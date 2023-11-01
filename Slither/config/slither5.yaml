@@ -1,0 +1,111 @@
+game: 'slither5'
+
+model:
+  # backbone can set "ResNet" or "SE-ResNet", if didn't set, default is "ResNet"
+  backbone: SE-ResNet
+  # if backbone is "SE-ResNet", you can set the fc_hidden_dimension, default is 16
+  fc_hidden_dimension: 16
+  channels: 32
+  blocks: 5
+
+train:
+  optimizer: # torch.optim
+    name: SGD
+    learning_rate: 0.1
+    momentum: 0.9
+    weight_decay: 1.e-4
+    nesterov: True
+
+  lr_scheduler: # torch.optim.lr_scheduler (disjoint)
+    name: MultiStepLR
+    gamma: 0.1
+    milestones:
+      - 250
+      - 1000
+      - 2000
+
+    # name: ReduceLROnPlateau
+    # factor: 0.5
+    # patience: 10
+    # min_lr: 0.001
+    # verbose: True
+
+  reset_learning_rate: False # True / False : also mean without scheduler
+
+  replay_buffer:
+    # train the model when there are N newly generated states or trajectories (disjoint options)
+    # Examples:
+    #     states_to_train: 5_000 # train per 5_000 states
+    #     trajectories_to_train: 25 # train per 25 trajectories
+    # 200 games * 40 avg_states_per_game
+    states_to_train: 65536
+    # trajectories_to_train: 100
+
+    # How many states to store in the replay buffer.
+    # usually equals to (25 * states_to_train) or (25 * average game step * trajectories_to_train)
+    replay_buffer_size: 655360
+
+    # sample the replay buffer with a number of the ratio of newly generated states
+    # or a fixed number of states (disjoint options)
+    # Examples:
+    #     sample_ratio: 1
+    #     sample_states: 10_000
+    sample_ratio: 1
+    # sample_states: 1_000
+
+    # when replay buffer isn't full, only sample and train
+    # [(len(replay_buffer) / replay_buffer_size) * states_to_train * sample_ratio] states
+    sample_retention: True
+
+    # Use observation from trajectory.states to add data in replay buffer.
+    # Deterministic game set False, Stochastic game set True.
+    use_observation: False
+    # Whether to augment data by rotation, reflection, etc.
+    use_transformation: False
+
+  # How many states to learn from per batch.
+  batch_size: 2048
+  # Save a checkpoint every N steps.
+  checkpoint_freq: 10
+
+mcts:
+  # PUCT exploration constant.
+  c_puct: 1.5
+  # How many MCTS simulations to run for each step.
+  max_simulations: 400
+  dirichlet:
+    # What dirichlet noise alpha to use.
+    # Deepmind : 10 / ${average of legal moves}
+    alpha: 1.0
+    # What dirichlet noise epsilon to use.
+    epsilon: 0.25
+  # Drop the temperature to 0 after this many moves.
+  temperature_drop: 999
+  # How many transformations to sample in evaluation step.
+  num_sampled_transformations: 0
+  # Save observation in trajectory.states for training.
+  # Deterministic game set False, Stochastic game set True.
+  save_observation: False
+
+misc:
+  # Data (trajectories) compression level. Valid values are integers between 1 and 22.
+  compression_level: 3
+
+evaluator:
+  # How many games to play
+  num_games: 20
+  # evaluation mode
+  mode: 'best'
+  # Set 0 to be AlphaZero or 0.55 to be AlphaGo
+  replace_rate: 0
+  # evaluate performance every N iterations
+  frequency: 100
+  # replace MCTS parameters
+  mcts:
+    # c_puct: 1.5
+    # max_simulations: 800
+    dirichlet:
+      alpha: 0.0
+      epsilon: 0.0
+    temperature_drop: 0
+    # num_sampled_transformations: 1
