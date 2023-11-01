@@ -4,6 +4,4 @@ __pycache__/
 *.so
 build/
 storage/
-*.pt
-*.sgf
 .nfs*
