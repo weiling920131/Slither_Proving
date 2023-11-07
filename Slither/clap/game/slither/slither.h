@@ -24,6 +24,11 @@ class SlitherState final : public State {
   SlitherState(const SlitherState &) = default;
   StatePtr clone() const override;
   void apply_action(const Action &) override;
+  // 11/7 modified
+  void test_action(std::vector<Action>) override;
+  std::vector<Action> path_;
+  void reset_path() override;
+  // 11/7 modified
   std::vector<Action> legal_actions() const override;
   bool is_terminal() const override;
 

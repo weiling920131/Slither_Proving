@@ -58,7 +58,7 @@ bool SlitherGame::save_manual(const std::vector<Action> actions, const std::stri
 	return false;
 }
 
-StatePtr SlitherState::clone() const {
+std::unique_ptr<State> SlitherState::clone() const {
   return std::make_unique<SlitherState>(*this);
 }
 
@@ -120,6 +120,41 @@ void SlitherState::apply_action(const Action &action) {
 		}
 	}
 }
+
+// 11/7 modified
+void SlitherState::reset_path() {
+	path_.clear();
+}
+
+void SlitherState::test_action(std::vector<Action> path) {
+	int cur_turn = path.size();
+	// std::cout << cur_turn << '\n';
+	if(cur_turn == 3) {
+		if(winner_ != -1) {
+			path.push_back(winner_);
+			path_ = path;
+			for(int i=0; i<3; i++) {
+				std::cout << path_[i] << ' ';
+			}
+			std::cout << "winner: " << path_[3] << '\n';
+			// std::cout << "----winner: " << winner_ << '\n';
+		}
+		return;
+	}
+
+	std::vector<Action> actions = legal_actions();
+	for(auto action: actions) {
+		auto copy_path = path;
+		// for(int i=0; i<cur_turn+1; i++) std::cout << "-";
+		// std::cout << action << '\n';
+		copy_path.push_back(action);
+		SlitherState cur_state = SlitherState(*this);
+
+		cur_state.apply_action(action);
+		cur_state.test_action(copy_path);
+	}
+}
+// 11/7 modified
 
 std::vector<Action> SlitherState::legal_actions() const {
 	std::vector<Action> actions;

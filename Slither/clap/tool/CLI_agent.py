@@ -79,7 +79,7 @@ class CLI_agent:
         trajectory = clap_pb2.Trajectory.FromString(raw)
         actions = []
         for state in trajectory.states:
-            # modified print("value:", state.evaluation.value)
+            print("value:", state.evaluation.value)
             # print("policy:", state.evaluation.policy)
             actions.append(state.transition.action)
         return actions
@@ -90,7 +90,7 @@ class CLI_agent:
                 print('=====> illegal move:', action, ', legal_actions: ',self.state.legal_actions(),';' )
                 print("Illegal Action")
             else:
-                # modified print('=====> legal move:', action, ', legal_actions: ',self.state.legal_actions(),';')
+                print('=====> legal move:', action, ', legal_actions: ',self.state.legal_actions(),';')
                 self.state.apply_action(action)
 
     def playmove(self, actions):
@@ -203,8 +203,16 @@ class CLI_agent:
         self.play(actions)
 
         actions_string  = [self.game.action_to_string(action) for action in actions]
-        # modified print("=" + ", ".join(actions_string))
+        print("=" + ", ".join(actions_string))
         self.history.append(actions_string)
+
+    # 11/7 modified
+    def test_action(self):
+        self.state.reset_path()
+        print("winning path: ")
+        path = []
+        self.state.test_action(path)
+    # 11/7 modified
 
     def loop(self):
         cnt = 0
@@ -215,7 +223,7 @@ class CLI_agent:
         self.history = []
         while not self.state.is_terminal():
             # modified start
-            # modified self.showboard()
+            self.showboard()
             cnt += 1
             if not self.automode:
                 string = input()
@@ -238,7 +246,6 @@ class CLI_agent:
                 self.history = []
 
             elif "genmove" in string or "gen" in string:
-                print("gen\n")
                 if len(string.split()) > 1:
                     self.engine.max_simulations = int(string.split()[-1])
                 actions = self.genmove()
@@ -281,11 +288,16 @@ class CLI_agent:
                     if is_tfile:
                         os.unlink(path)
 
+            # 11/7 modified
+            elif "test_action" in string:
+                self.test_action()
+            # 11/7 modified
+
             end = time.time()
-            # modified print("Command '{}' use".format(string), (end - start), "seconds")
+            print("Command '{}' use".format(string), (end - start), "seconds")                
 
         # modified start
-        # modified self.showboard()
+        self.showboard()
         if self.automode:
             self.save_manual()
             return
