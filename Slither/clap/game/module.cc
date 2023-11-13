@@ -18,6 +18,7 @@ PYBIND11_MODULE(game, m) {  // NOLINT
       .def("legal_actions", &State::legal_actions)
       .def("observation_tensor", &State::observation_tensor)
       .def("apply_action", &State::apply_action)
+      .def("manual_action", &State::manual_action)
     // 11/7 modified
       .def("reset_path", &State::reset_path)
       .def("test_action", &State::test_action)

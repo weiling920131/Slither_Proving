@@ -121,6 +121,64 @@ void SlitherState::apply_action(const Action &action) {
 	}
 }
 
+void SlitherState::manual_action(const Action &action, Player p) {
+ 	if (turn_ % 3 == 0) {  // choose
+		if (p != current_player()) turn_ += 3;
+		if (action == empty_index) skip_ = 1;
+		++turn_;
+		history_.push_back(action);
+		//std::cout << "success\n";
+	} 
+	else if (turn_ % 3 == 1) { // move
+		Player player = current_player();
+		const int src = history_[history_.size() - 1];
+		if(src != empty_index && action != empty_index){
+			std::swap(board_[src], board_[action]);
+			board_[src] = EMPTY;
+		} else if (action == empty_index) {
+			skip_ = 1;
+			history_[history_.size() - 1] = empty_index;
+		}
+		++turn_;
+		history_.push_back(action);
+	} 
+	else {  
+		// place new piece
+		Player player = current_player();
+		board_[action] = player;
+		++turn_;
+		history_.push_back(action);
+		// check if valid
+		if (skip_ == 1) { // only play a new piece
+			skip_ = 0;
+			if (!is_valid(action)) {
+				if(player == BLACK)
+					winner_ = WHITE;
+				else 
+					winner_ = BLACK;
+			}
+			// check if win
+			if(winner_ == -1 && have_win(action))
+				winner_ = player;
+		}
+		else {
+			const int src_empty = history_[history_.size() - 3]; // piece -> empty
+			const int src_new_piece = history_[history_.size() - 2]; // empty -> piece
+			if (!is_valid(action) || !is_valid(src_new_piece) || (action != src_empty && !is_empty_valid(src_empty) ) ) {
+				if(player == BLACK)
+					winner_ = WHITE;
+				else 
+					winner_ = BLACK;
+			}
+			// check if win
+			if(winner_ == -1){
+				if(have_win(action) || have_win(src_new_piece))
+					winner_ = player;
+			}
+		}
+	}
+}
+
 // 11/7 modified
 void SlitherState::reset_path() {
 	path_.clear();

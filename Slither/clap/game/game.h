@@ -25,6 +25,7 @@ class State {
   virtual std::vector<Action> legal_actions() const = 0;
   virtual std::vector<float> observation_tensor() const = 0;
   virtual void apply_action(const Action&) = 0;
+  virtual void manual_action(const Action&, Player) { return; }
   // 11/7 modified
   virtual void reset_path() { return; }
   virtual void test_action(std::vector<Action>) { return; }

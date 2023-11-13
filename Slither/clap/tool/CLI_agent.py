@@ -92,6 +92,19 @@ class CLI_agent:
             else:
                 print('=====> legal move:', action, ', legal_actions: ',self.state.legal_actions(),';')
                 self.state.apply_action(action)
+    
+    def play_manual(self, input_string: str):
+        player = int(input_string[input_string.find("play_manual") + len("play_manual") + 1])
+
+        substr = input_string[input_string.find("play_manual") + len("play_manual 0"):]
+        actions = self.game.string_to_action(substr)
+
+        for action in actions:
+            self.state.manual_action(action, player)
+
+        actions_string  = [self.game.action_to_string(action) for action in actions]
+        print("=" + ", ".join(actions_string))
+        self.history.append(actions_string)        
 
     def playmove(self, actions):
         move_count = 0
@@ -265,6 +278,9 @@ class CLI_agent:
                 print("=" + ", ".join(actions_string))
                 self.history.append(actions_string)
 
+            elif "play_manual" in string:
+                self.play_manual(string)
+                
             elif "play" in string:
                 self.play_game(string)
             
