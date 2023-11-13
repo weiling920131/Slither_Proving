@@ -26,7 +26,9 @@ class SlitherState final : public State {
   void apply_action(const Action &) override;
   void manual_action(const Action &, Player) override;
   // 11/7 modified
-  void test_action(std::vector<Action>) override;
+  // void test_action(std::vector<Action>) override;
+  bool test_action(std::vector<Action>) override;
+
   std::vector<Action> path_;
   void reset_path() override;
   // 11/7 modified

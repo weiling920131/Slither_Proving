@@ -306,7 +306,9 @@ class CLI_agent:
 
             # 11/7 modified
             elif "test_action" in string:
-                self.test_action()
+                # print(self.test_action())
+                if (self.test_action()):
+                    self.showboard()
             # 11/7 modified
 
             end = time.time()

@@ -1,5 +1,4 @@
 #include "clap/game/slither/slither.h"
-
 #include <algorithm>
 #include <iomanip>
 #include <numeric>
@@ -184,7 +183,35 @@ void SlitherState::reset_path() {
 	path_.clear();
 }
 
-void SlitherState::test_action(std::vector<Action> path) {
+// void SlitherState::test_action(std::vector<Action> path) {
+// 	int cur_turn = path.size();
+// 	// std::cout << cur_turn << '\n';
+// 	if(cur_turn == 3) {
+// 		if(winner_ != -1) {
+// 			path.push_back(winner_);
+// 			path_ = path;
+// 			for(int i=0; i<3; i++) {
+// 				std::cout << path_[i] << ' ';
+// 			}
+// 			std::cout << "winner: " << path_[3] << '\n';
+// 			// std::cout << "----winner: " << winner_ << '\n';
+// 		}
+// 		return;
+// 	}
+
+// 	std::vector<Action> actions = legal_actions();
+// 	for(auto action: actions) {
+// 		auto copy_path = path;
+// 		// for(int i=0; i<cur_turn+1; i++) std::cout << "-";
+// 		// std::cout << action << '\n';
+// 		copy_path.push_back(action);
+// 		SlitherState cur_state = SlitherState(*this);
+
+// 		cur_state.apply_action(action);
+// 		cur_state.test_action(copy_path);
+// 	}
+// }
+bool SlitherState::test_action(std::vector<Action> path) {
 	int cur_turn = path.size();
 	// std::cout << cur_turn << '\n';
 	if(cur_turn == 3) {
@@ -196,11 +223,13 @@ void SlitherState::test_action(std::vector<Action> path) {
 			}
 			std::cout << "winner: " << path_[3] << '\n';
 			// std::cout << "----winner: " << winner_ << '\n';
+			return true;
 		}
-		return;
+		return false;
 	}
 
 	std::vector<Action> actions = legal_actions();
+	bool isprint = false;
 	for(auto action: actions) {
 		auto copy_path = path;
 		// for(int i=0; i<cur_turn+1; i++) std::cout << "-";
@@ -209,7 +238,28 @@ void SlitherState::test_action(std::vector<Action> path) {
 		SlitherState cur_state = SlitherState(*this);
 
 		cur_state.apply_action(action);
-		cur_state.test_action(copy_path);
+		/*if (*/cur_state.test_action(copy_path);/*){
+			for(int i=0;i<5;i++){
+				std::cout << 5-i << " ";
+				for(int j=0;j<5;j++){
+					char color;
+					switch(board_[i * 5 + j]){
+						case 0:
+							color = 'x';
+							break;
+						case 1:
+							color = 'o';
+							break;
+						default:
+							color = '.';
+							break;
+					}
+					std::cout << color <<' ';
+				}
+				std::cout<<'\n';
+			}
+			std::cout << "  A B C D E\n";
+		}*/
 	}
 }
 // 11/7 modified

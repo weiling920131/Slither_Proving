@@ -28,7 +28,9 @@ class State {
   virtual void manual_action(const Action&, Player) { return; }
   // 11/7 modified
   virtual void reset_path() { return; }
-  virtual void test_action(std::vector<Action>) { return; }
+  // virtual void test_action(std::vector<Action>) { return; }
+  virtual bool test_action(std::vector<Action>) { return 0; }
+
   // 11/7 modified
   virtual bool is_terminal() const = 0;
   virtual std::vector<float> returns() const = 0;
