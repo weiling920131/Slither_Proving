@@ -227,6 +227,12 @@ class CLI_agent:
         if(self.state.test_action(path) >= 2):
             self.showboard()
 
+    # whp
+    def check(self):
+        self.state.generate(3)
+        # print("check py")
+    # whp
+
     def loop(self):
         cnt = 0
         t = time.localtime()
@@ -236,7 +242,7 @@ class CLI_agent:
         self.history = []
         while not self.state.is_terminal():
             # modified start
-            # self.showboard()
+            self.showboard()
             cnt += 1
             if not self.automode:
                 string = input()
@@ -310,6 +316,9 @@ class CLI_agent:
                 # if (self.test_action()):
                 #     self.showboard()
             # 11/7 modified
+            # whp
+            elif "check" in string:
+                self.check()
 
             end = time.time()
             print("Command '{}' use".format(string), (end - start), "seconds")                

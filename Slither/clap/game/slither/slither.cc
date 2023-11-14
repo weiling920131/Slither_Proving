@@ -262,6 +262,59 @@ int SlitherState::test_action(std::vector<Action> path) {
 	return num_of_win;
 }
 // 11/7 modified
+//whp
+bool SlitherState::check(std::vector<int> M){
+    for(int i=0;i<20;i++){
+        if(M[i]==1){
+            if(i%5!=0){
+                if(M[i+4]==1&&M[i+5]!=1&&M[i-1]!=1) return false;
+            }
+            if(i%5!=4){
+                if(M[i+6]==1&&M[i+5]!=1&&M[i+1]!=1) return false;
+            }
+        }
+    }
+    return true;
+}
+
+void SlitherState::DFS(std::vector<std::vector<int>> &MM, std::vector<int> &M, int cnt, int max){
+    // cout << "cnt: " << cnt << "\n";
+    if(cnt<=0){
+        if(check(M)){
+            // for(int i=0;i<25;i++){
+            //     cout << M[i] << " ";
+            //     if(i%5==4) cout << "\n";
+            // }
+            // cout << "============\n";
+            MM.push_back(M);
+            return;
+        }
+        
+    }else{
+        for(int i=max;i<=25-cnt;i++){
+            cnt=cnt-1;
+            M[i] = 1;
+            DFS(MM, M, cnt, i+1);
+            M[i] = 0;
+            cnt=cnt+1;
+        }
+        return;
+    }
+}
+
+std::vector<std::vector<int>> SlitherState::generate(int cnt){
+    // std::cout << "check " <<  "\n";
+	
+	std::vector<std::vector<int>> MM;
+	std::vector<int> M (25, 0);
+	DFS(MM, M, cnt, 0);
+    std::cout << "total: " << MM.size() << "\n";
+
+	return MM;
+
+}
+//whp
+
 
 std::vector<Action> SlitherState::legal_actions() const {
 	std::vector<Action> actions;

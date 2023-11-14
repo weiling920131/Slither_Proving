@@ -23,6 +23,11 @@ PYBIND11_MODULE(game, m) {  // NOLINT
       .def("reset_path", &State::reset_path)
       .def("test_action", &State::test_action)
     // 11/7 modified
+    //whp
+      .def("check", &State::check)
+      .def("DFS", &State::DFS)
+      .def("generate", &State::generate)
+    //whp
       .def("is_terminal", &State::is_terminal)
       .def("get_winner", &State::get_winner)
       .def("returns", &State::returns)

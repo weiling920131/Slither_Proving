@@ -31,6 +31,11 @@ class SlitherState final : public State {
   std::vector<Action> path_;
   void reset_path() override;
   // 11/7 modified
+  //whp
+  bool check(std::vector<int>);
+  void DFS(std::vector<std::vector<int>> &, std::vector<int> &, int , int);
+  std::vector<std::vector<int>> generate(int cnt);
+  //whp
   std::vector<Action> legal_actions() const override;
   bool is_terminal() const override;
 
