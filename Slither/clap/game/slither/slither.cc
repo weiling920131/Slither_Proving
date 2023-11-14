@@ -210,8 +210,7 @@ void SlitherState::reset_path() {
 // 		cur_state.apply_action(action);
 // 		cur_state.test_action(copy_path);
 // 	}
-// }
-bool SlitherState::test_action(std::vector<Action> path) {
+int SlitherState::test_action(std::vector<Action> path) {
 	int cur_turn = path.size();
 	// std::cout << cur_turn << '\n';
 	if(cur_turn == 3) {
@@ -222,14 +221,12 @@ bool SlitherState::test_action(std::vector<Action> path) {
 				std::cout << path_[i] << ' ';
 			}
 			std::cout << "winner: " << path_[3] << '\n';
-			// std::cout << "----winner: " << winner_ << '\n';
-			return true;
+			return 1;
 		}
-		return false;
+		return 0;
 	}
-
+	int num_of_win = 0;
 	std::vector<Action> actions = legal_actions();
-	bool isprint = false;
 	for(auto action: actions) {
 		auto copy_path = path;
 		// for(int i=0; i<cur_turn+1; i++) std::cout << "-";
@@ -238,29 +235,31 @@ bool SlitherState::test_action(std::vector<Action> path) {
 		SlitherState cur_state = SlitherState(*this);
 
 		cur_state.apply_action(action);
-		/*if (*/cur_state.test_action(copy_path);/*){
-			for(int i=0;i<5;i++){
-				std::cout << 5-i << " ";
-				for(int j=0;j<5;j++){
-					char color;
-					switch(board_[i * 5 + j]){
-						case 0:
-							color = 'x';
-							break;
-						case 1:
-							color = 'o';
-							break;
-						default:
-							color = '.';
-							break;
-					}
-					std::cout << color <<' ';
-				}
-				std::cout<<'\n';
-			}
-			std::cout << "  A B C D E\n";
-		}*/
+		num_of_win += cur_state.test_action(copy_path);
+		// if (cur_state.test_action(copy_path);){
+		// 	for(int i=0;i<5;i++){
+		// 		std::cout << 5-i << " ";
+		// 		for(int j=0;j<5;j++){
+		// 			char color;
+		// 			switch(board_[i * 5 + j]){
+		// 				case 0:
+		// 					color = 'x';
+		// 					break;
+		// 				case 1:
+		// 					color = 'o';
+		// 					break;
+		// 				default:
+		// 					color = '.';
+		// 					break;
+		// 			}
+		// 			std::cout << color <<' ';
+		// 		}
+		// 		std::cout<<'\n';
+		// 	}
+		// 	std::cout << "  A B C D E\n";
+		// }
 	}
+	return num_of_win;
 }
 // 11/7 modified
 

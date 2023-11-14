@@ -224,8 +224,8 @@ class CLI_agent:
         self.state.reset_path()
         print("winning path: ")
         path = []
-        self.state.test_action(path)
-    # 11/7 modified
+        if(self.state.test_action(path) >= 2):
+            self.showboard()
 
     def loop(self):
         cnt = 0
@@ -236,7 +236,7 @@ class CLI_agent:
         self.history = []
         while not self.state.is_terminal():
             # modified start
-            self.showboard()
+            # self.showboard()
             cnt += 1
             if not self.automode:
                 string = input()
@@ -306,9 +306,9 @@ class CLI_agent:
 
             # 11/7 modified
             elif "test_action" in string:
-                # print(self.test_action())
-                if (self.test_action()):
-                    self.showboard()
+                self.test_action()
+                # if (self.test_action()):
+                #     self.showboard()
             # 11/7 modified
 
             end = time.time()

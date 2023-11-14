@@ -29,7 +29,7 @@ class State {
   // 11/7 modified
   virtual void reset_path() { return; }
   // virtual void test_action(std::vector<Action>) { return; }
-  virtual bool test_action(std::vector<Action>) { return 0; }
+  virtual int test_action(std::vector<Action>) { return 0; }
 
   // 11/7 modified
   virtual bool is_terminal() const = 0;
