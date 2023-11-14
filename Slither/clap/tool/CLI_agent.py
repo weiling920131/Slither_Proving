@@ -157,7 +157,7 @@ class CLI_agent:
         else:
             with open(file_name, "w") as output:
                 output.write(rlt)
-            print(f"Saved manual as {file_name}")
+            # print(f"Saved manual as {file_name}")
             
     def load_manual(self, manual_path: Path, game_type='slither'):
         # Slither avalible only
@@ -243,7 +243,7 @@ class CLI_agent:
         self.history = []
         while not self.state.is_terminal():
             # modified start
-            self.showboard()
+            # self.showboard()
             cnt += 1
             if not self.automode:
                 string = input()
