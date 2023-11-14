@@ -210,21 +210,22 @@ void SlitherState::reset_path() {
 // 		cur_state.apply_action(action);
 // 		cur_state.test_action(copy_path);
 // 	}
-int SlitherState::test_action(std::vector<Action> path) {
+int SlitherState::test_action(std::vector<Action> path, Player p) {
 	int cur_turn = path.size();
 	// std::cout << cur_turn << '\n';
 	if(cur_turn == 3) {
 		if(winner_ != -1) {
 			path.push_back(winner_);
 			path_ = path;
-			for(int i=0; i<3; i++) {
-				std::cout << path_[i] << ' ';
-			}
-			std::cout << "winner: " << path_[3] << '\n';
+			// for(int i=0; i<3; i++) {
+				// std::cout << path_[i] << ' ';
+			// }
+			// std::cout << "winner: " << path_[3] << '\n';
 			return 1;
 		}
 		return 0;
 	}
+	if (p != current_player()) turn_ += 3;
 	int num_of_win = 0;
 	std::vector<Action> actions = legal_actions();
 	for(auto action: actions) {
@@ -235,7 +236,7 @@ int SlitherState::test_action(std::vector<Action> path) {
 		SlitherState cur_state = SlitherState(*this);
 
 		cur_state.apply_action(action);
-		num_of_win += cur_state.test_action(copy_path);
+		num_of_win += cur_state.test_action(copy_path, p);
 		// if (cur_state.test_action(copy_path);){
 		// 	for(int i=0;i<5;i++){
 		// 		std::cout << 5-i << " ";
@@ -282,10 +283,10 @@ void SlitherState::DFS(std::vector<std::vector<int>> &MM, std::vector<int> &M, i
     if(cnt<=0){
         if(check(M)){
             // for(int i=0;i<25;i++){
-            //     cout << M[i] << " ";
-            //     if(i%5==4) cout << "\n";
+            //     std::cout << M[i] << " ";
+            //     if(i%5==4) std::cout << "\n";
             // }
-            // cout << "============\n";
+            // std::cout << "============\n";
             MM.push_back(M);
             return;
         }
@@ -311,8 +312,60 @@ std::vector<std::vector<int>> SlitherState::generate(int cnt){
     std::cout << "total: " << MM.size() << "\n";
 
 	return MM;
-
 }
+
+int SlitherState::test_generate(std::vector<Action> path, int chess_num, int color){
+	// std::cout<<11111;
+	std::vector<std::vector<int>> MM = generate(chess_num);
+	int pruning_num = 0;
+	for(auto& m : MM){
+		SlitherState cur_state = SlitherState(*this);
+		for(int i=0;i<5;i++){
+			for(int j=0;j<5;j++){
+				int change = 0;
+				switch(m[i*5+j]){
+					case 2:
+						change = WHITE;
+						break;
+					case 1:
+						change = BLACK;
+						break;
+					case 0:
+						change = EMPTY;
+						break;
+				}
+				cur_state.board_[5*i+j] = change;
+			}
+		}
+		// std::cout<<"tmp: "<<tmp<<'\n';
+		if(cur_state.test_action(path, color) >= 2){
+			pruning_num++;
+			std::cout<<"\n==================\n";
+			for(int i=0;i<5;i++){
+				std::cout << 5-i << " ";
+				for(int j=0;j<5;j++){
+					char c;
+					switch(cur_state.board_[i * 5 + j]){
+						case 0:
+							c = 'x';
+							break;
+						case 1:
+							c = 'o';
+							break;
+						default:
+							c = '.';
+							break;
+					}
+					std::cout << c <<' ';
+				}
+				std::cout<<'\n';
+			}
+			std::cout << "  A B C D E\n";
+		}
+	}
+	std::cout<<"pruning_num: "<<pruning_num<<'\n';
+}
+
 //whp
 
 

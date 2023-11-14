@@ -220,17 +220,18 @@ class CLI_agent:
         self.history.append(actions_string)
 
     # 11/7 modified
-    def test_action(self):
+    def test_action(self, input_string: str):
+        player = int(input_string[input_string.find("test_action") + len("test_action") + 1])
         self.state.reset_path()
         print("winning path: ")
         path = []
-        if(self.state.test_action(path) >= 2):
+        if(self.state.test_action(path, player) >= 2):
             self.showboard()
 
     # whp
-    def check(self):
-        self.state.generate(3)
-        # print("check py")
+    def test_generate(self, input_string: str):
+        chess_num = int(input_string[input_string.find("test_generate") + len("test_generate") + 1])
+        self.state.test_generate([], chess_num, 0)
     # whp
 
     def loop(self):
@@ -263,6 +264,10 @@ class CLI_agent:
             elif "clear" in string or 'reset' in string:
                 self.clear()
                 self.history = []
+
+            elif "test_generate" in string:
+                self.test_generate(string)
+                break
 
             elif "genmove" in string or "gen" in string:
                 if len(string.split()) > 1:
@@ -312,13 +317,9 @@ class CLI_agent:
 
             # 11/7 modified
             elif "test_action" in string:
-                self.test_action()
-                # if (self.test_action()):
-                #     self.showboard()
+                self.test_action(string)
             # 11/7 modified
             # whp
-            elif "check" in string:
-                self.check()
 
             end = time.time()
             print("Command '{}' use".format(string), (end - start), "seconds")                

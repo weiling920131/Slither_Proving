@@ -29,7 +29,8 @@ class State {
   // 11/7 modified
   virtual void reset_path() { return; }
   // virtual void test_action(std::vector<Action>) { return; }
-  virtual int test_action(std::vector<Action>) { return 0; }
+  virtual int test_action(std::vector<Action>, Player) { return 0; }
+  virtual int test_generate(std::vector<Action>, int, int) { return 0; }
   // 11/7 modified
   //whp
   virtual bool check(std::vector<int>) { return 0; };
