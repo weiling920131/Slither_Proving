@@ -20,7 +20,7 @@ PYBIND11_MODULE(game, m) {  // NOLINT
       .def("apply_action", &State::apply_action)
       .def("manual_action", &State::manual_action)
     // 11/7 modified
-      .def("reset_path", &State::reset_path)
+      // .def("return_path", &State::return_path)
       .def("test_action", &State::test_action)
     // 11/7 modified
     //whp

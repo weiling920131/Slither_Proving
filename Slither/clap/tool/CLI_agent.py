@@ -222,11 +222,13 @@ class CLI_agent:
     # 11/7 modified
     def test_action(self, input_string: str):
         player = int(input_string[input_string.find("test_action") + len("test_action") + 1])
-        self.state.reset_path()
-        print("winning path: ")
         path = []
-        if(self.state.test_action(path, player) >= 2):
-            self.showboard()
+        pathes = []
+        print("winning path: ")
+        print(self.state.test_action(path, pathes, player))
+        # if(self.state.test_action(path, pathes, player)):
+
+        #     self.showboard()
 
     # whp
     def test_generate(self, input_string: str):
@@ -238,7 +240,6 @@ class CLI_agent:
         cnt = 0
         t = time.localtime()
         result = time.strftime("%m_%d_%Y_%H:%M:%S", t)
-
         self.clear()
         self.history = []
         while not self.state.is_terminal():
