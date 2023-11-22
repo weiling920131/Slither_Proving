@@ -220,15 +220,37 @@ class CLI_agent:
         self.history.append(actions_string)
 
     # 11/7 modified
+    def print_path(path):
+        cnt = 0
+        for point in path:
+            if(cnt == 3):
+                if(point == 0):
+                    print("Black",end='')
+                else:
+                    print("Write",end='')
+                continue
+            if(cnt == 1):
+                print("->",end=' ')
+            elif(cnt == 2):
+                print(", place",end=' ')
+            if(point == 25):
+                print("X",end=' ')
+            else:
+                col = chr(point % 5 + ord('A'))
+                row = 5 - int(point / 5)
+                print(f"{col}{row}",end=' ')
+            cnt += 1
+        print('\n')
+
     def test_action(self, input_string: str):
         player = int(input_string[input_string.find("test_action") + len("test_action") + 1])
         path = []
         pathes = []
         print("winning path: ")
-        print(self.state.test_action(path, pathes, player))
-        # if(self.state.test_action(path, pathes, player)):
-
-        #     self.showboard()
+        pathes = self.state.test_action(path, pathes, player)
+        ## TODO filter pathes
+        for path in pathes:
+            print_path(path)
 
     # whp
     def test_generate(self, input_string: str):
