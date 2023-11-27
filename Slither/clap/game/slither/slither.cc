@@ -185,7 +185,7 @@ std::vector<std::vector<Action>> SlitherState::test_action(std::vector<Action> p
 	// std::cout << cur_turn << '\n';
 	if(cur_turn == 3) {
 		if(winner_ != -1) {
-			path.push_back(winner_);
+			// path.push_back(winner_);
 			pathes.push_back(path);
 			return pathes;
 		}

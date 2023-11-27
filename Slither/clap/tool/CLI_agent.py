@@ -8,6 +8,7 @@ from pathlib import Path
 import tempfile
 # modified start
 import random
+from itertools import product
 # modified end
 
 import clap.game
@@ -220,38 +221,31 @@ class CLI_agent:
         self.history.append(actions_string)
 
     # 11/7 modified
-    def print_path(path):
-        cnt = 0
-        for point in path:
-            if(cnt == 3):
-                if(point == 0):
-                    print("Black",end='')
-                else:
-                    print("Write",end='')
+    def print_critical(self, pathes):
+        placewin = set()
+        critical = []
+        for path in pathes:
+            if(path[0] == 25 and path[1] == 25):
+                placewin.add(path[2])
+        
+        for path in pathes:
+            if(path[1] in placewin or path[2] in placewin):
                 continue
-            if(cnt == 1):
-                print("->",end=' ')
-            elif(cnt == 2):
-                print(", place",end=' ')
-            if(point == 25):
-                print("X",end=' ')
-            else:
-                col = chr(point % 5 + ord('A'))
-                row = 5 - int(point / 5)
-                print(f"{col}{row}",end=' ')
-            cnt += 1
-        print('\n')
+            critical.append([path[1], path[2]])
+
+        for s in list(product(*critical)):
+            print("critical points set:",end=' ')
+            for action in set(s).union(placewin):
+                print(self.game.action_to_string(action),end=' ')
+            print('\n')
+            
 
     def test_action(self, input_string: str):
         player = int(input_string[input_string.find("test_action") + len("test_action") + 1])
         path = []
         pathes = []
-        print("winning path: ")
         pathes = self.state.test_action(path, pathes, player)
-        ## TODO filter pathes
-        for path in pathes:
-            print_path(path)
-
+        self.print_critical(pathes)
     # whp
     def test_generate(self, input_string: str):
         chess_num = int(input_string[input_string.find("test_generate") + len("test_generate") + 1])
