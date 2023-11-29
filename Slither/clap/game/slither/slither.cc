@@ -224,11 +224,6 @@ void SlitherState::DFS(std::vector<std::vector<int>> &MM, std::vector<int> &M, i
 
     if(cnt<=0){
         if(check(M)){
-            // for(int i=0;i<25;i++){
-            //     std::cout << M[i] << " ";
-            //     if(i%5==4) std::cout << "\n";
-            // }
-            // std::cout << "============\n";
             MM.push_back(M);
             return;
         }
