@@ -269,10 +269,12 @@ int SlitherState::test_generate(std::vector<Action> path, int chess_num, int col
 		std::vector<std::vector<Action>> pathes = {};
 		if(cur_state.test_action(path, pathes, color).size() >= 1){
 			pruning_num++;
+			std::vector<int> curBlack;
 			std::cout<<"\n==================\n";
 			for(int i=0;i<5;i++){
 				std::cout << 5-i << " ";
 				for(int j=0;j<5;j++){
+					if(cur_state.board_[i * 5 + j]==0) curBlack.push_back(i*5+j);
 					std::cout << change[cur_state.board_[i * 5 + j]] <<' ';
 				}
 				std::cout<<'\n';
