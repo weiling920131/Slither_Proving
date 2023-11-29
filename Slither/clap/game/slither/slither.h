@@ -34,6 +34,8 @@ class SlitherState final : public State {
   // 11/7 modified
   //whp
   bool check(std::vector<int>);
+  std::map<std::vector<int>, std::vector<int>> path_point;
+
   void DFS(std::vector<std::vector<int>> &, std::vector<int> &, int , int);
   std::vector<std::vector<int>> generate(int cnt);
   //whp

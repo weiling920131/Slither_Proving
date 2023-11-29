@@ -52,8 +52,8 @@ class CLI_agent:
 
         # modified start
         self.automode = False if args.mode!='auto' else True
-        if not self.automode :
-            atexit.register(self.saveAtExit, 'autosave.sgf') # will execute after code terminate
+        # if not self.automode :
+        #     atexit.register(self.saveAtExit, 'autosave.sgf') # will execute after code terminate
         # modified end
 
     def saveAtExit(self, file_name='save_at_exit.sgf'):
