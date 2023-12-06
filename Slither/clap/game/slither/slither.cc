@@ -213,6 +213,7 @@ std::vector<std::vector<Action>> SlitherState::test_action(std::vector<Action> p
 
 std::array<short, kNumOfGrids + 1> get_P(std::array<short, kNumOfGrids> board, std::vector<std::vector<Action>> pathes) {
 	std::array<short, kNumOfGrids + 1> P = {0};
+	P[12] = 5;
 	for(int i=0; i<kNumOfGrids; i++) {
 		if(board[i] == 1) {
 			for(int j=0; j<5; j++) {
