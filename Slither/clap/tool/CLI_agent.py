@@ -233,11 +233,17 @@ class CLI_agent:
                 continue
             critical.append([path[1], path[2]])
 
+        all_critical = []
         for s in list(product(*critical)):
-            print("critical points set:",end=' ')
+            res = []
+            # print("critical points set:",end=' ')
             for action in set(s).union(placewin):
-                print(self.game.action_to_string(action),end=' ')
-            print('\n')
+                res.append(action)
+                # print(self.game.action_to_string(action),end=' ')
+            all_critical.append(res)
+            # print('\n')
+
+        return all_critical
             
 
     def test_action(self, input_string: str):
@@ -245,14 +251,16 @@ class CLI_agent:
         path = []
         pathes = []
         pathes = self.state.test_action(path, pathes, player)
-        self.print_critical(pathes)
+        return self.print_critical(pathes)
+
     # whp
     def test_generate(self, input_string: str):
         chess_num = int(input_string[input_string.find("test_generate") + len("test_generate") + 1])
         self.state.test_generate([], chess_num, 0)
     # whp
     def slicer(self):
-        pass
+        # print(self.test_action("test_action 1"))
+        self.state.slicer(self.test_action("test_action 1"))
 
     def loop(self):
         cnt = 0

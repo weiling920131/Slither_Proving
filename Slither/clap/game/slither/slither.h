@@ -27,7 +27,7 @@ class SlitherState final : public State {
   void manual_action(const Action &, Player) override;
   // 11/7 modified
   std::vector<std::vector<Action>> test_action(std::vector<Action>, std::vector<std::vector<Action>>&,Player) override;
-  void slicer() override;
+  void slicer(std::vector<std::vector<Action>>) override;
   int test_generate(std::vector<Action>, int, int) override;
   // 11/7 modified
   //whp
@@ -85,7 +85,6 @@ class SlitherState final : public State {
    * 15 16 17 18 19
    * 20 21 22 23 24*/
   std::array<short, kNumOfGrids> board_;
-  std::array<std::array<short, kBoardSize>, 4> HP;
   /** Game rule for terminal: the board_ repeat 3 times */
   //std::map<std::array<short, kNumOfGrids>, short> repeat_;
   std::vector<Action> history_;
