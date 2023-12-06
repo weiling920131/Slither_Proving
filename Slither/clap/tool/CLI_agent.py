@@ -251,6 +251,8 @@ class CLI_agent:
         chess_num = int(input_string[input_string.find("test_generate") + len("test_generate") + 1])
         self.state.test_generate([], chess_num, 0)
     # whp
+    def slicer(self):
+        pass
 
     def loop(self):
         cnt = 0
@@ -260,7 +262,7 @@ class CLI_agent:
         self.history = []
         while not self.state.is_terminal():
             # modified start
-            # self.showboard()
+            self.showboard()
             cnt += 1
             if not self.automode:
                 string = input()
@@ -285,6 +287,9 @@ class CLI_agent:
             elif "test_generate" in string:
                 self.test_generate(string)
                 break
+
+            elif "slicer" in string:
+                self.slicer()
 
             elif "genmove" in string or "gen" in string:
                 if len(string.split()) > 1:

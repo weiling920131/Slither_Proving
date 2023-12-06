@@ -15,7 +15,11 @@ SlitherState::SlitherState(GamePtr game_ptr)
       skip_(0),
       winner_(-1) {
   std::fill(std::begin(board_), std::end(board_), EMPTY);
+  for(auto P: HP) {
+	std::fill(std::begin(P), std::end(P), 2);
+  }
   history_.clear();
+  W = std::vector<std::vector<std::vector<int>>>(12);
 }
 int SlitherGame::getBoardSize() const {
 	return kBoardSize;
@@ -205,7 +209,53 @@ std::vector<std::vector<Action>> SlitherState::test_action(std::vector<Action> p
 	return pathes;
 }
 // 11/7 modified
+
+void SlitherState::slicer() {
+	for(int i=0; i<kBoardSize; i++) {
+		if(board_[i] == BLACK) {
+			
+		}
+	}
+}
+
 //whp
+//check redundant
+bool SlitherState::check3(std::vector<int> M, int num){
+    for(int i=5;i<num;i++){
+        for(int j=0;j<W[i].size();j++){
+            int f = 0;
+            for(int k=0;k<i;k++){
+                if(M[W[i][j][k]]) f++;
+            }
+            if (f==i) return false;
+        }
+    }
+    return true;
+}
+//check win
+bool SlitherState::check2(std::vector<int> M){
+    for(int i=0;i<20;i++){
+        if(M[i]==i/5+1&&M[i+5]) {
+            M[i+5] = (i+5)/5+1;
+            if(i<15){
+                for(int j=1;j+i%5<=4;j++){
+                    if(M[i+5+j]) M[i+5+j] = (i+5)/5+1;
+                    else break;
+                }
+                for(int j=1;i%5-j>=0;j++){
+                    if(M[i+5-j]) M[i+5-j] = (i+5)/5+1;
+                    else break;
+                }
+            }
+        }       
+    }
+    for(int i=20;i<25;i++){
+        if(M[i]==5) return true;
+    }
+    return false;
+}
+
+// check diag
 bool SlitherState::check(std::vector<int> M){
     for(int i=0;i<20;i++){
         if(M[i]==0){
@@ -245,6 +295,37 @@ void SlitherState::DFS(std::vector<std::vector<int>> &MM, std::vector<int> &M, i
     }
 }
 
+void SlitherState::DFS_WP(std::vector<int> &M, int cnt, int max, int num){
+    // cout << "cnt: " << cnt << "\n";
+    if(cnt<=0){
+        if(check(M)&&check2(M)&&check3(M, num)){
+            std::vector<int> w;
+            for(int i=0;i<25;i++){
+                if(M[i]) w.push_back(i);
+            }
+            W[num].push_back(w);
+            // MM.push_back(M);
+            return;
+        }
+    }else{
+        for(int i=max;i<=25-cnt;i++){
+            cnt=cnt-1;
+            M[i] = 1;
+            DFS_WP(M, cnt, i+1, num);
+            M[i] = 0;
+            cnt=cnt+1;
+        }
+        return;
+    }
+}
+
+int SlitherState::WP(){
+	std::vector<int> M (25, 0);
+    for(int i=5;i<=12;i++){
+        DFS_WP(M, i, 0, i);
+    }
+}
+
 std::vector<std::vector<int>> SlitherState::generate(int cnt){
 
 	std::vector<std::vector<int>> MM;
@@ -269,10 +350,12 @@ int SlitherState::test_generate(std::vector<Action> path, int chess_num, int col
 		std::vector<std::vector<Action>> pathes = {};
 		if(cur_state.test_action(path, pathes, color).size() >= 1){
 			pruning_num++;
+			std::vector<int> curBlack;
 			std::cout<<"\n==================\n";
 			for(int i=0;i<5;i++){
 				std::cout << 5-i << " ";
 				for(int j=0;j<5;j++){
+					if(cur_state.board_[i * 5 + j]==0) curBlack.push_back(i*5+j);
 					std::cout << change[cur_state.board_[i * 5 + j]] <<' ';
 				}
 				std::cout<<'\n';
