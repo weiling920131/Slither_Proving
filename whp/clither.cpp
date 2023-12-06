@@ -15,6 +15,7 @@ void print(vector<int> M){
         cout << M[i] << " ";
         if(i%5==4) cout << "\n";
     }
+    cout << "--------\n";
     return;
 }
 
@@ -62,14 +63,14 @@ pair<int, int> *check2(vector<int> M){
 }
 
 // check diag
-bool check(vector<int> M){
+bool check(vector<int> M, int color){
     for(int i=0;i<20;i++){
-        if(M[i]!=0){
-            if(i%5!=0){
-                if(M[i+4]!=0&&M[i+5]==0&&M[i-1]==0) return false;
+        if(M[i]==color){
+            if(i%5==color){
+                if(M[i+4]==color&&M[i+5]==color&&M[i-1]==color) return false;
             }
             if(i%5!=4){
-                if(M[i+6]!=0&&M[i+5]==0&&M[i+1]==0) return false;
+                if(M[i+6]==color&&M[i+5]==color&&M[i+1]==color) return false;
             }
         }
     }
@@ -109,7 +110,7 @@ void DFS(vector<int> &M, int cnt, int max, int num){
         pair<int, int> *p = check2(M);
         // if(p) cout << p->first << "-" << p->second << "\n";
         // else cout << "error\n";
-        if(check(M)&&p&&check3(M, num)){
+        if(check(M, 1)&&p&&check3(M, num)){
             print(M);
             vector<int> w;
             for(int i=0;i<25;i++){
@@ -132,80 +133,130 @@ void DFS(vector<int> &M, int cnt, int max, int num){
     }
 }
 
-int main(){
-    char *s = (char *)malloc(sizeof(char) * 50);
-    for(int i=12;i<=12;i++){
-        ofstream file;
-        cout << i << "\n";
-        sprintf(s, "winning_path_%d.txt", i);
-        file.open(s);
-        cout << i <<"====\n";
-        DFS(MM, i, 0, i);
-        // file << "total: " << W[i].size() << "\n";
-        // total+=W[i].size();
-        // for(int h=0;h<5;h++){
-
-        // }
-        // for(int j=0;j<W[i].size();j++){
-        //     int k=0;
-        //     for(int index=0;index<25;index++){
-        //         if(index==W[i][j][k]) {
-        //             file << "1 ";
-        //             k++;
-        //         }
-        //         else file << "0 ";
-        //         if(index%5==4) file << '\n';
-        //     }
-        //     if(j!=W[i].size()-1) file << "----------\n";
-        // }
-        // file.close();
-        for(int h=0;h<5;h++){
-            for(int t=0;t<5;t++){
-                file << "head: " << h << " ";
-                file << "tail: " << t << "\n";
-                // cout << "head: " << h << " ";
-                // cout << "tail: " << t << "\n";
-                for(int j=0;j<WW[i][h][t].size();j++){
-                    int k=0;
-                    for(int index=0;index<25;index++){
-                        if(index==WW[i][h][t][j][k]) {
-                            file << "1 ";
-                            cout << "1 ";
-                            k++;
-                        }
-                        else {
-                            file << "0 ";
-                            cout << "0 ";
-                        }
-                        if(index%5==4) {
-                            file << '\n';
-                            cout << '\n';
-                        }
-                    }
-                    if(j!=WW[i][h][t].size()-1) {
-                        file << "----------\n";
-                        cout << "----------\n";
-                    }
-                }
-            }
+bool check_blocked(vector<int> M, vector<vector<int>>CPs){
+    // for every crtical points set
+    bool blocked = true;
+    for(int i=0;i<CPs.size();i++){
+        // check if white has block every critical points
+        for(int j=0;j<CPs[i].size();j++){
+            if(M[CPs[i][j]]!=2) blocked = false;
         }
-        file.close();
-
+        if(blocked) {
+            // print(M);
+            // total++;
+            return blocked;
+        }
     }
+    return blocked;
+}
 
-    
+void DFSW(vector<int> &M, int cnt, int max, int num, vector<vector<int>>CPs){
+    if(cnt<=0){
+        if(check(M, 2)&&!check_blocked(M, CPs)){
+            print(M);
+            total++;
+            return;
+        }
+    }else{
+        for(int i=max;i<=25-cnt;i++){
+            if(M[i]==1) continue;
+            cnt=cnt-1;
+            M[i] = 2;
+            DFSW(M, cnt, i+1, num, CPs);
+            M[i] = 0;
+            cnt=cnt+1;
+        }
+        return;
+    }
+}
 
-    // vector<int> V(25, 0);
-    // V[0] = 1;
-    // V[5] = 1;
-    // V[10] = 1;
-    // V[15] = 1;
-    // V[16] = 1;
-    // zone(V, 6);
-    // for(int i=0;i<CP.size();i++){
-    //     V[CP[i]] = 3;
+
+
+int main(){
+    // char *s = (char *)malloc(sizeof(char) * 50);
+    // for(int i=12;i<=12;i++){
+    //     ofstream file;
+    //     cout << i << "\n";
+    //     sprintf(s, "winning_path_%d.txt", i);
+    //     file.open(s);
+    //     cout << i <<"====\n";
+    //     DFS(MM, i, 0, i);
+    //     // file << "total: " << W[i].size() << "\n";
+    //     // total+=W[i].size();
+    //     // for(int h=0;h<5;h++){
+    //     // }
+    //     // for(int j=0;j<W[i].size();j++){
+    //     //     int k=0;
+    //     //     for(int index=0;index<25;index++){
+    //     //         if(index==W[i][j][k]) {
+    //     //             file << "1 ";
+    //     //             k++;
+    //     //         }
+    //     //         else file << "0 ";
+    //     //         if(index%5==4) file << '\n';
+    //     //     }
+    //     //     if(j!=W[i].size()-1) file << "----------\n";
+    //     // }
+    //     // file.close();
+    //     for(int h=0;h<5;h++){
+    //         for(int t=0;t<5;t++){
+    //             file << "head: " << h << " ";
+    //             file << "tail: " << t << "\n";
+    //             // cout << "head: " << h << " ";
+    //             // cout << "tail: " << t << "\n";
+    //             for(int j=0;j<WW[i][h][t].size();j++){
+    //                 int k=0;
+    //                 for(int index=0;index<25;index++){
+    //                     if(index==WW[i][h][t][j][k]) {
+    //                         file << "1 ";
+    //                         cout << "1 ";
+    //                         k++;
+    //                     }
+    //                     else {
+    //                         file << "0 ";
+    //                         cout << "0 ";
+    //                     }
+    //                     if(index%5==4) {
+    //                         file << '\n';
+    //                         cout << '\n';
+    //                     }
+    //                 }
+    //                 if(j!=WW[i][h][t].size()-1) {
+    //                     file << "----------\n";
+    //                     cout << "----------\n";
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     file.close();
     // }
-    // print(V);
-    // cout << "all: " << total << "\n";
+
+    vector<int> V(25, 0);
+    vector<vector<int>> cps = {{5, 6}, {10, 6}};
+    V[0] = 1;
+    V[1] = 1;
+    V[20] = 1;
+    V[11] = 1;
+    V[15] = 1;
+    print(V);
+    DFSW(V, 5, 0, 5, cps);
+    cout << "all: " << total << "\n";
 
 }
+
+// vector<vector<int>> find_best_winning_path(vector<int> M, int num, vector<int> heads, vector<int> tails){
+//     int disFromWin = 13;
+//     for(int i=5;i<=num+1;i++){
+//         for(int h=0;h<=heads.size();h++){
+//             for(int t=0;t<tails.size();t++){
+//                 for(int m=0;m<WW[i][h][t].size();m++){
+
+//                 }
+//             }
+//         }
+//     }
+// }
+
+
+
+
