@@ -4,6 +4,7 @@
 #include <fstream>
 #include <queue>
 using namespace std;
+vector<vector<int>> P;
 vector<int> MM (25, 0);
 int total = 0;
 vector<vector<vector<int>>> W (12);
@@ -66,11 +67,11 @@ pair<int, int> *check2(vector<int> M){
 bool check(vector<int> M, int color){
     for(int i=0;i<20;i++){
         if(M[i]==color){
-            if(i%5==color){
-                if(M[i+4]==color&&M[i+5]==color&&M[i-1]==color) return false;
+            if(i%5!=0){
+                if(M[i+4]==color&&M[i+5]!=color&&M[i-1]!=color) return false;
             }
             if(i%5!=4){
-                if(M[i+6]==color&&M[i+5]==color&&M[i+1]==color) return false;
+                if(M[i+6]==color&&M[i+5]!=color&&M[i+1]!=color) return false;
             }
         }
     }
@@ -153,7 +154,8 @@ bool check_blocked(vector<int> M, vector<vector<int>>CPs){
 void DFSW(vector<int> &M, int cnt, int max, int num, vector<vector<int>>CPs){
     if(cnt<=0){
         if(check(M, 2)&&!check_blocked(M, CPs)){
-            print(M);
+            // print(M);
+            P.push_back(M);
             total++;
             return;
         }
@@ -240,7 +242,13 @@ int main(){
     V[15] = 1;
     print(V);
     DFSW(V, 5, 0, 5, cps);
+    for(int i=0;i<P.size();i++){
+        print(P[i]);
+    }
     cout << "all: " << total << "\n";
+
+
+    
 
 }
 
