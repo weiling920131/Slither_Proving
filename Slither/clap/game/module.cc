@@ -28,6 +28,7 @@ PYBIND11_MODULE(game, m) {  // NOLINT
       .def("DFS", &State::DFS)
       .def("generate", &State::generate)
       .def("test_generate", &State::test_generate)
+      .def("getboard", &State::getboard)
     //whp
       .def("is_terminal", &State::is_terminal)
       .def("get_winner", &State::get_winner)

@@ -179,6 +179,12 @@ void SlitherState::manual_action(const Action &action, Player p) {
 }
 
 // 11/7 modified
+std::vector<int> SlitherState::getboard(){
+	std::vector<int> board(25);
+	for(int i=0;i<25;i++) board[i] = board_[i];
+	return board;
+}
+
 
 std::vector<std::vector<Action>> SlitherState::test_action(std::vector<Action> path, std::vector<std::vector<Action>> &pathes, Player p) {
 	int cur_turn = path.size();

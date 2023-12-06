@@ -221,17 +221,29 @@ class CLI_agent:
         self.history.append(actions_string)
 
     # 11/7 modified
+
     def print_critical(self, pathes):
+        # for path in pathes:
+        #     print("path:",end=' ')
+        #     for point in path:
+        #         print(self.game.action_to_string(point), end=' ')
+        #     print('\n')
+
         placewin = set()
         critical = []
         for path in pathes:
             if(path[0] == 25 and path[1] == 25):
                 placewin.add(path[2])
         
+        setlist = []
         for path in pathes:
-            if(path[1] in placewin or path[2] in placewin):
+            if(path[1] in placewin or path[2] in placewin or {path[1], path[2]} in setlist):
                 continue
+            setlist.append({path[1], path[2]})
             critical.append([path[1], path[2]])
+
+        # print("critical: ",end='')
+        # print(critical)
 
         for s in list(product(*critical)):
             print("critical points set:",end=' ')
@@ -260,7 +272,7 @@ class CLI_agent:
         self.history = []
         while not self.state.is_terminal():
             # modified start
-            # self.showboard()
+            self.showboard()
             cnt += 1
             if not self.automode:
                 string = input()

@@ -29,6 +29,8 @@ class SlitherState final : public State {
   // void test_action(std::vector<Action>) override;
   std::vector<std::vector<Action>> test_action(std::vector<Action>, std::vector<std::vector<Action>>&,Player) override;
   int test_generate(std::vector<Action>, int, int) override;
+  
+  std::vector<int> getboard();
   // std::vector<std::vector<Action>> path_;
   // std::vector<std::vector<Action>> return_path() override;
   // 11/7 modified
