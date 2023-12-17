@@ -179,6 +179,7 @@ void SlitherState::manual_action(const Action &action, Player p) {
 }
 
 // 11/7 modified
+
 std::vector<int> SlitherState::getboard(){
 	std::vector<int> board(25);
 	for(int i=0;i<25;i++) board[i] = board_[i];
@@ -834,6 +835,13 @@ std::string SlitherState::serialize_num_to_char() const {
     }
 	return res;
 }
+// StatePtr SlitherGame::get_pre_state() {
+//   return pre_state;
+// }
+
+// void SlitherGame::save_state(){
+// 	pre_state = std::make_unique<SlitherState>(*this);
+// }
 
 std::string SlitherGame::name() const {
   return "slither";

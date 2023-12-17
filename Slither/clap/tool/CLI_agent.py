@@ -52,8 +52,8 @@ class CLI_agent:
 
         # modified start
         self.automode = False if args.mode!='auto' else True
-        # if not self.automode :
-        #     atexit.register(self.saveAtExit, 'autosave.sgf') # will execute after code terminate
+        if not self.automode :
+            atexit.register(self.saveAtExit, 'autosave.sgf') # will execute after code terminate
         # modified end
 
     def saveAtExit(self, file_name='save_at_exit.sgf'):
@@ -221,6 +221,8 @@ class CLI_agent:
         self.history.append(actions_string)
 
     # 11/7 modified
+    def back(self):
+        self.state = self.state.get_pre_state
 
     def print_critical(self, pathes):
         # for path in pathes:
@@ -289,7 +291,9 @@ class CLI_agent:
 
             if "showboard" in string or "sb" in string:
                 self.showboard()
-
+            elif "back" in string:
+                self.back()
+                
             elif "clear" in string or 'reset' in string:
                 self.clear()
                 self.history = []

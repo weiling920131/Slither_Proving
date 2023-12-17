@@ -45,6 +45,8 @@ PYBIND11_MODULE(game, m) {  // NOLINT
       .def_property_readonly("observation_tensor_shape",
                              &Game::observation_tensor_shape)
       .def("new_initial_state", &Game::new_initial_state)
+      // .def("get_pre_state", &Game::get_pre_state)
+      // .def("save_state", &Game::save_state)
       .def_property_readonly("num_transformations", &Game::num_transformations)
       .def("transform_observation", &Game::transform_observation)
       .def("transform_policy", &Game::transform_policy)

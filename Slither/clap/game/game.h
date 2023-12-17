@@ -58,6 +58,10 @@ class Game : public std::enable_shared_from_this<Game> {
   virtual int num_players() const = 0;
   virtual int num_distinct_actions() const = 0;
   virtual StatePtr new_initial_state() const = 0;
+
+  // virtual StatePtr get_pre_state(){return 0;}
+  // virtual void save_state(){return; }
+
   virtual std::vector<int> observation_tensor_shape() const = 0;
 
   virtual int num_transformations() const;

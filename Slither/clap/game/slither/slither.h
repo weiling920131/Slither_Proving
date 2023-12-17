@@ -37,7 +37,6 @@ class SlitherState final : public State {
   //whp
   bool check(std::vector<int>);
   std::map<std::vector<int>, std::vector<int>> path_point;
-
   void DFS(std::vector<std::vector<int>> &, std::vector<int> &, int , int);
   std::vector<std::vector<int>> generate(int cnt);
   //whp
@@ -52,10 +51,10 @@ class SlitherState final : public State {
 
   std::string serialize() const override;
   std::string serialize_num_to_char() const override;
-
   //bool has_piece(const Player &) const;
 
  private:
+
   std::vector<int> get_restrictions(const Action src, const Action action, const Player player, std::array<short, kNumOfGrids>* bptr = nullptr) const;
   bool is_moving_valid(const Action src, const Action action, const Player player, std::array<short, kNumOfGrids>* bptr = nullptr) const;
   bool is_selecting_valid(const Action action, const Player player) const;
@@ -100,6 +99,10 @@ class SlitherGame final : public Game {
   int num_players() const override;
   int num_distinct_actions() const override;
   StatePtr new_initial_state() const override;
+
+  // StatePtr get_pre_state();
+  // void save_state();
+
   std::vector<int> observation_tensor_shape() const override;
 
   int num_transformations() const override;
@@ -118,6 +121,7 @@ class SlitherGame final : public Game {
   bool save_manual(const std::vector<Action> actions, const std::string savepath) const override;
 
  private:
+//  StatePtr pre_state;
   int transform_index(const int &index, int) const;
 };
 
