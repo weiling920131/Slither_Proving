@@ -242,28 +242,11 @@ int main(){
     V[15] = 1;
     print(V);
     DFSW(V, 5, 0, 5, cps);
-    for(int i=0;i<P.size();i++){
-        print(P[i]);
-    }
+    // for(int i=0;i<P.size();i++){
+    //     print(P[i]);
+    // }
     cout << "all: " << total << "\n";
-
-
-    
-
 }
-
-// vector<vector<int>> find_best_winning_path(vector<int> M, int num, vector<int> heads, vector<int> tails){
-//     int disFromWin = 13;
-//     for(int i=5;i<=num+1;i++){
-//         for(int h=0;h<=heads.size();h++){
-//             for(int t=0;t<tails.size();t++){
-//                 for(int m=0;m<WW[i][h][t].size();m++){
-
-//                 }
-//             }
-//         }
-//     }
-// }
 
 
 
