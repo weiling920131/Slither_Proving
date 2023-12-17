@@ -19,6 +19,8 @@ SlitherState::SlitherState(GamePtr game_ptr)
   std::fill(std::begin(board_), std::end(board_), EMPTY);
   history_.clear();
   W = std::vector<std::vector<std::vector<int>>>(12);
+  W_ht = std::vector<std::vector<std::vector<std::vector<std::vector<int>>>>>(12, std::vector<std::vector<std::vector<std::vector<int>>>>(5, std::vector<std::vector<std::vector<int>>>(5)));
+//   noBlock = std::vector<std::vector<int>>;
 }
 int SlitherGame::getBoardSize() const {
 	return kBoardSize;
@@ -183,11 +185,11 @@ void SlitherState::manual_action(const Action &action, Player p) {
 
 // 11/7 modified
 
-std::vector<int> SlitherState::getboard(){
-	std::vector<int> board(25);
-	for(int i=0;i<25;i++) board[i] = board_[i];
-	return board;
-}
+// std::vector<int> SlitherState::getboard(){
+// 	std::vector<int> board(25);
+// 	for(int i=0;i<25;i++) board[i] = board_[i];
+// 	return board;
+// }
 
 
 std::vector<std::vector<Action>> SlitherState::test_action(std::vector<Action> path, std::vector<std::vector<Action>> &pathes, Player p) {
@@ -445,7 +447,7 @@ void SlitherState::slicer(std::vector<std::vector<Action>> pathes) {
 
 //whp
 //check redundant
-bool SlitherState::check3(std::vector<int> M, int num){
+bool SlitherState::check_redundent(std::vector<int> M, int num){
     for(int i=5;i<num;i++){
         for(int j=0;j<W[i].size();j++){
             int f = 0;
@@ -458,9 +460,12 @@ bool SlitherState::check3(std::vector<int> M, int num){
     return true;
 }
 //check win
-bool SlitherState::check2(std::vector<int> M){
+std::pair<int, int> * SlitherState::check_win(std::vector<int> M){
+	std::pair<int, int> *p = new std::pair<int, int>;
+	int head, tail;
     for(int i=0;i<20;i++){
         if(M[i]==i/5+1&&M[i+5]) {
+			if(i<5) head = i;
             M[i+5] = (i+5)/5+1;
             if(i<15){
                 for(int j=1;j+i%5<=4;j++){
@@ -475,30 +480,71 @@ bool SlitherState::check2(std::vector<int> M){
         }       
     }
     for(int i=20;i<25;i++){
-        if(M[i]==5) return true;
+        if(M[i]==5) {
+            tail = i%5;
+            *p=std::make_pair(head, tail);
+            return p;
+        }
     }
-    return false;
+    return NULL;
 }
 
 // check diag
-bool SlitherState::check(std::vector<int> M){
+bool SlitherState::check_diag(std::vector<int> M, int color){
     for(int i=0;i<20;i++){
-        if(M[i]==0){
+        if(M[i]==color){
             if(i%5!=0){
-                if(M[i+4]==0&&M[i+5]!=0&&M[i-1]!=0) return false;
+                if(M[i+4]==color&&M[i+5]!=color&&M[i-1]!=color) return false;
             }
             if(i%5!=4){
-                if(M[i+6]==0&&M[i+5]!=0&&M[i+1]!=0) return false;
+                if(M[i+6]==color&&M[i+5]!=color&&M[i+1]!=color) return false;
             }
         }
     }
     return true;
 }
 
+bool SlitherState::check_blocked(std::vector<int> M, std::vector<std::vector<int>>CPs){
+    // for every crtical points set
+    bool blocked = true;
+    for(int i=0;i<CPs.size();i++){
+        // check if white has block every critical points
+        for(int j=0;j<CPs[i].size();j++){
+            if(M[CPs[i][j]]!=2) blocked = false;
+        }
+        if(blocked) {
+            // print(M);
+            // total++;
+            return blocked;
+        }
+    }
+    return blocked;
+}
+
+void SlitherState::DFS_noBlock(std::vector<int> &M, int cnt, int max, int num, std::vector<std::vector<int>>CPs){
+    if(cnt<=0){
+        if(check_diag(M, 1)&&!check_blocked(M, CPs)){
+            // print(M);
+            noBlock.push_back(M);
+            return;
+        }
+    }else{
+        for(int i=max;i<=25-cnt;i++){
+            if(M[i]==0) continue;
+            cnt=cnt-1;
+            M[i] = 1;
+            DFS_noBlock(M, cnt, i+1, num, CPs);
+            M[i] = 2;
+            cnt=cnt+1;
+        }
+        return;
+    }
+}
+
 void SlitherState::DFS(std::vector<std::vector<int>> &MM, std::vector<int> &M, int cnt, int max){
 
     if(cnt<=0){
-        if(check(M)){
+        if(check_diag(M, 0)){
             MM.push_back(M);
             return;
         }
@@ -516,14 +562,15 @@ void SlitherState::DFS(std::vector<std::vector<int>> &MM, std::vector<int> &M, i
 }
 
 void SlitherState::DFS_WP(std::vector<int> &M, int cnt, int max, int num){
-    // cout << "cnt: " << cnt << "\n";
     if(cnt<=0){
-        if(check(M)&&check2(M)&&check3(M, num)){
+		std::pair<int, int> *p = check_win(M);
+        if(check_diag(M, 0)&&p&&check_redundent(M, num)){
             std::vector<int> w;
             for(int i=0;i<25;i++){
                 if(M[i]) w.push_back(i);
             }
             W[num].push_back(w);
+			W_ht[num][p->first][p->second].push_back(w);
             // MM.push_back(M);
             return;
         }
@@ -539,10 +586,14 @@ void SlitherState::DFS_WP(std::vector<int> &M, int cnt, int max, int num){
     }
 }
 
-int SlitherState::WP(){
+void SlitherState::generate_WP(){
+	// std::cout << "start\n";
 	std::vector<int> M (25, 0);
-    for(int i=5;i<=12;i++){
+	// std::cout << "start2\n";
+    for(int i=5;i<=11;i++){
+		// std::cout << "try" << i <<"\n";。
         DFS_WP(M, i, 0, i);
+		// std::cout << "done" << i <<"\n";。
     }
 }
 

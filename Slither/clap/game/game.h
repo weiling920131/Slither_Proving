@@ -32,10 +32,11 @@ class State {
   virtual std::vector<std::vector<Action>> test_action(std::vector<Action>, std::vector<std::vector<Action>>&, Player) { return {}; }
   virtual void slicer(std::vector<std::vector<Action>>) { return; }
   virtual int test_generate(std::vector<Action>, int, int) { return 0; }
+  virtual void generate_WP() { return; }
   virtual std::vector<int> getboard() {return {};}
   // 11/7 modified
   //whp
-  virtual bool check(std::vector<int>) { return 0; };
+  virtual bool check_diag(std::vector<int>) { return 0; };
   virtual void DFS(std::vector<std::vector<int>> &, std::vector<int> &, int , int) { return; };
   virtual std::vector<std::vector<int>> generate(int cnt) { return {}; };
   //whp

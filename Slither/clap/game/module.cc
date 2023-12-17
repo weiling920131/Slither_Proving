@@ -25,10 +25,11 @@ PYBIND11_MODULE(game, m) {  // NOLINT
       .def("slicer", &State::slicer)
     // 11/7 modified
     //whp
-      .def("check", &State::check)
+      .def("check_diag", &State::check_diag)
       .def("DFS", &State::DFS)
       .def("generate", &State::generate)
       .def("test_generate", &State::test_generate)
+      .def("generate_WP", &State::generate_WP)
       .def("getboard", &State::getboard)
     //whp
       .def("is_terminal", &State::is_terminal)

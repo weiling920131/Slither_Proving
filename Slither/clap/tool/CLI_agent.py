@@ -266,8 +266,12 @@ class CLI_agent:
 
     # whp
     def test_generate(self, input_string: str):
-        chess_num = int(input_string[input_string.find("test_generate") + len("test_generate") + 1])
-        self.state.test_generate([], chess_num, 0)
+        # chess_num = int(input_string[input_string.find("test_generate") + len("test_generate") + 1])
+        # self.state.test_generate([], chess_num, 0)
+        self.state.generate_WP()
+    def test_prune(self):
+        pass
+        # todo
     # whp
     def slicer(self):
         # print(self.test_action("test_action 1"))
@@ -298,8 +302,6 @@ class CLI_agent:
 
             if "showboard" in string or "sb" in string:
                 self.showboard()
-            elif "back" in string:
-                self.back()
                 
             elif "clear" in string or 'reset' in string:
                 self.clear()
