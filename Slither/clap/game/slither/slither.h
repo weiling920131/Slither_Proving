@@ -26,15 +26,19 @@ class SlitherState final : public State {
   void apply_action(const Action &) override;
   void manual_action(const Action &, Player) override;
   // 11/7 modified
-  // void test_action(std::vector<Action>) override;
   std::vector<std::vector<Action>> test_action(std::vector<Action>, std::vector<std::vector<Action>>&,Player) override;
+  void slicer(std::vector<std::vector<Action>>) override;
   int test_generate(std::vector<Action>, int, int) override;
+<<<<<<< HEAD
   
   std::vector<int> getboard();
   // std::vector<std::vector<Action>> path_;
   // std::vector<std::vector<Action>> return_path() override;
+=======
+>>>>>>> c34bd7d1142e19da8640932368ede4e433bb9b6e
   // 11/7 modified
   //whp
+  int WP();
   bool check(std::vector<int>);
   std::map<std::vector<int>, std::vector<int>> path_point;
   void DFS(std::vector<std::vector<int>> &, std::vector<int> &, int , int);
@@ -54,7 +58,16 @@ class SlitherState final : public State {
   //bool has_piece(const Player &) const;
 
  private:
+<<<<<<< HEAD
 
+=======
+  // whp
+  bool check3(std::vector<int> M, int num);
+  bool check2(std::vector<int> M);
+  void DFS_WP(std::vector<int> &M, int cnt, int max, int num);
+  std::vector<std::vector<std::vector<int>>> W;
+  // whp
+>>>>>>> c34bd7d1142e19da8640932368ede4e433bb9b6e
   std::vector<int> get_restrictions(const Action src, const Action action, const Player player, std::array<short, kNumOfGrids>* bptr = nullptr) const;
   bool is_moving_valid(const Action src, const Action action, const Player player, std::array<short, kNumOfGrids>* bptr = nullptr) const;
   bool is_selecting_valid(const Action action, const Player player) const;

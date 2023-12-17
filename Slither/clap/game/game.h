@@ -30,6 +30,7 @@ class State {
   // virtual std::vector<std::vector<Action>> return_path() { return {};}
   // virtual void test_action(std::vector<Action>) { return; }
   virtual std::vector<std::vector<Action>> test_action(std::vector<Action>, std::vector<std::vector<Action>>&, Player) { return {}; }
+  virtual void slicer(std::vector<std::vector<Action>>) { return; }
   virtual int test_generate(std::vector<Action>, int, int) { return 0; }
   virtual std::vector<int> getboard() {return {};}
   // 11/7 modified

@@ -52,8 +52,8 @@ class CLI_agent:
 
         # modified start
         self.automode = False if args.mode!='auto' else True
-        if not self.automode :
-            atexit.register(self.saveAtExit, 'autosave.sgf') # will execute after code terminate
+        # if not self.automode :
+            # atexit.register(self.saveAtExit, 'autosave.sgf') # will execute after code terminate
         # modified end
 
     def saveAtExit(self, file_name='save_at_exit.sgf'):
@@ -244,14 +244,17 @@ class CLI_agent:
             setlist.append({path[1], path[2]})
             critical.append([path[1], path[2]])
 
-        # print("critical: ",end='')
-        # print(critical)
-
+        all_critical = []
         for s in list(product(*critical)):
-            print("critical points set:",end=' ')
+            res = []
+            # print("critical points set:",end=' ')
             for action in set(s).union(placewin):
-                print(self.game.action_to_string(action),end=' ')
-            print('\n')
+                res.append(action)
+                # print(self.game.action_to_string(action),end=' ')
+            all_critical.append(res)
+            # print('\n')
+
+        return all_critical
             
 
     def test_action(self, input_string: str):
@@ -259,12 +262,16 @@ class CLI_agent:
         path = []
         pathes = []
         pathes = self.state.test_action(path, pathes, player)
-        self.print_critical(pathes)
+        return self.print_critical(pathes)
+
     # whp
     def test_generate(self, input_string: str):
         chess_num = int(input_string[input_string.find("test_generate") + len("test_generate") + 1])
         self.state.test_generate([], chess_num, 0)
     # whp
+    def slicer(self):
+        # print(self.test_action("test_action 1"))
+        self.state.slicer(self.test_action("test_action 1"))
 
     def loop(self):
         cnt = 0
@@ -301,6 +308,9 @@ class CLI_agent:
             elif "test_generate" in string:
                 self.test_generate(string)
                 break
+
+            elif "slicer" in string:
+                self.slicer()
 
             elif "genmove" in string or "gen" in string:
                 if len(string.split()) > 1:
