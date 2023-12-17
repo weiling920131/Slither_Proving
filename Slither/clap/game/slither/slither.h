@@ -32,10 +32,11 @@ class SlitherState final : public State {
   // 11/7 modified
   //whp
   int WP();
-  bool check(std::vector<int>);
+  bool check(std::vector<int>, int);
   std::map<std::vector<int>, std::vector<int>> path_point;
 
   void DFS(std::vector<std::vector<int>> &, std::vector<int> &, int , int);
+  std::vector<std::vector<int>> generate_unblock(std::vector<std::vector<int>> &, std::vector<int> &, int , int);
   std::vector<std::vector<int>> generate(int cnt);
   //whp
   std::vector<Action> legal_actions() const override;

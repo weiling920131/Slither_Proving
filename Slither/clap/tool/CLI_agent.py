@@ -236,12 +236,12 @@ class CLI_agent:
         all_critical = []
         for s in list(product(*critical)):
             res = []
-            # print("critical points set:",end=' ')
+            print("critical points set:",end=' ')
             for action in set(s).union(placewin):
                 res.append(action)
-                # print(self.game.action_to_string(action),end=' ')
+                print(self.game.action_to_string(action),end=' ')
             all_critical.append(res)
-            # print('\n')
+            print('\n')
 
         return all_critical
             
