@@ -105,7 +105,7 @@ void zone(vector<int> &M, int p){
     return;
 }
 
-void DFS_WP(vector<int> &M, int cnt, int max, int num){
+void DFS(vector<int> &M, int cnt, int max, int num){
     // cout << "cnt: " << cnt << "\n";
     if(cnt<=0){
         pair<int, int> *p = check2(M);
@@ -133,6 +133,46 @@ void DFS_WP(vector<int> &M, int cnt, int max, int num){
         return;
     }
 }
+
+bool check_blocked(vector<int> M, vector<vector<int>>CPs){
+    // for every crtical points set
+    bool blocked = true;
+    for(int i=0;i<CPs.size();i++){
+        // check if white has block every critical points
+        for(int j=0;j<CPs[i].size();j++){
+            if(M[CPs[i][j]]!=2) blocked = false;
+        }
+        if(blocked) {
+            // print(M);
+            // total++;
+            return blocked;
+        }
+    }
+    return blocked;
+}
+
+void DFSW(vector<int> &M, int cnt, int max, int num, vector<vector<int>>CPs){
+    if(cnt<=0){
+        if(check(M, 2)&&!check_blocked(M, CPs)){
+            // print(M);
+            P.push_back(M);
+            total++;
+            return;
+        }
+    }else{
+        for(int i=max;i<=25-cnt;i++){
+            if(M[i]==1) continue;
+            cnt=cnt-1;
+            M[i] = 2;
+            DFSW(M, cnt, i+1, num, CPs);
+            M[i] = 0;
+            cnt=cnt+1;
+        }
+        return;
+    }
+}
+
+
 
 int main(){
     // char *s = (char *)malloc(sizeof(char) * 50);
@@ -205,9 +245,9 @@ int main(){
     // for(int i=0;i<P.size();i++){
     //     print(P[i]);
     // }
-    cout << "all: " << total << "\n";
-}
+    cout << "all: " << total << "\n";  
 
+}
 
 
 
