@@ -125,6 +125,40 @@ class CLI_agent:
         with open(file_name, "w") as output:
             yaml.dump(self.history, output)
 
+    def save_noblock(self, file_name="noblock.sgf"):
+        boards = self.state.get_noBlock()
+        if len(boards) < 1:
+            print("Error: No board")
+            return
+        print(f"Number of Branchs: {len(boards)}")
+
+        posInt2Char=lambda p: chr(int(p)-1+ord('A'))
+        rlt="(;GM[511]"
+
+        color = 0  # BLACK
+        board = boards[0]
+        for i in range(len(board)):
+            if board[i] == color:
+                piece = self.game.action_to_string(i)
+                rlt += ";B"
+                rlt += f"[{piece[0]}{posInt2Char(piece[1])}]"
+
+        color = 1  # WHITE
+        for board in boards:
+            rlt += "("
+            for i in range(len(board)):
+                if board[i] == color:
+                    piece = self.game.action_to_string(i)
+                    rlt += ";W"
+                    rlt += f"[{piece[0]}{posInt2Char(piece[1])}]"
+            rlt += ")"
+
+        rlt += ")"
+
+        with open(file_name, "w") as output:
+            output.write(rlt)
+        print(f"Saved noblock as {file_name}")
+
     def save_manual(self, file_name="manual.sgf"):
         if not self.automode:
             print(self.history)
@@ -390,8 +424,7 @@ class CLI_agent:
             # 11/7 modified
             # whp
             elif "no block" in string or "nb" in string:
-                # print(self.state.get_noBlock())
-                self.state.get_noBlock()
+                self.save_noblock()
 
             end = time.time()
             print("Command '{}' use".format(string), (end - start), "seconds")                
