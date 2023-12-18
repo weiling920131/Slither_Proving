@@ -273,8 +273,8 @@ class CLI_agent:
     def test_prune(self):
         CPs = self.test_action("test_action 0")
         board = self.state.getboard()
-
-        # self.state.DFS_noBlock(board, , 0, , CPs)  
+        black_num = board.count(0)
+        self.state.DFS_noBlock(board, black_num, 0, black_num, CPs)  
         
     # whp
     def slicer(self):
