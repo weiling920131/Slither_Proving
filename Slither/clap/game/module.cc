@@ -30,6 +30,7 @@ PYBIND11_MODULE(game, m) {  // NOLINT
       .def("generate", &State::generate)
       .def("test_generate", &State::test_generate)
       .def("generate_WP", &State::generate_WP)
+      .def("match_WP", &State::match_WP)
       .def("DFS_noBlock", &State::DFS_noBlock)
       .def("get_noBlock", &State::get_noBlock)
       .def("getboard", &State::getboard)

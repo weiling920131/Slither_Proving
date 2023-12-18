@@ -5,7 +5,10 @@
 #include <sstream>
 #include <stack>
 #include <iostream>
+#include <string>
 #include <fstream>
+#include <stdio.h>
+#include <stdlib.h>
 #include <cstdlib>
 #include <ctime>
 
@@ -210,7 +213,6 @@ std::vector<std::vector<Action>> SlitherState::test_action(std::vector<Action> p
 		auto copy_path = path;
 		copy_path.push_back(action);
 		SlitherState cur_state = SlitherState(*this);
-
 		cur_state.apply_action(action);
 		cur_state.test_action(copy_path, pathes, p);
 	}
@@ -295,6 +297,138 @@ bool SlitherState::check_blocked(std::vector<int> M, std::vector<std::vector<int
 
 void SlitherState::slicer(std::vector<std::vector<Action>> M){
 
+}
+
+std::vector<std::vector<int>> SlitherState::match_WP(){
+
+	std::vector<int> M = getboard();
+	int num = 0;
+	for(int i=0;i<25;i++){
+		if(M[i]==0) num++;
+	}
+	std::string folder = "./winning_path/";
+	std::vector<std::vector<int>> pathes;
+	for(int i=5;i<=num+1;i++){
+		std::string filename = folder+std::to_string(i)+".txt";
+		std::ifstream file;
+		file.open(filename);
+
+		std::string line;
+        while (std::getline(file, line)) { 
+			bool miss_one = false;
+			bool miss_two = false;
+			bool is_wp = true;
+			std::stringstream ss(line);
+			std::string point;
+			std::vector<int> miss_points;
+			std::vector<int> wp;
+			while (std::getline(ss, point, ' ')) {
+				if(M[std::stoi(point)]!=0){
+					// std::cout << point << "\n";
+					if(miss_two) 
+					{
+						is_wp = false;
+					}
+					else if(miss_one) {
+						miss_two = true;
+						miss_points.push_back(std::stoi(point));
+					}
+					else {
+						miss_one = true;
+						miss_points.push_back(std::stoi(point));
+					}
+				} else{
+					wp.push_back(std::stoi(point));
+				}
+			}
+			// for(int i=0;i<pathes.size();i++){
+			// 	for(int j=0;j<pathes[i].size();j++){
+			// 		std::cout << pathes[i][j] << " ";
+			// 	}
+			// 	std::cout << "\n";
+			// }
+			if(is_wp){
+				std::cout << miss_points[0] << "-" << miss_points[1] <<"\n";
+				if(miss_two){
+					bool can_move = false;
+					for(int i=0;i<2;i++){
+						if(miss_points[i]/5>0&&miss_points[i]%5!=0&&M[miss_points[i]-6]==0
+							&&std::find(wp.begin(), wp.end(), miss_points[i]-6)==wp.end()){
+							std::swap(M[miss_points[i]-6], M[miss_points[i]]);
+							if(check_diag(M, 0)){
+								can_move=true;
+							}
+							std::swap(M[miss_points[i]-6], M[miss_points[i]]);
+						}
+						if(miss_points[i]/5>0&&M[miss_points[i]-5]==0
+							&&std::find(wp.begin(), wp.end(), miss_points[i]-6)==wp.end()){
+							std::swap(M[miss_points[i]-5], M[miss_points[i]]);
+							if(check_diag(M, 0)){
+								can_move=true;
+							}
+							std::swap(M[miss_points[i]-5], M[miss_points[i]]);
+						}
+						if(miss_points[i]/5>0&&miss_points[i]%5!=4&&M[miss_points[i]-4]==0
+							&&std::find(wp.begin(), wp.end(), miss_points[i]-4)==wp.end()){
+							std::swap(M[miss_points[i]-4], M[miss_points[i]]);
+							if(check_diag(M, 0)){
+								can_move=true;
+							}
+							std::swap(M[miss_points[i]-4], M[miss_points[i]]);
+						}
+						if(miss_points[i]%5!=0&&M[miss_points[i]-1]==0
+							&&std::find(wp.begin(), wp.end(), miss_points[i]-1)==wp.end()){
+							std::swap(M[miss_points[i]-1], M[miss_points[i]]);
+							if(check_diag(M, 0)){
+								can_move=true;
+							}
+							std::swap(M[miss_points[i]-1], M[miss_points[i]]);
+						}
+						if(miss_points[i]%5!=4&&M[miss_points[i]+1]==0
+							&&std::find(wp.begin(), wp.end(), miss_points[i]+1)==wp.end()){
+							std::swap(M[miss_points[i]+1], M[miss_points[i]]);
+							if(check_diag(M, 0)){
+								can_move=true;
+							}
+							std::swap(M[miss_points[i]+1], M[miss_points[i]]);
+						}
+						if(miss_points[i]/5<4&&miss_points[i]%5!=0&&M[miss_points[i]+4]==0
+							&&std::find(wp.begin(), wp.end(), miss_points[i]+4)==wp.end()){
+							std::swap(M[miss_points[i]+4], M[miss_points[i]]);
+							if(check_diag(M, 0)){
+								can_move=true;
+							}
+							std::swap(M[miss_points[i]+4], M[miss_points[i]]);
+						}
+						if(miss_points[i]/5<4&&M[miss_points[i]+5]==0
+							&&std::find(wp.begin(), wp.end(), miss_points[i]+5)==wp.end()){
+								std::swap(M[miss_points[i]+5], M[miss_points[i]]);
+							if(check_diag(M, 0)){
+								can_move=true;
+							}
+							std::swap(M[miss_points[i]+5], M[miss_points[i]]);
+						}
+						if(miss_points[i]/5<4&&miss_points[i]%5!=4&&M[miss_points[i]+6]==0
+							&&std::find(wp.begin(), wp.end(), miss_points[i]+6)==wp.end()){
+								std::swap(M[miss_points[i]+6], M[miss_points[i]]);
+							if(check_diag(M, 0)){
+								can_move=true;
+							}
+							std::swap(M[miss_points[i]+6], M[miss_points[i]]);
+						}
+					}
+					if(can_move){
+						pathes.push_back(miss_points);
+					}
+				} else {
+					pathes.push_back(miss_points);
+				}
+			}
+        }
+        file.close();
+	}
+	
+	return pathes;
 }
 
 void SlitherState::DFS_noBlock(std::vector<int> &M, int cnt, int max, int num, std::vector<std::vector<int>>CPs){
