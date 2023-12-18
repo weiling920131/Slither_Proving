@@ -125,6 +125,39 @@ class CLI_agent:
         with open(file_name, "w") as output:
             yaml.dump(self.history, output)
 
+    def save_noblock(self, file_name="noblock.sgf"):
+        boards = [[]]
+        if len(boards) < 1:
+            print("Error: No board")
+            return
+        
+        posInt2Char=lambda p: chr(int(p)-1+ord('A'))
+        rlt="(;GM[511]"
+        color = 0  # BLACK
+        board = boards[0]
+        for i in len(board):
+            if board[i] == color:
+                piece = self.game.action_to_string(i)
+                rlt += ";B"
+                rlf += f"[{piece[0]}{posInt2Char(piece[1:])}]"
+
+        for board in boards:
+            
+            if place != "X":
+                if mov2 != "X":
+                    rlt += ";"
+                    rlt += "W" if color else "B"
+                    rlt += f"[{mov1[0]}{posInt2Char(mov1[1:])}{mov2[0]}{posInt2Char(mov2[1:])}]"
+                rlt += ";"
+                rlt += "W" if color else "B"
+                rlt += f"[{place[0]}{posInt2Char(place[1:])}]"
+                color = not color
+        rlt+=")"
+
+        with open(file_name, "w") as output:
+            output.write(rlt)
+        # print(f"Saved manual as {file_name}")
+
     def save_manual(self, file_name="manual.sgf"):
         if not self.automode:
             print(self.history)
