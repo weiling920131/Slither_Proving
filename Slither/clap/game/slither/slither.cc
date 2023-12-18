@@ -264,7 +264,7 @@ std::pair<int, int> * SlitherState::check_win(std::vector<int> M){
 // check diag
 bool SlitherState::check_diag(std::vector<int> M, int color){
     for(int i=0;i<20;i++){
-        if(M[i]==0){
+        if(M[i]==color){
             if(i%5!=0){
                 if(M[i+4]==color&&M[i+5]!=color&&M[i-1]!=color) return false;
             }
@@ -282,7 +282,7 @@ bool SlitherState::check_blocked(std::vector<int> M, std::vector<std::vector<int
     for(int i=0;i<CPs.size();i++){
         // check if white has block every critical points
         for(int j=0;j<CPs[i].size();j++){
-            if(M[CPs[i][j]]!=2) blocked = false;
+            if(M[CPs[i][j]]!=1) blocked = false;
         }
         if(blocked) {
             // print(M);
@@ -319,6 +319,16 @@ void SlitherState::DFS_noBlock(std::vector<int> &M, int cnt, int max, int num, s
 
 std::vector<std::vector<int>> SlitherState::get_noBlock(){
 	std::cout << "get not blocked\n";
+	// for(int i=0;i<noBlock.size();i++){
+	// 	for(int j=0;j<25;j++){
+	// 		if(noBlock[i][j]==2) std::cout << ". ";
+	// 		else if(noBlock[i][j]==0) std::cout << "x ";
+	// 		else if(noBlock[i][j]==1) std::cout << "o ";
+	// 		if(j%5==4) std::cout << "\n";
+	// 	}
+	// 	std::cout << "-------------\n";
+	// }
+	std::cout << "total: " << noBlock.size() <<"\n";
 	return noBlock;
 }
 
