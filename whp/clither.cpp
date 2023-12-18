@@ -234,12 +234,13 @@ int main(){
     // }
 
     vector<int> V(25, 0);
+    //criticle point sets
     vector<vector<int>> cps = {{5, 6}, {10, 6}};
     V[0] = 1;
     V[1] = 1;
-    V[20] = 1;
+    V[21] = 1;
     V[11] = 1;
-    V[15] = 1;
+    V[16] = 1;
     print(V);
     DFSW(V, 5, 0, 5, cps);
     // for(int i=0;i<P.size();i++){

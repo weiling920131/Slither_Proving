@@ -25,10 +25,13 @@ PYBIND11_MODULE(game, m) {  // NOLINT
       .def("slicer", &State::slicer)
     // 11/7 modified
     //whp
-      .def("check", &State::check)
-      .def("generate_all", &State::generate_all)
+      .def("check_diag", &State::check_diag)
+      .def("DFS", &State::DFS)
       .def("generate", &State::generate)
       .def("test_generate", &State::test_generate)
+      .def("generate_WP", &State::generate_WP)
+      .def("DFS_noBlock", &State::DFS_noBlock)
+      .def("getboard", &State::getboard)
     //whp
       .def("is_terminal", &State::is_terminal)
       .def("get_winner", &State::get_winner)
@@ -45,6 +48,8 @@ PYBIND11_MODULE(game, m) {  // NOLINT
       .def_property_readonly("observation_tensor_shape",
                              &Game::observation_tensor_shape)
       .def("new_initial_state", &Game::new_initial_state)
+      // .def("get_pre_state", &Game::get_pre_state)
+      // .def("save_state", &Game::save_state)
       .def_property_readonly("num_transformations", &Game::num_transformations)
       .def("transform_observation", &Game::transform_observation)
       .def("transform_policy", &Game::transform_policy)

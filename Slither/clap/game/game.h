@@ -32,10 +32,13 @@ class State {
   virtual std::vector<std::vector<Action>> test_action(std::vector<Action>, std::vector<std::vector<Action>>&, Player) { return {}; }
   virtual void slicer(std::vector<std::vector<Action>>) { return; }
   virtual int test_generate(std::vector<Action>, int, int) { return 0; }
+  virtual void generate_WP() { return; }
+  virtual void DFS_noBlock(std::vector<int> &M, int cnt, int max, int num, std::vector<std::vector<int>>CPs) {return;};
+  virtual std::vector<int> getboard() {return {};}
   // 11/7 modified
   //whp
-  virtual bool check(std::vector<int>) { return 0; };
-  virtual void generate_all(std::vector<std::vector<int>> &, std::vector<int> &, int , int) { return; };
+  virtual bool check_diag(std::vector<int>) { return 0; };
+  virtual void DFS(std::vector<std::vector<int>> &, std::vector<int> &, int , int) { return; };
   virtual std::vector<std::vector<int>> generate(int cnt) { return {}; };
   //whp
   virtual bool is_terminal() const = 0;
@@ -58,6 +61,10 @@ class Game : public std::enable_shared_from_this<Game> {
   virtual int num_players() const = 0;
   virtual int num_distinct_actions() const = 0;
   virtual StatePtr new_initial_state() const = 0;
+
+  // virtual StatePtr get_pre_state(){return 0;}
+  // virtual void save_state(){return; }
+
   virtual std::vector<int> observation_tensor_shape() const = 0;
 
   virtual int num_transformations() const;
