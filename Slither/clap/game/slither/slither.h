@@ -34,7 +34,7 @@ class SlitherState final : public State {
   //whp
   void generate_WP() override;
   void DFS_noBlock(std::vector<int> &M, int cnt, int max, int num, std::vector<std::vector<int>>CPs) override;
-
+  std::vector<std::vector<int>> get_noBlock();
   bool check_diag(std::vector<int>, int);
   std::map<std::vector<int>, std::vector<int>> path_point;
   void DFS(std::vector<std::vector<int>> &, std::vector<int> &, int , int);

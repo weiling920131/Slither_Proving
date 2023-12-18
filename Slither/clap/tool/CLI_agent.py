@@ -271,8 +271,10 @@ class CLI_agent:
         self.state.generate_WP()
         
     def test_prune(self):
-        self.test_action()
-            
+        CPs = self.test_action("test_action 0")
+        board = self.state.getboard()
+
+        self.state.DFS_noBlock(board, , 0, , CPs)  
         
     # whp
     def slicer(self):
@@ -368,6 +370,8 @@ class CLI_agent:
                 self.test_prune()
             # 11/7 modified
             # whp
+            elif "no_block" in string or "nb" in string:
+                self.state.get_noBlock()
 
             end = time.time()
             print("Command '{}' use".format(string), (end - start), "seconds")                

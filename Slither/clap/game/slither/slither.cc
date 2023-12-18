@@ -20,7 +20,7 @@ SlitherState::SlitherState(GamePtr game_ptr)
   history_.clear();
   W = std::vector<std::vector<std::vector<int>>>(12);
   W_ht = std::vector<std::vector<std::vector<std::vector<std::vector<int>>>>>(12, std::vector<std::vector<std::vector<std::vector<int>>>>(5, std::vector<std::vector<std::vector<int>>>(5)));
-  //   noBlock = std::vector<std::vector<int>>;
+    // noBlock = std::vector<std::vector<int>>;
 }
 int SlitherGame::getBoardSize() const {
 	return kBoardSize;
@@ -311,6 +311,11 @@ void SlitherState::DFS_noBlock(std::vector<int> &M, int cnt, int max, int num, s
         }
         return;
     }
+}
+
+std::vector<std::vector<int>> SlitherState::get_noBlock(){
+	std::cout << "get not blocked\n";
+	return noBlock;
 }
 
 
