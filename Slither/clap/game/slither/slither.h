@@ -33,6 +33,8 @@ class SlitherState final : public State {
   // 11/7 modified
   //whp
   void generate_WP() override;
+  void DFS_noBlock(std::vector<int> &M, int cnt, int max, int num, std::vector<std::vector<int>>CPs) override;
+
   bool check_diag(std::vector<int>, int);
   std::map<std::vector<int>, std::vector<int>> path_point;
   void DFS(std::vector<std::vector<int>> &, std::vector<int> &, int , int);
@@ -57,7 +59,6 @@ class SlitherState final : public State {
   std::pair<int, int> *check_win(std::vector<int> M);
   bool check_blocked(std::vector<int> M, std::vector<std::vector<int>>CPs);
   void DFS_WP(std::vector<int> &M, int cnt, int max, int num);
-  void DFS_noBlock(std::vector<int> &M, int cnt, int max, int num, std::vector<std::vector<int>>CPs);
   std::vector<std::vector<std::vector<int>>> W;
   std::vector<std::vector<std::vector<std::vector<std::vector<int>>>>> W_ht;
 	std::vector<std::vector<int>> noBlock;

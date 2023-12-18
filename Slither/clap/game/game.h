@@ -33,6 +33,7 @@ class State {
   virtual void slicer(std::vector<std::vector<Action>>) { return; }
   virtual int test_generate(std::vector<Action>, int, int) { return 0; }
   virtual void generate_WP() { return; }
+  virtual void DFS_noBlock(std::vector<int> &M, int cnt, int max, int num, std::vector<std::vector<int>>CPs) {return;};
   virtual std::vector<int> getboard() {return {};}
   // 11/7 modified
   //whp

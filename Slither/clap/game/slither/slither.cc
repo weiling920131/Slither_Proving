@@ -20,7 +20,6 @@ SlitherState::SlitherState(GamePtr game_ptr)
   history_.clear();
   W = std::vector<std::vector<std::vector<int>>>(12);
   W_ht = std::vector<std::vector<std::vector<std::vector<std::vector<int>>>>>(12, std::vector<std::vector<std::vector<std::vector<int>>>>(5, std::vector<std::vector<std::vector<int>>>(5)));
-//   noBlock = std::vector<std::vector<int>>;
 }
 int SlitherGame::getBoardSize() const {
 	return kBoardSize;
@@ -203,8 +202,7 @@ std::vector<std::vector<Action>> SlitherState::test_action(std::vector<Action> p
 		}
 		return pathes;
 	}
-	Player ori = current_player();
-	if (p != ori) turn_ += 3;
+	if (p != current_player()) turn_ += 3;
 	// int num_of_win = 0;
 	std::vector<Action> actions = legal_actions();
 	for(auto action: actions) {
@@ -215,239 +213,12 @@ std::vector<std::vector<Action>> SlitherState::test_action(std::vector<Action> p
 		cur_state.apply_action(action);
 		cur_state.test_action(copy_path, pathes, p);
 	}
-	if(p != ori) turn_ -= 3;
 	return pathes;
 }
 // 11/7 modified
-
-std::array<short, kNumOfGrids + 1> get_P(std::array<short, kNumOfGrids> board, std::vector<std::vector<Action>> pathes) {
-	std::array<short, kNumOfGrids + 1> P = {0};
-	P[12] = 5;
-	for(int i=0; i<kNumOfGrids; i++) {
-		if(board[i] == 1) {
-			for(int j=0; j<5; j++) {
-				P[5 * (i / 5) + j]+=2;
-				if(j == 0 or j == 4) {
-					P[5 * (i / 5) + j]+=2;
-				}
-			}
-			if(i % 5 < 2) {
-				P[5 * (i / 5) + 0]+=2;
-				P[5 * (i / 5) + 1]+=2;
-			}
-			else if(i % 5 > 2) {
-				P[5 * (i / 5) + 3]+=2;
-				P[5 * (i / 5) + 4]+=2;
-			}
-		}
-		// if(board[i] == 0) {
-		// 	for(int j=0; j<5; j++) {
-		// 		P[5 * j + (i % 5)]+=1;
-		// 	}
-		// 	if(i / 5 < 2) {
-		// 		P[5 * 0 + (i % 5)]+=1;
-		// 		P[5 * 1 + (i % 5)]+=1;
-		// 	}
-		// 	else if(i / 5 > 2) {
-		// 		P[5 * 3 + (i % 5)]+=1;
-		// 		P[5 * 4 + (i % 5)]+=1;
-		// 	}
-		// }
-	}
-	for(int i=0; i<kNumOfGrids; i++) {
-		if(board[i] == 0) {
-			if(i % 5 < 2) {
-				P[5 * (i / 5)] = 0;
-				P[5 * (i / 5) + 1] = 0;
-			}
-			else if(i % 5 > 2) {
-				P[5 * (i / 5) + 3] = 0;
-				P[5 * (i / 5) + 4] = 0;
-			}
-		}
-		if(board[i] == 1) {
-			if(i / 5 < 2) {
-				P[5 * 0 + (i % 5)] = 0;
-				P[5 * 1 + (i % 5)] = 0;
-			}
-			else if(i / 5 > 2) {
-				P[5 * 3 + (i % 5)] = 0;
-				P[5 * 4 + (i % 5)] = 0;
-			}
-		}
-	}
-	if(pathes[0].size() > 0) {
-		for(auto p: pathes) {
-			// std::cout << "critical points set: ";
-			for(auto pp: p) {
-				P[pp] += 10;
-				// std::cout << pp << ' ';
-			}
-			// std::cout << '\n';
-		}
-	}
-	return P;
-}
-
-void SlitherState::slicer(std::vector<std::vector<Action>> pathes) {
-	if(turn_ == 0) {	// 第一步下中間
-		apply_action(empty_index);
-		apply_action(empty_index);
-		apply_action(12);
-		return;
-	}
-  	std::array<std::array<short, kBoardSize>, 4> HP;
-	for(int i=0; i<4; i++) {
-		for(int j=0; j<kBoardSize; j++) {
-			HP[i][j] = 2;
-		}
-	}
-	std::array<short, kNumOfGrids + 1> P = get_P(board_, pathes);
-	
-	
-	// print HP & P
-	// for(int i=0; i<kNumOfGrids; i++) {
-	// 	if(i == 0) {
-	// 		std::cout << "  ";
-	// 		for(auto h: HP[0]) {
-	// 			std::cout << h << ' ';
-	// 		}
-	// 		std::cout << '\n';
-	// 	}
-	// 	if(i % 5 == 0) {
-	// 		std::cout << HP[1][i / 5] << ' ';
-	// 	}
-	// 	std::cout << P[i] << ' ';
-	// 	if(i % 5 == 4) {
-	// 		std::cout << HP[3][i / 5] << '\n';
-	// 	}
-	// 	if(i == kNumOfGrids - 1) {
-	// 		std::cout << "  ";
-	// 		for(auto h: HP[2]) {
-	// 			std::cout << h << ' ';
-	// 		}
-	// 		std::cout << '\n';
-	// 	}
-	// }
-	for(int i=0; i<kNumOfGrids; i++) {
-		std::cout << P[i] << ' ';
-		if(i % 5 == 4) {
-			std::cout << '\n';
-		}
-	}
-	
-	// 	// srand(time(NULL));
-	// 	// int ri = rand() % pathes.size();
-	// 	// std::cout << ri << '\n';
-	// 	// std::vector<Action> critical = pathes[ri];
-	// 	for(auto critical: pathes) {
-	// 		if(critical.size() == 1) {
-	// 			SlitherState cur_state1 = SlitherState(*this);
-	// 			std::vector<Action> a1s = cur_state1.legal_actions();
-	// 			std::sort(a1s.begin(), a1s.end(), [&P](Action a, Action b){
-	// 				return P[a] > P[b];
-	// 			});
-	// 			// a1
-	// 			for(auto a1: a1s) {
-	// 				std::cout << "a1: " << a1 << '\n';
-	// 				SlitherState cur_state2 = cur_state1;
-	// 				cur_state2.apply_action(a1);
-	// 				std::vector<Action> a2s = cur_state2.legal_actions();
-	// 				std::sort(a2s.begin(), a2s.end(), [&P](Action a, Action b){
-	// 					return P[a] > P[b];
-	// 				});
-	// 				// a2
-	// 				for(auto a2: a2s) {
-	// 					int flag = 0;
-	// 					std::cout << "a2: " << a2 << '\n';
-	// 					if(a2 == critical[0]) {
-	// 						apply_action(a1);
-	// 						apply_action(a2);
-	// 						flag = 1;
-	// 						// apply_action(0);
-	// 					}
-	// 					SlitherState cur_state3 = cur_state2;
-	// 					cur_state3.apply_action(a2);
-	// 					std::vector<Action> a3s = cur_state3.legal_actions();
-	// 					std::sort(a3s.begin(), a3s.end(), [&P](Action a, Action b){
-	// 						return P[a] > P[b];
-	// 					});
-	// 					// a3
-	// 					for(auto a3: a3s) {
-	// 						std::cout << "a3: " << a3 << '\n';
-	// 						if(flag) {
-	// 							apply_action(a3);
-	// 							return;
-	// 						}
-	// 						if(a3 == critical[0]) {
-	// 							apply_action(a1);
-	// 							apply_action(a2);
-	// 							apply_action(a3);
-	// 							return;
-	// 						}
-	// 					}
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-		
-	
-	std::vector<std::vector<Action>> as;
-
-	SlitherState cur_state1 = SlitherState(*this);
-	std::vector<Action> a1s = cur_state1.legal_actions();
-	
-	// a1
-	for(auto a1: a1s) {
-		// std::cout << "a1: " << a1 << '\n';
-		SlitherState cur_state2 = cur_state1;
-		cur_state2.apply_action(a1);
-		std::vector<Action> a2s = cur_state2.legal_actions();
-		
-		// a2
-		for(auto a2: a2s) {
-			// std::cout << a1 << ' ' << a2 << '\n';
-			SlitherState cur_state3 = cur_state2;
-			cur_state3.apply_action(a2);
-			std::vector<Action> a3s = cur_state3.legal_actions();
-			std::array<short, kNumOfGrids + 1> P2 = get_P(cur_state3.board_, pathes);
-			// for(int i=0; i<kNumOfGrids; i++) {
-			// 	std::cout << P2[i] << ' ';
-			// 	if(i % 5 == 4) {
-			// 		std::cout << '\n';
-			// 	}
-			// }
-			
-			// a3
-			for(auto a3: a3s) {
-				// std::cout << "a3: " << a3 << '\n';
-				std::vector<Action> a;
-				a.push_back(P[a2] + P2[a3] - P[a1]);
-				a.push_back(a1);
-				a.push_back(a2);
-				a.push_back(a3);
-				as.push_back(a);
-			}
-		}
-	}
-	std::sort(as.begin(), as.end(), [](std::vector<Action> a, std::vector<Action> b){
-        return a[0] > b[0];
-    });
-	for(auto a: as) {
-		for(auto aa: a) {
-			std::cout << aa << ' ';
-		}
-		std::cout << '\n';
-	}
-	apply_action(as[0][1]);
-	apply_action(as[0][2]);
-	apply_action(as[0][3]);
-	return;
-}
-
 //whp
 //check redundant
-bool SlitherState::check_redundent(std::vector<int> M, int num){
+bool SlitherState::check3(std::vector<int> M, int num){
     for(int i=5;i<num;i++){
         for(int j=0;j<W[i].size();j++){
             int f = 0;
@@ -460,12 +231,9 @@ bool SlitherState::check_redundent(std::vector<int> M, int num){
     return true;
 }
 //check win
-std::pair<int, int> * SlitherState::check_win(std::vector<int> M){
-	std::pair<int, int> *p = new std::pair<int, int>;
-	int head, tail;
+bool SlitherState::check2(std::vector<int> M){
     for(int i=0;i<20;i++){
         if(M[i]==i/5+1&&M[i+5]) {
-			if(i<5) head = i;
             M[i+5] = (i+5)/5+1;
             if(i<15){
                 for(int j=1;j+i%5<=4;j++){
@@ -480,19 +248,15 @@ std::pair<int, int> * SlitherState::check_win(std::vector<int> M){
         }       
     }
     for(int i=20;i<25;i++){
-        if(M[i]==5) {
-            tail = i%5;
-            *p=std::make_pair(head, tail);
-            return p;
-        }
+        if(M[i]==5) return true;
     }
-    return NULL;
+    return false;
 }
 
 // check diag
-bool SlitherState::check_diag(std::vector<int> M, int color){
+bool SlitherState::check(std::vector<int> M){
     for(int i=0;i<20;i++){
-        if(M[i]==color){
+        if(M[i]==0){
             if(i%5!=0){
                 if(M[i+4]==color&&M[i+5]!=color&&M[i-1]!=color) return false;
             }
@@ -541,19 +305,23 @@ void SlitherState::DFS_noBlock(std::vector<int> &M, int cnt, int max, int num, s
     }
 }
 
-void SlitherState::DFS(std::vector<std::vector<int>> &MM, std::vector<int> &M, int cnt, int max){
 
+void SlitherState::generate_all(std::vector<std::vector<int>> &MM, std::vector<int> &M, int cnt, int max){
     if(cnt<=0){
-        if(check_diag(M, 0)){
+        if(check(M)){
+            // for(int i=0;i<25;i++){
+            //     std::cout << M[i] << " ";
+            //     if(i%5==4) std::cout << "\n";
+            // }
+            // std::cout << "============\n";
             MM.push_back(M);
             return;
         }
-        
-    }else{
+            }else{
         for(int i=max;i<=25-cnt;i++){
             cnt=cnt-1;
             M[i] = 0;
-            DFS(MM, M, cnt, i+1);
+            generate_all(MM, M, cnt, i+1);
             M[i] = 2;
             cnt=cnt+1;
         }
@@ -562,15 +330,14 @@ void SlitherState::DFS(std::vector<std::vector<int>> &MM, std::vector<int> &M, i
 }
 
 void SlitherState::DFS_WP(std::vector<int> &M, int cnt, int max, int num){
+    // cout << "cnt: " << cnt << "\n";
     if(cnt<=0){
-		std::pair<int, int> *p = check_win(M);
-        if(check_diag(M, 0)&&p&&check_redundent(M, num)){
+        if(check(M)&&check2(M)&&check3(M, num)){
             std::vector<int> w;
             for(int i=0;i<25;i++){
                 if(M[i]) w.push_back(i);
             }
             W[num].push_back(w);
-			W_ht[num][p->first][p->second].push_back(w);
             // MM.push_back(M);
             return;
         }
@@ -603,12 +370,10 @@ void SlitherState::generate_WP(){
 }
 
 std::vector<std::vector<int>> SlitherState::generate(int cnt){
-
 	std::vector<std::vector<int>> MM;
 	std::vector<int> M (25, 0);
-	DFS(MM, M, cnt, 0);
+	generate_all(MM, M, cnt, 0);
     std::cout << "total: " << MM.size() << "\n";
-
 	return MM;
 }
 
