@@ -224,35 +224,53 @@ class CLI_agent:
     def back(self):
         self.state = self.state.get_pre_state
 
-    def get_critical(self, pathes):
-        # for path in pathes:
-        #     print("path:",end=' ')
-        #     for point in path:
-        #         print(self.game.action_to_string(point), end=' ')
-        #     print('\n')
+    def match_WP(self):
+        board = self.state.getboard()
+        black_num = board.count(0)
+        folder = './winning_path/'
+        pathes = []
+        for i in range(5, black_num + 2):
+            file = open(folder+str(i)+'.txt', 'r')
+            lines = file.readlines()
+            for line in lines:
+                s = list()
+                black_cnt = 0
+                for point in line.strip().split():
+                    if board[int(point)] != 0:
+                        s.append(int(point))
+                    else:
+                        black_cnt += 1
+                if black_cnt > i-3:
+                    
+                    pathes.append(s)
 
-        placewin = set()
-        critical = []
-        for path in pathes:
-            if(path[0] == 25 and path[1] == 25):
-                placewin.add(path[2])
-        
-        setlist = []
-        for path in pathes:
-            if(path[1] in placewin or path[2] in placewin or {path[1], path[2]} in setlist):
-                continue
-            setlist.append({path[1], path[2]})
-            critical.append([path[1], path[2]])
+        return pathes
+
+    def get_critical(self, pathes):
+        pathes_1 = [ i for i in pathes if len(i) == 1]
+        pathes_2 = [ i for i in pathes if len(i) == 2]
 
         all_critical = []
-        for s in list(product(*critical)):
+        for s in list(product(*pathes_2)):
             res = []
-            print("critical points set:",end=' ')
-            for action in set(s).union(placewin):
+            # print("critical points set:",end=' ')
+            for action in set(s):
                 res.append(action)
-                print(self.game.action_to_string(action),end=' ')
+                # print(self.game.action_to_string(action),end=' ')
             all_critical.append(res)
-            print('\n')
+            # print('\n')
+
+        copy = all_critical.copy()
+        for s in copy:
+            if len(s) == 1:
+                continue
+            for path in pathes:
+                if s[0] in path and s[1] in path:
+                    all_critical.remove(s)
+                    break
+        for i in range(len(all_critical)):
+            for j in pathes_1:
+                all_critical[i].append(j)
 
         return all_critical
             
@@ -262,7 +280,7 @@ class CLI_agent:
         path = []
         pathes = []
         pathes = self.state.test_action(path, pathes, player)
-        return self.get_critical(pathes)
+        return pathes
 
     # whp
     def test_generate(self, input_string: str):
@@ -271,15 +289,16 @@ class CLI_agent:
         self.state.generate_WP()
         
     def test_prune(self):
-        CPs = self.test_action("test_action 0")
-        board = self.state.getboard()
-        black_num = board.count(0)
-        self.state.DFS_noBlock(board, black_num, 0, black_num, CPs)  
+        CPs = self.get_critical(self.match_WP())
+        print(CPs)
+        # board = self.state.getboard()
+        # black_num = board.count(0)
+        # self.state.DFS_noBlock(board, black_num, 0, black_num, CPs)  
         
     # whp
     def slicer(self):
         # print(self.test_action("test_action 1"))
-        self.state.slicer(self.test_action("test_action 1"))
+        self.state.slicer(self.get_critical(self.test_action("test_action 1")))
 
     def loop(self):
         cnt = 0
@@ -365,7 +384,7 @@ class CLI_agent:
                         os.unlink(path)
             # 11/7 modified
             elif "test_action" in string:
-                print(self.test_action(string))
+                print(self.get_critical(self.test_action(string)))
             elif "test_prune" in string:
                 self.test_prune()
             # 11/7 modified
