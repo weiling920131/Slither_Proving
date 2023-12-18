@@ -224,7 +224,7 @@ class CLI_agent:
     def back(self):
         self.state = self.state.get_pre_state
 
-    def print_critical(self, pathes):
+    def get_critical(self, pathes):
         # for path in pathes:
         #     print("path:",end=' ')
         #     for point in path:
@@ -262,16 +262,18 @@ class CLI_agent:
         path = []
         pathes = []
         pathes = self.state.test_action(path, pathes, player)
-        return self.print_critical(pathes)
+        return self.get_critical(pathes)
 
     # whp
     def test_generate(self, input_string: str):
         # chess_num = int(input_string[input_string.find("test_generate") + len("test_generate") + 1])
         # self.state.test_generate([], chess_num, 0)
         self.state.generate_WP()
+        
     def test_prune(self):
-        pass
-        # todo
+        self.test_action()
+            
+        
     # whp
     def slicer(self):
         # print(self.test_action("test_action 1"))
@@ -359,10 +361,11 @@ class CLI_agent:
                     self.load_manual(Path(path))
                     if is_tfile:
                         os.unlink(path)
-
             # 11/7 modified
             elif "test_action" in string:
-                self.test_action(string)
+                print(self.test_action(string))
+            elif "test_prune" in string:
+                self.test_prune()
             # 11/7 modified
             # whp
 

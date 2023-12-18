@@ -185,11 +185,11 @@ void SlitherState::manual_action(const Action &action, Player p) {
 
 // 11/7 modified
 
-// std::vector<int> SlitherState::getboard(){
-// 	std::vector<int> board(25);
-// 	for(int i=0;i<25;i++) board[i] = board_[i];
-// 	return board;
-// }
+std::vector<int> SlitherState::getboard(){
+	std::vector<int> board(25);
+	for(int i=0;i<25;i++) board[i] = board_[i];
+	return board;
+}
 
 
 std::vector<std::vector<Action>> SlitherState::test_action(std::vector<Action> path, std::vector<std::vector<Action>> &pathes, Player p) {
@@ -587,14 +587,19 @@ void SlitherState::DFS_WP(std::vector<int> &M, int cnt, int max, int num){
 }
 
 void SlitherState::generate_WP(){
-	// std::cout << "start\n";
 	std::vector<int> M (25, 0);
-	// std::cout << "start2\n";
     for(int i=5;i<=11;i++){
-		// std::cout << "try" << i <<"\n";。
         DFS_WP(M, i, 0, i);
-		// std::cout << "done" << i <<"\n";。
     }
+	for(auto&x:W){
+		for(auto&y:x){
+			for(auto&z:y){
+				std::cout<<z<<' ';
+			}
+			std::cout<<'\n';
+		}
+		std::cout<<'\n';
+	}
 }
 
 std::vector<std::vector<int>> SlitherState::generate(int cnt){
