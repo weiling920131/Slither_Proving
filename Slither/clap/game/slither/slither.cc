@@ -232,7 +232,7 @@ bool SlitherState::check_redundent(std::vector<int> M, int num){
     return true;
 }
 //check win
-std::pair<int, int> SlitherState::check_win(std::vector<int> M){
+std::pair<int, int> * SlitherState::check_win(std::vector<int> M){
     std::pair<int, int> *p = new std::pair<int, int>;
 	int head, tail;
 	for(int i=0;i<20;i++){
@@ -319,7 +319,7 @@ std::vector<std::vector<int>> SlitherState::get_noBlock(){
 }
 
 
-void SlitherState::generate_all(std::vector<std::vector<int>> &MM, std::vector<int> &M, int cnt, int max){
+void SlitherState::DFS(std::vector<std::vector<int>> &MM, std::vector<int> &M, int cnt, int max){
     if(cnt<=0){
         if(check_diag(M, 0)){
             // for(int i=0;i<25;i++){
@@ -334,7 +334,7 @@ void SlitherState::generate_all(std::vector<std::vector<int>> &MM, std::vector<i
         for(int i=max;i<=25-cnt;i++){
             cnt=cnt-1;
             M[i] = 0;
-            generate_all(MM, M, cnt, i+1);
+            DFS(MM, M, cnt, i+1);
             M[i] = 2;
             cnt=cnt+1;
         }
@@ -377,7 +377,7 @@ void SlitherState::generate_WP(){
 std::vector<std::vector<int>> SlitherState::generate(int cnt){
 	std::vector<std::vector<int>> MM;
 	std::vector<int> M (25, 0);
-	generate_all(MM, M, cnt, 0);
+	DFS(MM, M, cnt, 0);
     std::cout << "total: " << MM.size() << "\n";
 	return MM;
 }
