@@ -371,7 +371,8 @@ class CLI_agent:
             # 11/7 modified
             # whp
             elif "no block" in string or "nb" in string:
-                print(self.state.get_noBlock())
+                # print(self.state.get_noBlock())
+                self.state.get_noBlock()
 
             end = time.time()
             print("Command '{}' use".format(string), (end - start), "seconds")                
