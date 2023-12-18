@@ -293,6 +293,10 @@ bool SlitherState::check_blocked(std::vector<int> M, std::vector<std::vector<int
     return blocked;
 }
 
+void SlitherState::slicer(std::vector<std::vector<Action>> M){
+
+}
+
 void SlitherState::DFS_noBlock(std::vector<int> &M, int cnt, int max, int num, std::vector<std::vector<int>>CPs){
     if(cnt<=0){
         if(check_diag(M, 1)&&!check_blocked(M, CPs)){
@@ -319,7 +323,7 @@ std::vector<std::vector<int>> SlitherState::get_noBlock(){
 }
 
 
-void SlitherState::DFS(std::vector<std::vector<int>> &MM, std::vector<int> &M, int cnt, int max){
+void SlitherState::generate_all(std::vector<std::vector<int>> &MM, std::vector<int> &M, int cnt, int max){
     if(cnt<=0){
         if(check_diag(M, 0)){
             // for(int i=0;i<25;i++){
@@ -334,7 +338,7 @@ void SlitherState::DFS(std::vector<std::vector<int>> &MM, std::vector<int> &M, i
         for(int i=max;i<=25-cnt;i++){
             cnt=cnt-1;
             M[i] = 0;
-            DFS(MM, M, cnt, i+1);
+            generate_all(MM, M, cnt, i+1);
             M[i] = 2;
             cnt=cnt+1;
         }
@@ -377,7 +381,7 @@ void SlitherState::generate_WP(){
 std::vector<std::vector<int>> SlitherState::generate(int cnt){
 	std::vector<std::vector<int>> MM;
 	std::vector<int> M (25, 0);
-	DFS(MM, M, cnt, 0);
+	generate_all(MM, M, cnt, 0);
     std::cout << "total: " << MM.size() << "\n";
 	return MM;
 }
@@ -1044,6 +1048,8 @@ int SlitherGame::transform_index(const int &index, const int type) const {
     return i * kBoardSize + j;
   }
 }
+
+
 
 std::string SlitherGame::action_to_string(
     const Action &action) const {

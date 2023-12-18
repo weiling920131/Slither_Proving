@@ -39,7 +39,7 @@ class State {
   // 11/7 modified
   //whp
   virtual bool check_diag(std::vector<int>) { return 0; };
-  virtual void DFS(std::vector<std::vector<int>> &, std::vector<int> &, int , int) { return; };
+  virtual void generate_all(std::vector<std::vector<int>> &, std::vector<int> &, int , int) { return; };
   virtual std::vector<std::vector<int>> generate(int cnt) { return {}; };
   //whp
   virtual bool is_terminal() const = 0;

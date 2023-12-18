@@ -26,11 +26,12 @@ PYBIND11_MODULE(game, m) {  // NOLINT
     // 11/7 modified
     //whp
       .def("check_diag", &State::check_diag)
-      .def("DFS", &State::DFS)
+      .def("generate_all", &State::generate_all)
       .def("generate", &State::generate)
       .def("test_generate", &State::test_generate)
       .def("generate_WP", &State::generate_WP)
       .def("DFS_noBlock", &State::DFS_noBlock)
+      .def("get_noBlock", &State::get_noBlock)
       .def("getboard", &State::getboard)
     //whp
       .def("is_terminal", &State::is_terminal)

@@ -37,7 +37,7 @@ class SlitherState final : public State {
   std::vector<std::vector<int>> get_noBlock();
   bool check_diag(std::vector<int>, int);
   std::map<std::vector<int>, std::vector<int>> path_point;
-  void DFS(std::vector<std::vector<int>> &, std::vector<int> &, int , int);
+  void generate_all(std::vector<std::vector<int>> &, std::vector<int> &, int , int);
   std::vector<std::vector<int>> generate(int cnt);
   //whp
   std::vector<Action> legal_actions() const override;
