@@ -35,7 +35,7 @@ class SlitherState final : public State {
   bool check(std::vector<int>, int);
   std::map<std::vector<int>, std::vector<int>> path_point;
 
-  void DFS(std::vector<std::vector<int>> &, std::vector<int> &, int , int);
+  void generate_all(std::vector<std::vector<int>> &, std::vector<int> &, int , int);
   std::vector<std::vector<int>> generate_unblock(std::vector<std::vector<int>> &, std::vector<int> &, int , int);
   std::vector<std::vector<int>> generate(int cnt);
   //whp

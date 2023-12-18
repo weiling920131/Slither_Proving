@@ -26,7 +26,7 @@ PYBIND11_MODULE(game, m) {  // NOLINT
     // 11/7 modified
     //whp
       .def("check", &State::check)
-      .def("DFS", &State::DFS)
+      .def("generate_all", &State::generate_all)
       .def("generate", &State::generate)
       .def("test_generate", &State::test_generate)
     //whp
