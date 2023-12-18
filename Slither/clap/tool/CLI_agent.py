@@ -275,7 +275,6 @@ class CLI_agent:
                     else:
                         black_cnt += 1
                 if black_cnt > i-3:
-
                     pathes.append(s)
 
         return pathes
