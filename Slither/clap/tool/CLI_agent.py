@@ -258,27 +258,26 @@ class CLI_agent:
     def back(self):
         self.state = self.state.get_pre_state
 
-    def match_WP(self):
-        board = self.state.getboard()
-        black_num = board.count(0)
-        folder = './winning_path/'
-        pathes = []
-        for i in range(5, black_num + 2):
-            file = open(folder+str(i)+'.txt', 'r')
-            lines = file.readlines()
-            for line in lines:
-                s = list()
-                black_cnt = 0
-                for point in line.strip().split():
-                    if board[int(point)] != 0:
-                        s.append(int(point))
-                    else:
-                        black_cnt += 1
-                if black_cnt > i-3:
+    # def match_WP(self):
+    #     board = self.state.getboard()
+    #     black_num = board.count(0)
+    #     folder = './winning_path/'
+    #     pathes = []
+    #     for i in range(5, black_num + 2):
+    #         file = open(folder+str(i)+'.txt', 'r')
+    #         lines = file.readlines()
+    #         for line in lines:
+    #             s = list()
+    #             black_cnt = 0
+    #             for point in line.strip().split():
+    #                 if board[int(point)] != 0:
+    #                     s.append(int(point))
+    #                 else:
+    #                     black_cnt += 1
+    #             if black_cnt > i-3:
+    #                 pathes.append(s)
 
-                    pathes.append(s)
-
-        return pathes
+    #     return pathes
 
     def get_critical(self, pathes):
         pathes_1 = [ i for i in pathes if len(i) == 1]
@@ -323,7 +322,9 @@ class CLI_agent:
         self.state.generate_WP()
         
     def test_prune(self):
-        CPs = self.get_critical(self.match_WP())
+        print("==")
+        CPs = self.get_critical(self.state.match_WP())
+        print("--")
         print(CPs)
         # board = self.state.getboard()
         # black_num = board.count(0)

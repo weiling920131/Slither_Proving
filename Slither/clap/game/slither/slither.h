@@ -33,6 +33,7 @@ class SlitherState final : public State {
   // 11/7 modified
   //whp
   void generate_WP() override;
+  std::vector<std::vector<int>> match_WP();
   void DFS_noBlock(std::vector<int> &M, int cnt, int max, int num, std::vector<std::vector<int>>CPs) override;
   std::vector<std::vector<int>> get_noBlock();
   bool check_diag(std::vector<int>, int);
