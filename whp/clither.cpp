@@ -243,9 +243,9 @@ int main(){
     V[16] = 1;
     print(V);
     DFSW(V, 5, 0, 5, cps);
-    // for(int i=0;i<P.size();i++){
-    //     print(P[i]);
-    // }
+    for(int i=0;i<P.size();i++){
+        print(P[i]);
+    }
     cout << "all: " << total << "\n";  
 
 }
