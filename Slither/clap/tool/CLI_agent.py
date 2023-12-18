@@ -137,7 +137,6 @@ class CLI_agent:
 
         color = 0  # BLACK
         board = boards[0]
-        print(board)
         for i in range(len(board)):
             if board[i] == color:
                 piece = self.game.action_to_string(i)
