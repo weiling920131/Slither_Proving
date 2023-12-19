@@ -317,9 +317,11 @@ class CLI_agent:
 
     # whp
     def test_generate(self, input_string: str):
-        # chess_num = int(input_string[input_string.find("test_generate") + len("test_generate") + 1])
-        # self.state.test_generate([], chess_num, 0)
-        self.state.generate_WP()
+        chess_num = int(input_string[input_string.find("test_generate") + len("test_generate") + 1])
+        for i in range(4,11):
+            self.state.test_generate([], i, 0)
+            print(i, "done")
+        # self.state.generate_WP()
         
     def test_prune(self):
         print("==")
@@ -328,7 +330,7 @@ class CLI_agent:
         print(CPs)
         # board = self.state.getboard()
         # black_num = board.count(0)
-        # self.state.DFS_noBlock(board, black_num, 0, black_num, CPs)  
+        # self.state.DFS_noBlock(board, black_num, 0, black_num, CPs) 
         
     # whp
     def slicer(self):
