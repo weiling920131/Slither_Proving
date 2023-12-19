@@ -255,8 +255,6 @@ class CLI_agent:
         self.history.append(actions_string)
 
     # 11/7 modified
-    def back(self):
-        self.state = self.state.get_pre_state
 
     # def match_WP(self):
     #     board = self.state.getboard()
@@ -419,7 +417,7 @@ class CLI_agent:
                         os.unlink(path)
             # 11/7 modified
             elif "test_action" in string:
-                print(self.get_critical(self.test_action(string)))
+                # print(self.get_critical(self.test_action(string)))
             elif "test_prune" in string:
                 self.test_prune()
             # 11/7 modified
