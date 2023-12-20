@@ -322,21 +322,31 @@ class CLI_agent:
         # self.state.generate_WP()
         
     def test_prune(self):
-        # print("==")
-        CPs = self.get_critical(self.state.match_WP())
-        # print("--")
-        # print(CPs)
-        board = self.state.getboard()
-        black_num = board.count(0)
-        self.state.DFS_noBlock(board, black_num, 0, black_num, CPs) 
-        boards = self.state.get_noBlock()
-        cnt = 0
-        for b in boards:
-            print(cnt)
-            cnt += 1
-            if not self.state.test_action_bool([],[],0):
-                print(b)
-        # print(board)
+        for i in range(4, 11):
+            file = open('./checkmate/'+str(i)+'.txt')
+            lines = file.readlines()
+            cnt = 1
+            for line in lines:
+                if cnt >= 210:
+                    break
+                self.clear()
+                self.history = []
+                for point in line:
+                    self.play_manual('play_manual 0 X X '+self.state.action_to_string(point))
+                
+                CPs = self.get_critical(self.state.match_WP())
+
+                board = self.state.getboard()
+                black_num = board.count(0)
+                self.state.DFS_noBlock(board, black_num, 0, black_num, CPs) 
+                boards = self.state.get_noBlock()
+                # cnt = 0
+                for b in boards:
+                    # print(cnt)
+                    # cnt += 1
+                    if not self.state.test_action_bool([],[],0):
+                        print(b)
+                cnt+=1
 
     # whp
     def slicer(self):
