@@ -322,14 +322,22 @@ class CLI_agent:
         # self.state.generate_WP()
         
     def test_prune(self):
-        print("==")
+        # print("==")
         CPs = self.get_critical(self.state.match_WP())
-        print("--")
-        print(CPs)
-        # board = self.state.getboard()
-        # black_num = board.count(0)
-        # self.state.DFS_noBlock(board, black_num, 0, black_num, CPs) 
-        
+        # print("--")
+        # print(CPs)
+        board = self.state.getboard()
+        black_num = board.count(0)
+        self.state.DFS_noBlock(board, black_num, 0, black_num, CPs) 
+        boards = self.state.get_noBlock()
+        cnt = 0
+        for b in boards:
+            print(cnt)
+            cnt += 1
+            if not self.state.test_action_bool([],[],0):
+                print(b)
+        # print(board)
+
     # whp
     def slicer(self):
         # print(self.test_action("test_action 1"))
@@ -420,6 +428,7 @@ class CLI_agent:
             # 11/7 modified
             elif "test_action" in string:
                 # print(self.get_critical(self.test_action(string)))
+                pass
             elif "test_prune" in string:
                 self.test_prune()
             # 11/7 modified

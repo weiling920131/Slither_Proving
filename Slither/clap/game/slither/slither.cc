@@ -218,6 +218,32 @@ std::vector<std::vector<Action>> SlitherState::test_action(std::vector<Action> p
 	}
 	return pathes;
 }
+
+bool SlitherState::test_action_bool(std::vector<Action> path, std::vector<std::vector<Action>> &pathes, Player p) {
+	int cur_turn = path.size();
+	// std::cout << cur_turn << '\n';
+	if(cur_turn == 3) {
+		if(winner_ != -1) {
+			// path.push_back(winner_);
+			// pathes.push_back(path);
+			return true;
+		}
+		return false;
+	}
+	if (p != current_player()) turn_ += 3;
+	// int num_of_win = 0;
+	std::vector<Action> actions = legal_actions();
+	for(auto action: actions) {
+		auto copy_path = path;
+		copy_path.push_back(action);
+		SlitherState cur_state = SlitherState(*this);
+		cur_state.apply_action(action);
+		if (cur_state.test_action_bool(copy_path, pathes, p)){
+			return true;
+		}
+	}
+	return false;
+}
 // 11/7 modified
 //whp
 //check redundant
@@ -348,7 +374,7 @@ std::vector<std::vector<int>> SlitherState::match_WP(){
 			// 	std::cout << "\n";
 			// }
 			if(is_wp){
-				std::cout << miss_points[0] << "-" << miss_points[1] <<"\n";
+				// std::cout << miss_points[0] << "-" << miss_points[1] <<"\n";
 				if(miss_two){
 					bool can_move = false;
 					for(int i=0;i<2;i++){
@@ -452,7 +478,7 @@ void SlitherState::DFS_noBlock(std::vector<int> &M, int cnt, int max, int num, s
 }
 
 std::vector<std::vector<int>> SlitherState::get_noBlock(){
-	std::cout << "get not blocked\n";
+	// std::cout << "get not blocked\n";
 	// for(int i=0;i<noBlock.size();i++){
 	// 	for(int j=0;j<25;j++){
 	// 		if(noBlock[i][j]==2) std::cout << ". ";
@@ -462,7 +488,7 @@ std::vector<std::vector<int>> SlitherState::get_noBlock(){
 	// 	}
 	// 	std::cout << "-------------\n";
 	// }
-	std::cout << "total: " << noBlock.size() <<"\n";
+	// std::cout << "total: " << noBlock.size() <<"\n";
 	return noBlock;
 }
 
