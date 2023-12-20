@@ -49,6 +49,7 @@ class SlitherState final : public State {
   std::vector<float> returns() const override;
   std::vector<float> observation_tensor() const override;
   std::string to_string() const override;
+  std::string printBoard(std::vector<Action>, std::vector<std::vector<Action>>);
 
   std::string serialize() const override;
   std::string serialize_num_to_char() const override;

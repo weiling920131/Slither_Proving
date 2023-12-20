@@ -47,6 +47,7 @@ class State {
   virtual std::vector<float> returns() const = 0;
   virtual StatePtr clone() const = 0;
   virtual std::string to_string() const { return ""; }
+  virtual std::string printBoard(std::vector<Action>, std::vector<std::vector<Action>>) { return ""; }
   GamePtr game() const { return game_; }
 
   virtual std::string serialize() const { return ""; }

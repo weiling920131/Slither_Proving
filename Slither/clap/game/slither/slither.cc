@@ -188,7 +188,7 @@ void SlitherState::manual_action(const Action &action, Player p) {
 
 // 11/7 modified
 
-std::vector<int> SlitherState::getboard(){
+std::vector<int> SlitherState::getboard() {
 	std::vector<int> board(25);
 	for(int i=0;i<25;i++) board[i] = board_[i];
 	return board;
@@ -348,7 +348,6 @@ std::vector<std::vector<int>> SlitherState::match_WP(){
 			// 	std::cout << "\n";
 			// }
 			if(is_wp){
-				std::cout << miss_points[0] << "-" << miss_points[1] <<"\n";
 				if(miss_two){
 					bool can_move = false;
 					for(int i=0;i<2;i++){
@@ -420,14 +419,19 @@ std::vector<std::vector<int>> SlitherState::match_WP(){
 					if(can_move){
 						pathes.push_back(miss_points);
 					}
-				} else {
+				} else if(miss_one) {
 					pathes.push_back(miss_points);
 				}
 			}
         }
         file.close();
 	}
-	
+	// for(auto path:pathes) {
+	// 	for(auto mp:path) {
+	// 		std::cout << mp << ' ';
+	// 	} std::cout << '\n';
+	// }
+	// std::cout << "done\n";
 	return pathes;
 }
 
@@ -1010,6 +1014,47 @@ std::string SlitherState::to_string() const {
   ss << "  ";
   for (int i = 0; i < kBoardSize; ++i) ss << ' ' << static_cast<char>('A' + i);
   return ss.str();
+}
+
+std::string SlitherState::printBoard(std::vector<Action> board = {}, std::vector<std::vector<Action>> CPs = {}) {
+	if(board.size() == 0) {
+		board = getboard();
+	}
+	std::stringstream ss;
+	//  const std::vector<std::string> chess{"●", "o", "·"};
+	const std::vector<std::string> chess{"x", "o", "·", "@"};
+
+	if(CPs.size() > 0) {
+		for(const auto CP: CPs) {
+			std::vector<Action> newBoard = board;
+			for(const auto c: CP) {
+				newBoard[c] = 3;
+			}
+			for (int i = 0; i < kBoardSize; ++i) {
+				ss << std::setw(2) << std::setfill(' ') << kBoardSize - i;
+				for (int j = 0; j < kBoardSize; ++j) {
+					ss << ' ' << chess[newBoard[i * kBoardSize + j]];
+				}
+				ss << std::endl;
+			}
+			ss << "  ";
+			for (int i = 0; i < kBoardSize; ++i) ss << ' ' << static_cast<char>('A' + i);
+			ss << "\n\n";
+		}
+	}
+	else {
+		for (int i = 0; i < kBoardSize; ++i) {
+			ss << std::setw(2) << std::setfill(' ') << kBoardSize - i;
+			for (int j = 0; j < kBoardSize; ++j) {
+				ss << ' ' << chess[board[i * kBoardSize + j]];
+			}
+			ss << std::endl;
+		}
+		ss << "  ";
+		for (int i = 0; i < kBoardSize; ++i) ss << ' ' << static_cast<char>('A' + i);
+	}
+	
+	return ss.str();
 }
 
 bool SlitherState::is_terminal() const {

@@ -40,7 +40,8 @@ PYBIND11_MODULE(game, m) {  // NOLINT
       .def("returns", &State::returns)
       .def("clone", &State::clone)
       .def("serialize", &State::serialize)
-      .def("__repr__", &State::to_string);
+      .def("__repr__", &State::to_string)
+      .def("printBoard", &State::printBoard);
 
   py::class_<Game, std::shared_ptr<Game>>(m, "Game")
       .def_property_readonly("name", &Game::name)

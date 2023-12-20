@@ -70,6 +70,15 @@ class CLI_agent:
         print(self.state, file=file)
         print(file=file)
 
+    def printboard(self, file=sys.stdout, board=[]):
+        path = self.state.match_WP()
+        print("path:", path)
+        CPs = self.get_critical(path)
+        print(CPs)
+        print("=", file=file)
+        print(self.state.printBoard(board, CPs), file=file)
+        print(file=file)
+
     def clear(self):
         self.state = self.game.new_initial_state()
 
@@ -284,26 +293,39 @@ class CLI_agent:
         pathes_2 = [ i for i in pathes if len(i) == 2]
 
         all_critical = []
-        for s in list(product(*pathes_2)):
-            res = []
-            # print("critical points set:",end=' ')
-            for action in set(s):
-                res.append(action)
-                # print(self.game.action_to_string(action),end=' ')
-            all_critical.append(res)
-            # print('\n')
+        if len(pathes_2) > 0:
+            print("path2", pathes_2)
+            for s in list(product(*pathes_2)):
+                res = []
+                # print("critical points set:",end=' ')
+                for action in set(s):
+                    res.append(action)
+                    # print(self.game.action_to_string(action),end=' ')
+                all_critical.append(res)
+                # print('\n')
 
-        copy = all_critical.copy()
-        for s in copy:
-            if len(s) == 1:
-                continue
-            for path in pathes:
-                if s[0] in path and s[1] in path:
-                    all_critical.remove(s)
-                    break
-        for i in range(len(all_critical)):
-            for j in pathes_1:
-                all_critical[i].append(j)
+            print("C2", all_actions)
+
+            copy = all_critical.copy()
+            for s in copy:
+                if len(s) == 1:
+                    continue
+                for path in pathes:
+                    if s[0] in path and s[1] in path:
+                        all_critical.remove(s)
+                        break
+
+            print(all_actions)
+        
+            for i in range(len(all_critical)):
+                for j in pathes_1:
+                    all_critical[i].append(j)
+
+            print(all_actions)
+        
+        else:
+            for i in pathes_1:
+                all_critical.append(i)
 
         return all_critical
             
@@ -362,6 +384,9 @@ class CLI_agent:
 
             if "showboard" in string or "sb" in string:
                 self.showboard()
+
+            elif "showcritical" in string or "sc" in string:
+                self.printboard()
                 
             elif "clear" in string or 'reset' in string:
                 self.clear()
