@@ -478,7 +478,7 @@ void SlitherState::generate_all(std::vector<std::vector<int>> &MM, std::vector<i
             MM.push_back(M);
             return;
         }
-            }else{
+	}else{
         for(int i=max;i<=25-cnt;i++){
             cnt=cnt-1;
             M[i] = 0;
@@ -524,17 +524,20 @@ void SlitherState::generate_WP(){
 
 std::vector<std::vector<int>> SlitherState::generate(int cnt){
 	std::vector<std::vector<int>> MM;
-	std::vector<int> M (25, 0);
+	std::vector<int> M (25, 2);
 	generate_all(MM, M, cnt, 0);
     std::cout << "total: " << MM.size() << "\n";
 	return MM;
 }
 
 int SlitherState::test_generate(std::vector<Action> path, int chess_num, int color){
+	std::string filename = "checkmate/checkmate_"+std::to_string(chess_num)+".txt";
+	std::ofstream file;
+	file.open(filename);
 	std:: vector<char> change = {'x', 'o', '.'};
-	std::vector<std::vector<int>> MM = generate(chess_num);
+	std::vector<std::vector<int>> M = generate(chess_num);
 	int pruning_num = 0;
-	for(auto& m : MM){
+	for(auto& m : M){
 		SlitherState cur_state = SlitherState(*this);
 		for(int i=0;i<5;i++){
 			for(int j=0;j<5;j++){
@@ -545,16 +548,20 @@ int SlitherState::test_generate(std::vector<Action> path, int chess_num, int col
 		if(cur_state.test_action(path, pathes, color).size() >= 1){
 			pruning_num++;
 			std::vector<int> curBlack;
-			std::cout<<"\n==================\n";
+			// std::cout<<"\n==================\n";
 			for(int i=0;i<5;i++){
-				std::cout << 5-i << " ";
+				// std::cout << 5-i << " ";
 				for(int j=0;j<5;j++){
-					if(cur_state.board_[i * 5 + j]==0) curBlack.push_back(i*5+j);
-					std::cout << change[cur_state.board_[i * 5 + j]] <<' ';
+					if(cur_state.board_[i * 5 + j]==0) {
+						curBlack.push_back(i*5+j);
+						file << i * 5 + j << " ";
+					}
+					// std::cout << change[cur_state.board_[i * 5 + j]] <<' ';
 				}
-				std::cout<<'\n';
+				// std::cout<<'\n';
 			}
-			std::cout << "  A B C D E\n";
+			// std::cout << "  A B C D E\n";
+			file << "\n";
 		}
 	}
 	std::cout<<"pruning_num: "<<pruning_num<<'\n';
