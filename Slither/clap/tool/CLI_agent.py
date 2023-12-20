@@ -70,9 +70,8 @@ class CLI_agent:
         print(self.state, file=file)
         print(file=file)
 
-    def printboard(self, file=sys.stdout, board=[]):
+    def printBoard(self, file=sys.stdout, board=[]):
         path = self.state.match_WP()
-        print("path:", path)
         CPs = self.get_critical(path)
         print(CPs)
         print("=", file=file)
@@ -133,40 +132,6 @@ class CLI_agent:
         import yaml
         with open(file_name, "w") as output:
             yaml.dump(self.history, output)
-
-    def save_noblock(self, file_name="noblock.sgf"):
-        boards = self.state.get_noBlock()
-        if len(boards) < 1:
-            print("Error: No board")
-            return
-        print(f"Number of Branchs: {len(boards)}")
-
-        posInt2Char=lambda p: chr(int(p)-1+ord('A'))
-        rlt="(;GM[511]"
-
-        color = 0  # BLACK
-        board = boards[0]
-        for i in range(len(board)):
-            if board[i] == color:
-                piece = self.game.action_to_string(i)
-                rlt += ";B"
-                rlt += f"[{piece[0]}{posInt2Char(piece[1])}]"
-
-        color = 1  # WHITE
-        for board in boards:
-            rlt += "("
-            for i in range(len(board)):
-                if board[i] == color:
-                    piece = self.game.action_to_string(i)
-                    rlt += ";W"
-                    rlt += f"[{piece[0]}{posInt2Char(piece[1])}]"
-            rlt += ")"
-
-        rlt += ")"
-
-        with open(file_name, "w") as output:
-            output.write(rlt)
-        print(f"Saved noblock as {file_name}")
 
     def save_manual(self, file_name="manual.sgf"):
         if not self.automode:
@@ -264,8 +229,6 @@ class CLI_agent:
         self.history.append(actions_string)
 
     # 11/7 modified
-    def back(self):
-        self.state = self.state.get_pre_state
 
     # def match_WP(self):
     #     board = self.state.getboard()
@@ -294,7 +257,6 @@ class CLI_agent:
 
         all_critical = []
         if len(pathes_2) > 0:
-            print("path2", pathes_2)
             for s in list(product(*pathes_2)):
                 res = []
                 # print("critical points set:",end=' ')
@@ -304,8 +266,6 @@ class CLI_agent:
                 all_critical.append(res)
                 # print('\n')
 
-            print("C2", all_actions)
-
             copy = all_critical.copy()
             for s in copy:
                 if len(s) == 1:
@@ -314,15 +274,12 @@ class CLI_agent:
                     if s[0] in path and s[1] in path:
                         all_critical.remove(s)
                         break
-
-            print(all_actions)
         
             for i in range(len(all_critical)):
                 for j in pathes_1:
-                    all_critical[i].append(j)
+                    if j[0] not in all_critical[i]:
+                        all_critical[i].append(j[0])
 
-            print(all_actions)
-        
         else:
             for i in pathes_1:
                 all_critical.append(i)
@@ -340,20 +297,119 @@ class CLI_agent:
     # whp
     def test_generate(self, input_string: str):
         chess_num = int(input_string[input_string.find("test_generate") + len("test_generate") + 1])
-        for i in range(4,11):
-            self.state.test_generate([], i, 0)
-            print(i, "done")
-        # self.state.generate_WP()
+        # for i in range(5,11):
+            # self.state.test_generate([], i, 0)
+        self.state.generate_WP()
+        print("done")
+
         
     def test_prune(self):
-        print("==")
-        CPs = self.get_critical(self.state.match_WP())
-        print("--")
-        print(CPs)
-        # board = self.state.getboard()
-        # black_num = board.count(0)
-        # self.state.DFS_noBlock(board, black_num, 0, black_num, CPs) 
-        
+        posInt2Char=lambda p: chr(int(p)-1+ord('A'))
+
+        for i in range(4, 5):
+            file = open('./checkmate/'+str(i)+'.txt')
+            lines = file.readlines()
+            cnt = 1
+
+            print(i)
+            output = open(f"./test_prune/{i}.sgf", "w")
+
+            output.write("(;GM[511]")
+
+            for line in lines:
+                if cnt >= 210:
+                    break
+                self.clear()
+                self.history = []
+                for point in line.strip().split():
+                    self.play_manual('play_manual 0 X X '+self.game.action_to_string(int(point)))
+                
+                CPs = self.get_critical(self.state.match_WP())
+
+                rlt = "("
+                board = self.state.getboard()
+                for b in range(len(board)):
+                    if board[b] == 0:   # BLACK
+                        piece = self.game.action_to_string(b)
+                        rlt += ";B"
+                        rlt += f"[{piece[0]}{posInt2Char(piece[1])}]"
+
+                rlt += ";C["
+                for CP in CPs:
+                    rlt += "("
+                    for c in CP:
+                        rlt += str(c) + " "
+                    rlt += ")\n"
+                rlt += "]"
+
+                output.write(rlt)
+
+                black_num = board.count(0)
+                self.state.DFS_noBlock(board, black_num, 0, black_num, CPs) 
+                boards = self.state.get_noBlock()
+                # cnt = 0
+                for b in boards:
+                    rlt = "("
+                    for w in range(len(b)):
+                        if b[w] == 1:  # WHITE
+                            piece = self.game.action_to_string(w)
+                            rlt += ";W"
+                            rlt += f"[{piece[0]}{posInt2Char(piece[1])}]"
+                    # print(cnt)
+                    # cnt += 1
+                    if not self.state.test_action_bool([],[],0):
+                        rlt += ";C[black not win]"
+                        print("black not win")
+                        print(b)
+                    else:
+                        rlt += ";C[black win]"
+                    rlt += ")"
+                    output.write(rlt)
+
+                output.write(")")
+                print(cnt)
+                cnt+=1
+            
+            output.write(")")
+            output.close()
+
+            print(f"Saved as {i}.sgf")
+            file.close()
+
+    # def save_noblock(self, file_name="noblock.sgf"):
+    #     boards = self.state.get_noBlock()
+    #     if len(boards) < 1:
+    #         print("Error: No board")
+    #         return
+    #     print(f"Number of Branchs: {len(boards)}")
+
+    #     posInt2Char=lambda p: chr(int(p)-1+ord('A'))
+    #     rlt="(;GM[511]"
+
+    #     color = 0  # BLACK
+    #     board = boards[0]
+    #     for i in range(len(board)):
+    #         if board[i] == color:
+    #             piece = self.game.action_to_string(i)
+    #             rlt += ";B"
+    #             rlt += f"[{piece[0]}{posInt2Char(piece[1])}]"
+
+    #     color = 1  # WHITE
+    #     for board in boards:
+    #         rlt += "("
+    #         for i in range(len(board)):
+    #             if board[i] == color:
+    #                 piece = self.game.action_to_string(i)
+    #                 rlt += ";W"
+    #                 rlt += f"[{piece[0]}{posInt2Char(piece[1])}]"
+    #         rlt += ")"
+
+    #     rlt += ")"
+
+    #     with open(file_name, "w") as output:
+    #         output.write(rlt)
+    #     print(f"Saved noblock as {file_name}")
+
     # whp
     def slicer(self):
         # print(self.test_action("test_action 1"))
@@ -386,7 +442,7 @@ class CLI_agent:
                 self.showboard()
 
             elif "showcritical" in string or "sc" in string:
-                self.printboard()
+                self.printBoard()
                 
             elif "clear" in string or 'reset' in string:
                 self.clear()
@@ -446,13 +502,14 @@ class CLI_agent:
                         os.unlink(path)
             # 11/7 modified
             elif "test_action" in string:
-                print(self.get_critical(self.test_action(string)))
+                # print(self.get_critical(self.test_action(string)))
+                pass
             elif "test_prune" in string:
                 self.test_prune()
             # 11/7 modified
             # whp
-            elif "no block" in string or "nb" in string:
-                self.save_noblock()
+            # elif "no block" in string or "nb" in string:
+            #     self.save_noblock()
 
             end = time.time()
             print("Command '{}' use".format(string), (end - start), "seconds")                
