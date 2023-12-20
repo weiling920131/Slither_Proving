@@ -252,7 +252,7 @@ bool SlitherState::check_redundent(std::vector<int> M, int num){
         for(int j=0;j<W[i].size();j++){
             int f = 0;
             for(int k=0;k<i;k++){
-                if(M[W[i][j][k]]) f++;
+                if(M[W[i][j][k]]==1) f++;
             }
             if (f==i) return false;
         }
@@ -520,7 +520,7 @@ void SlitherState::DFS_WP(std::vector<int> &M, int cnt, int max, int num){
     // cout << "cnt: " << cnt << "\n";
     if(cnt<=0){
 		std::pair<int, int> *p = check_win(M);
-        if(check_diag(M, 0)&&p&&check_redundent(M, num)){
+        if(check_diag(M, 1)&&p&&check_redundent(M, num)){
             std::vector<int> w;
             for(int i=0;i<25;i++){
                 if(M[i]) w.push_back(i);
@@ -543,9 +543,20 @@ void SlitherState::DFS_WP(std::vector<int> &M, int cnt, int max, int num){
 
 void SlitherState::generate_WP(){
 	std::vector<int> M (25, 0);
-    for(int i=5;i<=11;i++){
+    for(int i=5;i<=10;i++){
+		std::string filename = "winning_path/"+std::to_string(i)+".txt";
         DFS_WP(M, i, 0, i);
+		std::ofstream file;
+		file.open(filename);
+		for(int j=0;j<W[i].size();j++){
+			for(int k=0;k<W[i][j].size();k++){
+				file << W[i][j][k] << " ";
+			}
+			file << "\n";
+		}
+		file.close();
     }
+	
 }
 
 std::vector<std::vector<int>> SlitherState::generate(int cnt){

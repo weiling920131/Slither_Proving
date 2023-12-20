@@ -316,10 +316,11 @@ class CLI_agent:
     # whp
     def test_generate(self, input_string: str):
         chess_num = int(input_string[input_string.find("test_generate") + len("test_generate") + 1])
-        for i in range(4,11):
-            self.state.test_generate([], i, 0)
-            print(i, "done")
-        # self.state.generate_WP()
+        # for i in range(5,11):
+            # self.state.test_generate([], i, 0)
+        self.state.generate_WP()
+        print("done")
+
         
     def test_prune(self):
         for i in range(4, 11):
