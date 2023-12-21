@@ -23,6 +23,7 @@ PYBIND11_MODULE(game, m) {  // NOLINT
       // .def("return_path", &State::return_path)
       .def("test_action", &State::test_action)
       .def("test_action_bool", &State::test_action_bool)
+      .def("test_board", &State::test_board)
       .def("slicer", &State::slicer)
     // 11/7 modified
     //whp

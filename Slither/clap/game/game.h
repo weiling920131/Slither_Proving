@@ -31,11 +31,12 @@ class State {
   // virtual void test_action(std::vector<Action>) { return; }
   virtual std::vector<std::vector<Action>> test_action(std::vector<Action>, std::vector<std::vector<Action>>&, Player) { return {}; }
   virtual bool test_action_bool(std::vector<Action>, std::vector<std::vector<Action>>&, Player) { return 0; }
+  virtual bool test_board(std::vector<Action>) { return 0; }
   virtual void slicer(std::vector<std::vector<Action>>) { return; }
   virtual int test_generate(std::vector<Action>, int, int) { return 0; }
   virtual void generate_WP() { return; }
   virtual std::vector<std::vector<int>> match_WP() {return {};}
-  virtual void DFS_noBlock(std::vector<int> &M, int cnt, int max, int num, std::vector<std::vector<int>>CPs) {return;};
+  virtual int DFS_noBlock(std::vector<int> &M, int cnt, int max, int num, std::vector<std::vector<int>>CPs, int&) { return 0; }
   virtual std::vector<std::vector<int>> get_noBlock() {return{};}
   virtual std::vector<int> getboard() {return {};}
   // 11/7 modified

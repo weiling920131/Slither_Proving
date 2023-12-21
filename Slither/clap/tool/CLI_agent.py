@@ -70,7 +70,7 @@ class CLI_agent:
         print(self.state, file=file)
         print(file=file)
 
-    def printBoard(self, file=sys.stdout, board=[]):
+    def printBoard(self, board=[], file=sys.stdout):
         path = self.state.match_WP()
         CPs = self.get_critical(path)
         print(CPs)
@@ -112,7 +112,7 @@ class CLI_agent:
             self.state.manual_action(action, player)
 
         actions_string  = [self.game.action_to_string(action) for action in actions]
-        print("=" + ", ".join(actions_string))
+        # print("=" + ", ".join(actions_string))
         self.history.append(actions_string)        
 
     def playmove(self, actions):
@@ -306,10 +306,12 @@ class CLI_agent:
     def test_prune(self):
         posInt2Char=lambda p: chr(int(p)-1+ord('A'))
 
-        for i in range(4, 5):
+        for i in range(5, 11):
             file = open('./checkmate/'+str(i)+'.txt')
             lines = file.readlines()
             cnt = 1
+            white_noBlock = 0
+            white_all = 0
 
             print(i)
             output = open(f"./test_prune/{i}.sgf", "w")
@@ -336,16 +338,19 @@ class CLI_agent:
 
                 rlt += ";C["
                 for CP in CPs:
-                    rlt += "("
-                    for c in CP:
-                        rlt += str(c) + " "
-                    rlt += ")\n"
+                    rlt += "{"
+                    for c in range(len(CP)):
+                        if c != 0:
+                            rlt += " "
+                        rlt += self.game.action_to_string(CP[c])
+                    rlt += "} "
                 rlt += "]"
 
                 output.write(rlt)
 
                 black_num = board.count(0)
-                self.state.DFS_noBlock(board, black_num, 0, black_num, CPs) 
+                all_num = 0
+                all_num = self.state.DFS_noBlock(board, black_num, 0, black_num, CPs, all_num)
                 boards = self.state.get_noBlock()
                 # cnt = 0
                 for b in boards:
@@ -357,23 +362,26 @@ class CLI_agent:
                             rlt += f"[{piece[0]}{posInt2Char(piece[1])}]"
                     # print(cnt)
                     # cnt += 1
-                    if not self.state.test_action_bool([],[],0):
+                    if not self.state.test_board(b):
                         rlt += ";C[black not win]"
                         print("black not win")
-                        print(b)
+                        print(self.state.printBoard(b, []))
                     else:
                         rlt += ";C[black win]"
                     rlt += ")"
                     output.write(rlt)
 
                 output.write(")")
-                print(cnt)
-                cnt+=1
+                print(f"{cnt}: {len(boards)} / {all_num} = {len(boards) / all_num}") 
+                cnt += 1
+                white_noBlock += len(boards)
+                white_all += all_num
             
             output.write(")")
             output.close()
 
-            print(f"Saved as {i}.sgf")
+            print(f"Saved as test_prune/{i}.sgf")
+            print(f"Avg: {white_noBlock} / {white_all} = {white_noBlock / white_all}")
             file.close()
 
     # def save_noblock(self, file_name="noblock.sgf"):

@@ -244,6 +244,18 @@ bool SlitherState::test_action_bool(std::vector<Action> path, std::vector<std::v
 	}
 	return false;
 }
+
+bool SlitherState::test_board(std::vector<Action> board) {
+	SlitherState cur_state = SlitherState(*this);
+	for(int i=0; i<kNumOfGrids; i++) {
+		cur_state.board_[i] = board[i];
+	}
+
+	std::vector<Action> path;
+	std::vector<std::vector<Action>> pathes;
+	return cur_state.test_action_bool(path, pathes, BLACK);
+}
+
 // 11/7 modified
 //whp
 //check redundant
@@ -305,14 +317,18 @@ bool SlitherState::check_diag(std::vector<int> M, int color){
 }
 
 bool SlitherState::check_blocked(std::vector<int> M, std::vector<std::vector<int>>CPs){
+	int blocked = CPs.size();
     // for every crtical points set
     for(int i=0;i<CPs.size();i++){
         // check if white has block every critical points
         for(int j=0;j<CPs[i].size();j++){
-            if(M[CPs[i][j]]!=1) return false;
+            if(M[CPs[i][j]]!=1) {
+				blocked--;
+				break;
+			}
         }
     }
-    return true;
+    return blocked;
 }
 
 void SlitherState::slicer(std::vector<std::vector<Action>> M){
@@ -320,7 +336,6 @@ void SlitherState::slicer(std::vector<std::vector<Action>> M){
 }
 
 std::vector<std::vector<int>> SlitherState::match_WP(){
-
 	std::vector<int> M = getboard();
 	int num = 0;
 	for(int i=0;i<25;i++){
@@ -382,7 +397,7 @@ std::vector<std::vector<int>> SlitherState::match_WP(){
 							std::swap(M[miss_points[i]-6], M[miss_points[i]]);
 						}
 						if(miss_points[i]/5>0&&M[miss_points[i]-5]==0
-							&&std::find(wp.begin(), wp.end(), miss_points[i]-6)==wp.end()){
+							&&std::find(wp.begin(), wp.end(), miss_points[i]-5)==wp.end()){
 							std::swap(M[miss_points[i]-5], M[miss_points[i]]);
 							M[miss_points[1-i]] = 0;
 							if(check_diag(M, 0)){
@@ -471,24 +486,26 @@ std::vector<std::vector<int>> SlitherState::match_WP(){
 	return pathes;
 }
 
-void SlitherState::DFS_noBlock(std::vector<int> &M, int cnt, int max, int num, std::vector<std::vector<int>>CPs){
+int SlitherState::DFS_noBlock(std::vector<int> &M, int cnt, int max, int num, std::vector<std::vector<int>>CPs, int &board_num){
     if(cnt<=0){
-        if(check_diag(M, 1)&&!check_blocked(M, CPs)){
-            // print(M);
-            noBlock.push_back(M);
-            return;
-        }
+        if(check_diag(M, 1)){
+			board_num++;
+			if(!check_blocked(M, CPs)){
+				// print(M);
+				noBlock.push_back(M);
+			}
+		}
     }else{
         for(int i=max;i<=25-cnt;i++){
             if(M[i]==0) continue;
             cnt=cnt-1;
             M[i] = 1;
-            DFS_noBlock(M, cnt, i+1, num, CPs);
+            DFS_noBlock(M, cnt, i+1, num, CPs, board_num);
             M[i] = 2;
             cnt=cnt+1;
         }
-        return;
     }
+	return board_num;
 }
 
 std::vector<std::vector<int>> SlitherState::get_noBlock(){
@@ -620,6 +637,46 @@ int SlitherState::test_generate(std::vector<Action> path, int chess_num, int col
 	std::cout<<"pruning_num: "<<pruning_num<<'\n';
 }
 
+std::string SlitherState::printBoard(std::vector<Action> board = {}, std::vector<std::vector<Action>> CPs = {}) {
+	if(board.size() == 0) {
+		board = getboard();
+	}
+	std::stringstream ss;
+	//  const std::vector<std::string> chess{"●", "o", "·"};
+	const std::vector<std::string> chess{"x", "o", "·", "@"};
+
+	if(CPs.size() > 0) {
+		for(const auto CP: CPs) {
+			std::vector<Action> newBoard = board;
+			for(const auto c: CP) {
+				newBoard[c] = 3;
+			}
+			for (int i = 0; i < kBoardSize; ++i) {
+				ss << std::setw(2) << std::setfill(' ') << kBoardSize - i;
+				for (int j = 0; j < kBoardSize; ++j) {
+					ss << ' ' << chess[newBoard[i * kBoardSize + j]];
+				}
+				ss << std::endl;
+			}
+			ss << "  ";
+			for (int i = 0; i < kBoardSize; ++i) ss << ' ' << static_cast<char>('A' + i);
+			ss << "\n\n";
+		}
+	}
+	else {
+		for (int i = 0; i < kBoardSize; ++i) {
+			ss << std::setw(2) << std::setfill(' ') << kBoardSize - i;
+			for (int j = 0; j < kBoardSize; ++j) {
+				ss << ' ' << chess[board[i * kBoardSize + j]];
+			}
+			ss << std::endl;
+		}
+		ss << "  ";
+		for (int i = 0; i < kBoardSize; ++i) ss << ' ' << static_cast<char>('A' + i);
+	}
+	
+	return ss.str();
+}
 //whp
 
 
@@ -1063,47 +1120,6 @@ std::string SlitherState::to_string() const {
   ss << "  ";
   for (int i = 0; i < kBoardSize; ++i) ss << ' ' << static_cast<char>('A' + i);
   return ss.str();
-}
-
-std::string SlitherState::printBoard(std::vector<Action> board = {}, std::vector<std::vector<Action>> CPs = {}) {
-	if(board.size() == 0) {
-		board = getboard();
-	}
-	std::stringstream ss;
-	//  const std::vector<std::string> chess{"●", "o", "·"};
-	const std::vector<std::string> chess{"x", "o", "·", "@"};
-
-	if(CPs.size() > 0) {
-		for(const auto CP: CPs) {
-			std::vector<Action> newBoard = board;
-			for(const auto c: CP) {
-				newBoard[c] = 3;
-			}
-			for (int i = 0; i < kBoardSize; ++i) {
-				ss << std::setw(2) << std::setfill(' ') << kBoardSize - i;
-				for (int j = 0; j < kBoardSize; ++j) {
-					ss << ' ' << chess[newBoard[i * kBoardSize + j]];
-				}
-				ss << std::endl;
-			}
-			ss << "  ";
-			for (int i = 0; i < kBoardSize; ++i) ss << ' ' << static_cast<char>('A' + i);
-			ss << "\n\n";
-		}
-	}
-	else {
-		for (int i = 0; i < kBoardSize; ++i) {
-			ss << std::setw(2) << std::setfill(' ') << kBoardSize - i;
-			for (int j = 0; j < kBoardSize; ++j) {
-				ss << ' ' << chess[board[i * kBoardSize + j]];
-			}
-			ss << std::endl;
-		}
-		ss << "  ";
-		for (int i = 0; i < kBoardSize; ++i) ss << ' ' << static_cast<char>('A' + i);
-	}
-	
-	return ss.str();
 }
 
 bool SlitherState::is_terminal() const {

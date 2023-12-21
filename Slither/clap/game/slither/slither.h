@@ -28,6 +28,7 @@ class SlitherState final : public State {
   // 11/7 modified
   bool test_action_bool(std::vector<Action>, std::vector<std::vector<Action>>&,Player) override;
   std::vector<std::vector<Action>> test_action(std::vector<Action>, std::vector<std::vector<Action>>&,Player) override;
+  bool test_board(std::vector<Action>);
   void slicer(std::vector<std::vector<Action>>) override;
   int test_generate(std::vector<Action>, int, int) override;
   std::vector<int> getboard() override;
@@ -35,7 +36,7 @@ class SlitherState final : public State {
   //whp
   void generate_WP() override;
   std::vector<std::vector<int>> match_WP();
-  void DFS_noBlock(std::vector<int> &M, int cnt, int max, int num, std::vector<std::vector<int>>CPs) override;
+  int DFS_noBlock(std::vector<int> &M, int cnt, int max, int num, std::vector<std::vector<int>>CPs, int&) override;
   std::vector<std::vector<int>> get_noBlock();
   bool check_diag(std::vector<int>, int);
   std::map<std::vector<int>, std::vector<int>> path_point;
