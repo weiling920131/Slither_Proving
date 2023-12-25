@@ -260,7 +260,11 @@ class CLI_agent:
             for s in list(product(*pathes_2)):
                 all_critical.append(list(set(s)))   # 組內
 
-            # print("all_critical: ", all_critical)
+            for i in range(len(all_critical)):
+                for j in pathes_1:
+                    if j[0] not in all_critical[i]:
+                        all_critical[i].append(j[0])
+                        
             max_length = max(len(lst) for lst in all_critical)
             pathes_n = []
             for i in range(1, max_length+1):
@@ -277,11 +281,6 @@ class CLI_agent:
                 if len(path_n) > 0:
                     for p in path_n:
                         all_pathes.append(list(p))
-
-            for i in range(len(all_pathes)):
-                for j in pathes_1:
-                    if j[0] not in all_pathes[i]:
-                        all_pathes[i].append(j[0])
 
         else:
             for i in pathes_1:
