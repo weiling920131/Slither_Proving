@@ -70,13 +70,13 @@ class CLI_agent:
         print(self.state, file=file)
         print(file=file)
 
-    def printBoard(self, board=[], file=sys.stdout):
+    def printBoard(self, board=[]):
         path = self.state.match_WP()
         CPs = self.get_critical(path)
         print(CPs)
-        print("=", file=file)
-        print(self.state.printBoard(board, CPs), file=file)
-        print(file=file)
+        print("=")
+        print(self.state.printBoard(board, CPs))
+        print()
 
     def clear(self):
         self.state = self.game.new_initial_state()

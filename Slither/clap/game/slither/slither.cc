@@ -637,12 +637,11 @@ int SlitherState::test_generate(std::vector<Action> path, int chess_num, int col
 	std::cout<<"pruning_num: "<<pruning_num<<'\n';
 }
 
-std::string SlitherState::printBoard(std::vector<Action> board = {}, std::vector<std::vector<Action>> CPs = {}) {
+std::string SlitherState::printBoard(std::vector<Action> board, std::vector<std::vector<Action>> CPs) {
 	if(board.size() == 0) {
 		board = getboard();
 	}
 	std::stringstream ss;
-	//  const std::vector<std::string> chess{"●", "o", "·"};
 	const std::vector<std::string> chess{"x", "o", "·", "@"};
 
 	if(CPs.size() > 0) {
