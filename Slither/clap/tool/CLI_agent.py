@@ -254,37 +254,40 @@ class CLI_agent:
     def get_critical(self, pathes):
         pathes_1 = [ i for i in pathes if len(i) == 1]
         pathes_2 = [ i for i in pathes if len(i) == 2]
-
         all_critical = []
+        all_pathes = []
         if len(pathes_2) > 0:
             for s in list(product(*pathes_2)):
-                res = []
-                # print("critical points set:",end=' ')
-                for action in set(s):
-                    res.append(action)
-                    # print(self.game.action_to_string(action),end=' ')
-                all_critical.append(res)
-                # print('\n')
+                all_critical.append(list(set(s)))   # 組內
 
-            copy = all_critical.copy()
-            for s in copy:
-                if len(s) == 1:
-                    continue
-                for path in pathes:
-                    if s[0] in path and s[1] in path:
-                        all_critical.remove(s)
-                        break
-        
-            for i in range(len(all_critical)):
+            # print("all_critical: ", all_critical)
+            max_length = max(len(lst) for lst in all_critical)
+            pathes_n = []
+            for i in range(1, max_length+1):
+                pathes_n.append({ tuple(j) for j in all_critical if len(j) == i})
+
+            for i in range(0, max_length-1):
+                for j in range(i+1, max_length):
+                    for setb in pathes_n[i]:
+                        for seta in pathes_n[j].copy():
+                            if set(setb).issubset(set(seta)):
+                                pathes_n[j].remove(seta)
+
+            for path_n in pathes_n:
+                if len(path_n) > 0:
+                    for p in path_n:
+                        all_pathes.append(list(p))
+
+            for i in range(len(all_pathes)):
                 for j in pathes_1:
-                    if j[0] not in all_critical[i]:
-                        all_critical[i].append(j[0])
+                    if j[0] not in all_pathes[i]:
+                        all_pathes[i].append(j[0])
 
         else:
             for i in pathes_1:
-                all_critical.append(i)
+                all_pathes.append(i)
 
-        return all_critical
+        return all_pathes
             
 
     def test_action(self, input_string: str):
@@ -306,7 +309,7 @@ class CLI_agent:
     def test_prune(self):
         posInt2Char=lambda p: chr(int(p)-1+ord('A'))
 
-        for i in range(5, 11):
+        for i in range(4, 11):
             file = open('./checkmate/'+str(i)+'.txt')
             lines = file.readlines()
             cnt = 1
@@ -319,8 +322,8 @@ class CLI_agent:
             output.write("(;GM[511]")
 
             for line in lines:
-                if cnt >= 210:
-                    break
+                # if cnt >= 210:
+                #     break
                 self.clear()
                 self.history = []
                 for point in line.strip().split():
@@ -366,6 +369,7 @@ class CLI_agent:
                         rlt += ";C[black not win]"
                         print("black not win")
                         print(self.state.printBoard(b, []))
+                        break
                     else:
                         rlt += ";C[black win]"
                     rlt += ")"
