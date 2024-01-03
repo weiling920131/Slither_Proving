@@ -293,8 +293,9 @@ class CLI_agent:
         player = int(input_string[input_string.find("test_action") + len("test_action") + 1])
         path = []
         pathes = []
-        pathes = self.state.test_action(path, pathes, player)
-        return pathes
+        # pathes = self.state.test_action(path, pathes, player)
+        # return pathes
+        return self.state.test_action_bool(path, pathes, player)
 
     # whp
     def test_generate(self, input_string: str):
@@ -454,6 +455,10 @@ class CLI_agent:
 
             elif "showcritical" in string or "sc" in string:
                 self.printBoard()
+
+            elif "tb" in string:
+                b = [0, 0, 0, 0, 1, 1, 0, 2, 2, 2, 1, 0, 1, 0, 0, 2, 2, 2, 2, 1, 1, 1, 0, 1, 1]
+                print(self.state.test_board(b))
                 
             elif "clear" in string or 'reset' in string:
                 self.clear()
@@ -513,8 +518,8 @@ class CLI_agent:
                         os.unlink(path)
             # 11/7 modified
             elif "test_action" in string:
-                # print(self.get_critical(self.test_action(string)))
-                pass
+                print(self.test_action(string))
+                
             elif "test_prune" in string:
                 self.test_prune()
             # 11/7 modified

@@ -223,6 +223,9 @@ bool SlitherState::test_action_bool(std::vector<Action> path, std::vector<std::v
 	int cur_turn = path.size();
 	// std::cout << cur_turn << '\n';
 	if(cur_turn == 3) {
+		// for (auto& p: path) {
+		// 	std::cout << p << ' ';
+		// } std::cout << winner_ << '\n';
 		if(winner_ != -1) {
 			// path.push_back(winner_);
 			// pathes.push_back(path);
@@ -253,6 +256,8 @@ bool SlitherState::test_board(std::vector<Action> board) {
 
 	std::vector<Action> path;
 	std::vector<std::vector<Action>> pathes;
+	for (auto a: cur_state.legal_actions())
+		std::cout << a << ' ';
 	return cur_state.test_action_bool(path, pathes, BLACK);
 }
 
