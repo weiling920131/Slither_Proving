@@ -223,6 +223,9 @@ bool SlitherState::test_action_bool(std::vector<Action> path, std::vector<std::v
 	int cur_turn = path.size();
 	// std::cout << cur_turn << '\n';
 	if(cur_turn == 3) {
+		// for (auto& p: path) {
+		// 	std::cout << p << ' ';
+		// } std::cout << winner_ << '\n';
 		if(winner_ != -1) {
 			// path.push_back(winner_);
 			// pathes.push_back(path);
@@ -253,6 +256,8 @@ bool SlitherState::test_board(std::vector<Action> board) {
 
 	std::vector<Action> path;
 	std::vector<std::vector<Action>> pathes;
+	for (auto a: cur_state.legal_actions())
+		std::cout << a << ' ';
 	return cur_state.test_action_bool(path, pathes, BLACK);
 }
 
@@ -637,12 +642,11 @@ int SlitherState::test_generate(std::vector<Action> path, int chess_num, int col
 	std::cout<<"pruning_num: "<<pruning_num<<'\n';
 }
 
-std::string SlitherState::printBoard(std::vector<Action> board = {}, std::vector<std::vector<Action>> CPs = {}) {
+std::string SlitherState::printBoard(std::vector<Action> board, std::vector<std::vector<Action>> CPs) {
 	if(board.size() == 0) {
 		board = getboard();
 	}
 	std::stringstream ss;
-	//  const std::vector<std::string> chess{"●", "o", "·"};
 	const std::vector<std::string> chess{"x", "o", "·", "@"};
 
 	if(CPs.size() > 0) {

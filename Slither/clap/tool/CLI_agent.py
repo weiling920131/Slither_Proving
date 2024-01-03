@@ -70,13 +70,13 @@ class CLI_agent:
         print(self.state, file=file)
         print(file=file)
 
-    def printBoard(self, board=[], file=sys.stdout):
+    def printBoard(self, board=[]):
         path = self.state.match_WP()
         CPs = self.get_critical(path)
         print(CPs)
-        print("=", file=file)
-        print(self.state.printBoard(board, CPs), file=file)
-        print(file=file)
+        print("=")
+        print(self.state.printBoard(board, CPs))
+        print()
 
     def clear(self):
         self.state = self.game.new_initial_state()
@@ -260,7 +260,11 @@ class CLI_agent:
             for s in list(product(*pathes_2)):
                 all_critical.append(list(set(s)))   # 組內
 
-            # print("all_critical: ", all_critical)
+            for i in range(len(all_critical)):
+                for j in pathes_1:
+                    if j[0] not in all_critical[i]:
+                        all_critical[i].append(j[0])
+                        
             max_length = max(len(lst) for lst in all_critical)
             pathes_n = []
             for i in range(1, max_length+1):
@@ -278,11 +282,6 @@ class CLI_agent:
                     for p in path_n:
                         all_pathes.append(list(p))
 
-            for i in range(len(all_pathes)):
-                for j in pathes_1:
-                    if j[0] not in all_pathes[i]:
-                        all_pathes[i].append(j[0])
-
         else:
             for i in pathes_1:
                 all_pathes.append(i)
@@ -294,8 +293,9 @@ class CLI_agent:
         player = int(input_string[input_string.find("test_action") + len("test_action") + 1])
         path = []
         pathes = []
-        pathes = self.state.test_action(path, pathes, player)
-        return pathes
+        # pathes = self.state.test_action(path, pathes, player)
+        # return pathes
+        return self.state.test_action_bool(path, pathes, player)
 
     # whp
     def test_generate(self, input_string: str):
@@ -455,6 +455,10 @@ class CLI_agent:
 
             elif "showcritical" in string or "sc" in string:
                 self.printBoard()
+
+            elif "tb" in string:
+                b = [0, 0, 0, 0, 1, 1, 0, 2, 2, 2, 1, 0, 1, 0, 0, 2, 2, 2, 2, 1, 1, 1, 0, 1, 1]
+                print(self.state.test_board(b))
                 
             elif "clear" in string or 'reset' in string:
                 self.clear()
@@ -514,8 +518,8 @@ class CLI_agent:
                         os.unlink(path)
             # 11/7 modified
             elif "test_action" in string:
-                # print(self.get_critical(self.test_action(string)))
-                pass
+                print(self.test_action(string))
+                
             elif "test_prune" in string:
                 self.test_prune()
             # 11/7 modified
