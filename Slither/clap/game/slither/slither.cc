@@ -697,7 +697,7 @@ std::vector<Action> SlitherState::legal_actions() const {
 	if (actions.empty()) {
 		actions.push_back(empty_index);
 	}
-
+	
 	return actions;
 }
 
