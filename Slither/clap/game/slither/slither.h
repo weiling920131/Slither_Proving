@@ -32,7 +32,7 @@ class SlitherState final : public State {
   void slicer(std::vector<std::vector<Action>>) override;
   int test_generate(std::vector<Action>, int, int) override;
   std::vector<int> getboard() override;
-  std::vector<std::vector<int>> get_critical(std::vector<std::vector<int>>) override;
+  std::vector<std::vector<int>> get_critical(std::vector<std::vector<int>>);
   // 11/7 modified
   //whp
   void generate_WP() override;

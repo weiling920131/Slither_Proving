@@ -5,6 +5,7 @@
 #include <sstream>
 #include <stack>
 #include <iostream>
+#include <set>
 #include <string>
 #include <fstream>
 #include <stdio.h>
@@ -194,27 +195,28 @@ std::vector<std::vector<int>> SlitherState::get_critical(std::vector<std::vector
 		if(path.size() == 1) pathes_1.push_back(path);
 		else if(path.size() == 2) pathes_2.push_back(path);
 	}
-	
+
 	// CLI_agent.py Line: 259 - 287
 	if(pathes_2.size()){
 		// CLI_agent.py Line: 260 - 261
-		std::stack<pair<std::set<int> ,int>> s;
-		s.push(make_pair({}, 0));
+		std::stack<std::pair<std::set<int> ,int>> s;
+		std::set<int> emp;
+		s.push(std::make_pair(emp, 0));
 		while(!s.empty()){
 			std::set<int> combination = s.top().first;
 			int ind = s.top().second;
 			s.pop();
 			if(ind == pathes_2.size()) {
-				all_critical.push_back(vectorData(combination.begin(), combination.end()));
+				all_critical.push_back(std::vector<int>(combination.begin(), combination.end()));
 				continue;
 			}
 			for(auto &point: pathes_2[ind]){
 				std::set<int> tmp = combination;
 				tmp.insert(point);
-				s.push(make_pair(tmp, ind+1));
+				s.push(std::make_pair(tmp, ind+1));
 			}
 		}
-
+		
 		// CLI_agent.py Line: 263 - 268
 		int max_length = 0;
 		for(int i = 0;i<all_critical.size();i++){
@@ -223,7 +225,7 @@ std::vector<std::vector<int>> SlitherState::get_critical(std::vector<std::vector
 					all_critical[i].push_back(point[0]);
 				}
 			}
-			max_length = max(max_length, all_critical[i].size());
+			if(max_length > all_critical[i].size()) max_length = all_critical[i].size();
 		}
 
 		// CLI_agent.py Line: 269 - 271
