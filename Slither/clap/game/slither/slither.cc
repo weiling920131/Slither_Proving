@@ -188,6 +188,53 @@ void SlitherState::manual_action(const Action &action, Player p) {
 
 // 11/7 modified
 
+std::vector<std::vector<int>> SlitherState::get_critical(std::vector<std::vector<int>> pathes) {
+	std::vector<std::vector<int>> pathes_1, pathes_2, all_critical, all_pathes;
+	for(auto& path: pathes){
+		if(path.size() == 1) pathes_1.push_back(path);
+		else if(path.size() == 2) pathes_2.push_back(path);
+	}
+	
+	// CLI_agent.py Line: 259 - 287
+	if(pathes_2.size()){
+		// CLI_agent.py Line: 260 - 261
+		std::stack<pair<std::set<int> ,int>> s;
+		s.push(make_pair({}, 0));
+		while(!s.empty()){
+			std::set<int> combination = s.top().first;
+			int ind = s.top().second;
+			s.pop();
+			if(ind == pathes_2.size()) {
+				all_critical.push_back(vectorData(combination.begin(), combination.end()));
+				continue;
+			}
+			for(auto &point: pathes_2[ind]){
+				std::set<int> tmp = combination;
+				tmp.insert(point);
+				s.push(make_pair(tmp, ind+1));
+			}
+		}
+
+		// CLI_agent.py Line: 263 - 268
+		int max_length = 0;
+		for(int i = 0;i<all_critical.size();i++){
+			for(auto& point: pathes_1){
+				if(std::find(all_critical[i].begin(), all_critical[i].end(), point[0]) == all_critical[i].end()){
+					all_critical[i].push_back(point[0]);
+				}
+			}
+			max_length = max(max_length, all_critical[i].size());
+		}
+
+		// CLI_agent.py Line: 269 - 271
+		std::vector<std::vector<int>> pathes_n;
+		for(int i = 1;i<max_length+1;i++){
+			
+		}
+	}
+
+}
+
 std::vector<int> SlitherState::getboard() {
 	std::vector<int> board(25);
 	for(int i=0;i<25;i++) board[i] = board_[i];
@@ -701,7 +748,7 @@ std::vector<Action> SlitherState::legal_actions() const {
 	if (actions.empty()) {
 		actions.push_back(empty_index);
 	}
-	
+
 	return actions;
 }
 
