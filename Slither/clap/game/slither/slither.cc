@@ -216,7 +216,7 @@ std::vector<std::vector<int>> SlitherState::get_critical(std::vector<std::vector
 				s.push(std::make_pair(tmp, ind+1));
 			}
 		}
-		
+
 		// CLI_agent.py Line: 263 - 268
 		int max_length = 0;
 		for(int i = 0;i<all_critical.size();i++){
@@ -229,11 +229,31 @@ std::vector<std::vector<int>> SlitherState::get_critical(std::vector<std::vector
 		}
 
 		// CLI_agent.py Line: 269 - 271
-		std::vector<std::vector<int>> pathes_n;
+		std::vector<std::set<std::vector<int>>> pathes_n;
 		for(int i = 1;i<max_length+1;i++){
-			
+			std::set<std::vector<int>> tmp;
+			for(auto& j:all_critical){
+				if(j.size() == i){
+					tmp.insert(j);
+				}
+			}
+			pathes_n.push_back(tmp);
 		}
-	}
+
+		// CLI_agent.py Line: 273 - 278
+		for(int i =0;i<max_length-1;i++){
+			for(int j = i+1;j<max_length;j++){
+				for(auto& vectora: pathes_n[i]){
+					for(auto& vectorb: pathes_n[j].copy()){
+						std::set<std::vector<int> seta(vectora.begin(), vectora.end());
+						std::set<std::vector<int> setb(vectorb.begin(), vectorb.end());
+						if()
+					}
+				}
+			}
+		}
+
+	}		
 
 }
 
