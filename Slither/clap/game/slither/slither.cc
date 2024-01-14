@@ -830,11 +830,7 @@ int SlitherState::test_generate(std::vector<Action> path, int chess_num, int col
 		// std::cout<<'\n';
 		std::vector<std::vector<Action>> pathes = {};
 		if(cur_state.test_action(path, pathes, color).size() >= 1){
-			// std::cout << "test_action\n";
-			auto p = cur_state.check_win(cur_state.getboard());
-			if(p != NULL) continue;
-			// else std::cout<<p->first<<' '<<p->second<<'\n';
-			// std::cout<<"check_win\n";
+			if(cur_state.check_win(cur_state.getboard())) continue;
 			pruning_num++;
 			std::vector<int> curBlack;
 			// std::cout<<"\n==================\n";
