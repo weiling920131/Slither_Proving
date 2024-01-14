@@ -70,8 +70,9 @@ std::unique_ptr<State> SlitherState::clone() const {
 }
 
 void SlitherState::apply_action(const Action &action) {
-  //std::cout << "current turn:" << turn_ << "\n"; 
-  //std::cout << "action:" << action << '\n';
+  
+//   std::cout << "current turn:" << turn_ << "\n"; 
+//   std::cout << "action:" << action << '\n';
   if (turn_ % 3 == 0) {  // choose
 		if (action == empty_index) skip_ = 1;
 		++turn_;
@@ -601,6 +602,7 @@ std::vector<std::vector<int>> SlitherState::generate(int cnt){
 }
 
 int SlitherState::test_generate(std::vector<Action> path, int chess_num, int color){
+	std::cout<<"generating"<<chess_num << "\n";
 	std::string filename = "checkmate/checkmate_"+std::to_string(chess_num)+".txt";
 	std::ofstream file;
 	file.open(filename);
@@ -624,10 +626,14 @@ int SlitherState::test_generate(std::vector<Action> path, int chess_num, int col
 				for(int j=0;j<5;j++){
 					if(cur_state.board_[i * 5 + j]==0) {
 						curBlack.push_back(i*5+j);
-						file << i * 5 + j << " ";
+						// file << i * 5 + j << " ";  checkmate
+						file << "X ";
+					} else {
+						file << ". ";
 					}
 					// std::cout << change[cur_state.board_[i * 5 + j]] <<' ';
 				}
+				file << "\n";
 				// std::cout<<'\n';
 			}
 			// std::cout << "  A B C D E\n";

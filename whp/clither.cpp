@@ -68,10 +68,17 @@ bool check(vector<int> M, int color){
     for(int i=0;i<20;i++){
         if(M[i]==color){
             if(i%5!=0){
-                if(M[i+4]==color&&M[i+5]!=color&&M[i-1]!=color) return false;
+                if(M[i+4]==color&&M[i+5]!=color&&M[i-1]!=color) {
+                    // return {i+5, i-1};
+                    return false;
+                }
             }
             if(i%5!=4){
-                if(M[i+6]==color&&M[i+5]!=color&&M[i+1]!=color) return false;
+                if(M[i+6]==color&&M[i+5]!=color&&M[i+1]!=color) {
+                    return false;
+                    // return {i+5, i+1};
+                    
+                }
             }
         }
     }
@@ -79,6 +86,105 @@ bool check(vector<int> M, int color){
 }
 
 
+
+bool check_move(vector<int> &M, int pos, int D){
+    vector<int> dir = {-5, -1, 1, 5, -6, -4,  4, 6};
+    //移動到place
+    for(int i=0;i<8;i++){
+        if(M[pos+dir[i]]==1&&pos+dir[i]!=D){
+            M[pos+dir[i]] = 2;
+            M[pos] = 1;
+
+            if(check(M, 1)){
+                printf("%d -> %d\n", pos+dir[i], pos);
+                print(M);
+                return true;
+            }
+            M[pos+dir[i]] = 1;
+            M[pos] = 2;
+        }
+    }
+    //移動在下place
+    if(D!=-1) return false;
+    M[pos] = 1;
+    for(int i=0;i<4;i++){
+        if(M[pos+dir[i]]==2){
+            if(check_move(M, pos+dir[i], pos)) return true;
+        }
+    }
+    
+    return false;
+   
+}
+
+bool check4(vector<int> M, vector<vector<int>> pos){
+    vector<int> dir = {-5, -1, 1, 5, -6, -4,  4, 6};
+    for(int j=0;j<pos.size();j++){
+        if(pos[j].size()>=3){
+            continue;
+        }
+        bool b = false;
+        bool moved = false;
+        if(!check_move(M, pos[j][0], -1)){ //無法移動到pos
+            M[pos[j][0]] = 1; //移動加下
+            for(int i=0;i<4;i++){ //相鄰四格哪一格是空
+                if(M[pos[j][0]+dir[i]]==2){
+                    if(check_move(M, pos[j][0]+dir[i], pos[j][0])) {
+                        if(pos[j].size()==1) return true; //只有1顆
+                        else { //兩顆
+                            b = true;
+                            moved = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }else{
+            if(pos[j].size()==1) return true; // 可以移動到pos
+            else{
+                b = true;
+                moved = true;
+            }
+        }
+        if(!b){ //直接用下的
+            M[pos[j][0]] = 1;
+            if(check(M, 1)) {
+                printf("place %d\n", pos[j][0]);
+                print(M);
+                if(pos[j].size()==1) return true; //只有1顆
+                else b = true;
+            }else{ //這個critical point沒法檔
+                M[pos[j][0]] = 2;
+                break;
+            }
+        }
+      
+        if(moved){ //移動過直接用下的
+            M[pos[j][1]] = 1;
+            if(check(M, 1)) {
+                printf("place %d\n", pos[j][0]);
+                print(M);
+                return true; 
+            }else{ //這個critical point沒法檔
+                M[pos[j][1]] = 2;
+                break;
+            }
+        }
+        if(!check_move(M, pos[j][1], -1)){ //無法移動到pos
+            M[pos[j][1]] = 1; //移動加下
+            for(int i=0;i<4;i++){ //相鄰四格哪一格是空
+                if(M[pos[j][0]+dir[i]]==2){
+                    if(check_move(M, pos[j][1]+dir[i], pos[j][1])) {
+                        return true;
+                    }
+                }
+            }
+        }else{
+            return true; // 可以移動到pos
+        }
+    }
+    return false;
+}
 
 void zone(vector<int> &M, int p){
     cout << "========\n";
@@ -105,6 +211,15 @@ void zone(vector<int> &M, int p){
     return;
 }
 
+void DFS_checkmate(vector<int> &W, int cnt, int num){
+    for(int i=0;i<num;i++){
+        for(int j=0;j<num;j++){
+            // if()
+        }
+    }
+    
+}
+
 void DFS(vector<int> &M, int cnt, int max, int num){
     // cout << "cnt: " << cnt << "\n";
     if(cnt<=0){
@@ -112,7 +227,7 @@ void DFS(vector<int> &M, int cnt, int max, int num){
         // if(p) cout << p->first << "-" << p->second << "\n";
         // else cout << "error\n";
         if(check(M, 1)&&p&&check3(M, num)){
-            print(M);
+            // print(M);
             vector<int> w;
             for(int i=0;i<25;i++){
                 if(M[i]) w.push_back(i);
@@ -173,82 +288,98 @@ void DFSW(vector<int> &M, int cnt, int max, int num, vector<vector<int>>CPs){
 }
 
 
+/*
+int main(){
+    char *s = (char *)malloc(sizeof(char) * 50);
+    char *s2 = (char *)malloc(sizeof(char) * 50);
+    for(int i=5;i<=12;i++){
+        ofstream file;
+        ofstream file2;
+        cout << i << "\n";
+        // sprintf(s, "winning_path/winning_path_%d.txt", i);
+        sprintf(s2, "check_mate/check_mate_%d.txt", i);
+        // file.open(s);
+        file.open(s2);
+        cout << i <<"====\n";
+        DFS(MM, i, 0, i);
+        // file << "total: " << W[i].size() << "\n";
+        total+=W[i].size();
+        for(int j=0;j<W[i].size();j++){
+            int k=0;
+            for(int index=0;index<25;index++){
+                if(index==W[i][j][k]) {
+                    file << "1 ";
+                    k++;
+                }
+                else file << "0 ";
+                if(index%5==4) file << '\n';
+            }
+            if(j!=W[i].size()-1) file << "----------\n";
+        }
+        file.close();
+        // for(int h=0;h<5;h++){
+        //     for(int t=0;t<5;t++){
+        //         file << "head: " << h << " ";
+        //         file << "tail: " << t << "\n";
+        //         // cout << "head: " << h << " ";
+        //         // cout << "tail: " << t << "\n";
+        //         for(int j=0;j<WW[i][h][t].size();j++){
+        //             int k=0;
+        //             for(int index=0;index<25;index++){
+        //                 if(index==WW[i][h][t][j][k]) {
+        //                     file << "1 ";
+        //                     cout << "1 ";
+        //                     k++;
+        //                 }
+        //                 else {
+        //                     file << "0 ";
+        //                     cout << "0 ";
+        //                 }
+        //                 if(index%5==4) {
+        //                     file << '\n';
+        //                     cout << '\n';
+        //                 }
+        //             }
+        //             if(j!=WW[i][h][t].size()-1) {
+        //                 file << "----------\n";
+        //                 cout << "----------\n";
+        //             }
+        //         }
+        //     }
+        // }
+        file.close();
+    }
+
+    // vector<int> V(25, 0);
+    // //criticle point sets
+    // vector<vector<int>> cps = {{5, 6}, {10, 6}};
+    // V[0] = 1;
+    // V[1] = 1;
+    // V[21] = 1;
+    // V[11] = 1;
+    // V[16] = 1;
+    // print(V);
+    // DFSW(V, 5, 0, 5, cps);
+    // for(int i=0;i<P.size();i++){
+    //     print(P[i]);
+    // }
+    // cout << "all: " << total << "\n";  
+}*/
 
 int main(){
-    // char *s = (char *)malloc(sizeof(char) * 50);
-    // for(int i=12;i<=12;i++){
-    //     ofstream file;
-    //     cout << i << "\n";
-    //     sprintf(s, "winning_path_%d.txt", i);
-    //     file.open(s);
-    //     cout << i <<"====\n";
-    //     DFS(MM, i, 0, i);
-    //     // file << "total: " << W[i].size() << "\n";
-    //     // total+=W[i].size();
-    //     // for(int h=0;h<5;h++){
-    //     // }
-    //     // for(int j=0;j<W[i].size();j++){
-    //     //     int k=0;
-    //     //     for(int index=0;index<25;index++){
-    //     //         if(index==W[i][j][k]) {
-    //     //             file << "1 ";
-    //     //             k++;
-    //     //         }
-    //     //         else file << "0 ";
-    //     //         if(index%5==4) file << '\n';
-    //     //     }
-    //     //     if(j!=W[i].size()-1) file << "----------\n";
-    //     // }
-    //     // file.close();
-    //     for(int h=0;h<5;h++){
-    //         for(int t=0;t<5;t++){
-    //             file << "head: " << h << " ";
-    //             file << "tail: " << t << "\n";
-    //             // cout << "head: " << h << " ";
-    //             // cout << "tail: " << t << "\n";
-    //             for(int j=0;j<WW[i][h][t].size();j++){
-    //                 int k=0;
-    //                 for(int index=0;index<25;index++){
-    //                     if(index==WW[i][h][t][j][k]) {
-    //                         file << "1 ";
-    //                         cout << "1 ";
-    //                         k++;
-    //                     }
-    //                     else {
-    //                         file << "0 ";
-    //                         cout << "0 ";
-    //                     }
-    //                     if(index%5==4) {
-    //                         file << '\n';
-    //                         cout << '\n';
-    //                     }
-    //                 }
-    //                 if(j!=WW[i][h][t].size()-1) {
-    //                     file << "----------\n";
-    //                     cout << "----------\n";
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     file.close();
-    // }
-
-    vector<int> V(25, 0);
-    //criticle point sets
-    vector<vector<int>> cps = {{5, 6}, {10, 6}};
-    V[0] = 1;
-    V[1] = 1;
-    V[21] = 1;
-    V[11] = 1;
-    V[16] = 1;
-    print(V);
-    DFSW(V, 5, 0, 5, cps);
-    for(int i=0;i<P.size();i++){
-        print(P[i]);
+    vector<int> M (25, 2);
+    M[6]=0;
+    M[7]=0;
+    M[11]=0;
+    M[12]=0;
+    M[16]=0;
+    M[17]=0;
+    M[0]=1;
+    print(M);
+    if(!check4(M, {{1,2}, {21, 22}})){
+        printf("Can't\n");
     }
-    cout << "all: " << total << "\n";  
 
+    return 0;
 }
-
-
 
