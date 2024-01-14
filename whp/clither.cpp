@@ -63,6 +63,24 @@ pair<int, int> *check2(vector<int> M){
     return NULL;
 }
 
+bool newcheck2(vector<int> M, int color){
+    vector<bool> m(25, false);
+    for(int i=0;i<20;i++){
+        if(i<5&&M[i]==color) m[i]=true;
+        if(m[i]==true) {
+            if(M[i+5]==color&&m[i+5]==false){
+                m[i+5]=true;
+                if(i%5!=0&&M[i+4]==color&&m[i+4]==false) m[i+4]==true;
+                if(i%5!=4&&M[i+6]==color&&m[i+6]==false) m[i+6]==true;
+            }
+        }
+    }
+    for(int i=20;i<25;i++){
+        if(m[i]) return true;
+    }
+    return false;
+}
+
 // check diag
 bool check(vector<int> M, int color){
     for(int i=0;i<20;i++){
@@ -220,29 +238,21 @@ void DFS_checkmate(vector<int> &W, int cnt, int num){
     
 }
 
-void DFS(vector<int> &M, int cnt, int max, int num){
+void DFS(vector<int> &M, int cnt, int max, int num,int color){
     // cout << "cnt: " << cnt << "\n";
     if(cnt<=0){
-        pair<int, int> *p = check2(M);
         // if(p) cout << p->first << "-" << p->second << "\n";
         // else cout << "error\n";
-        if(check(M, 1)&&p&&check3(M, num)){
-            // print(M);
-            vector<int> w;
-            for(int i=0;i<25;i++){
-                if(M[i]) w.push_back(i);
-            }
-            W[num].push_back(w);
-            WW[num][p->first][p->second].push_back(w);
-            // MM.push_back(M);
+        if(check(M, color)){
+            if(newcheck2(M, color)) print(M);
             return;
         }
     }else{
         for(int i=max;i<=25-cnt;i++){
             cnt=cnt-1;
-            M[i] = 1;
-            DFS(M, cnt, i+1, num);
-            M[i] = 0;
+            M[i] = color;
+            DFS(M, cnt, i+1, num, color);
+            M[i] = 2;
             cnt=cnt+1;
         }
         return;
@@ -273,7 +283,7 @@ void DFSW(vector<int> &M, int cnt, int max, int num, vector<vector<int>>CPs){
             P.push_back(M);
             total++;
             return;
-        }
+        } 
     }else{
         for(int i=max;i<=25-cnt;i++){
             if(M[i]==1) continue;
@@ -288,35 +298,37 @@ void DFSW(vector<int> &M, int cnt, int max, int num, vector<vector<int>>CPs){
 }
 
 
-/*
+
 int main(){
     char *s = (char *)malloc(sizeof(char) * 50);
     char *s2 = (char *)malloc(sizeof(char) * 50);
-    for(int i=5;i<=12;i++){
-        ofstream file;
-        ofstream file2;
+    vector<int> MM(25, 2);
+    for(int i=5;i<=5;i++){
+        // ofstream file;
+        // ofstream file2;
         cout << i << "\n";
         // sprintf(s, "winning_path/winning_path_%d.txt", i);
-        sprintf(s2, "check_mate/check_mate_%d.txt", i);
+        // sprintf(s2, "check_mate/check_mate_%d.txt", i);
+        // sprintf(s2, "DFS/%d.txt", i);
         // file.open(s);
-        file.open(s2);
-        cout << i <<"====\n";
-        DFS(MM, i, 0, i);
+        // file.open(s2);
+        // cout << i <<"====\n";
+        DFS(MM, i, 0, i, 0);
         // file << "total: " << W[i].size() << "\n";
-        total+=W[i].size();
-        for(int j=0;j<W[i].size();j++){
-            int k=0;
-            for(int index=0;index<25;index++){
-                if(index==W[i][j][k]) {
-                    file << "1 ";
-                    k++;
-                }
-                else file << "0 ";
-                if(index%5==4) file << '\n';
-            }
-            if(j!=W[i].size()-1) file << "----------\n";
-        }
-        file.close();
+        // total+=W[i].size();
+        // for(int j=0;j<W[i].size();j++){
+        //     int k=0;
+        //     for(int index=0;index<25;index++){
+        //         if(index==W[i][j][k]) {
+        //             file << "1 ";
+        //             k++;
+        //         }
+        //         else file << "0 ";
+        //         if(index%5==4) file << '\n';
+        //     }
+        //     if(j!=W[i].size()-1) file << "----------\n";
+        // }
+        // file.close();
         // for(int h=0;h<5;h++){
         //     for(int t=0;t<5;t++){
         //         file << "head: " << h << " ";
@@ -347,7 +359,7 @@ int main(){
         //         }
         //     }
         // }
-        file.close();
+        // file.close();
     }
 
     // vector<int> V(25, 0);
@@ -364,22 +376,22 @@ int main(){
     //     print(P[i]);
     // }
     // cout << "all: " << total << "\n";  
-}*/
-
-int main(){
-    vector<int> M (25, 2);
-    M[6]=0;
-    M[7]=0;
-    M[11]=0;
-    M[12]=0;
-    M[16]=0;
-    M[17]=0;
-    M[0]=1;
-    print(M);
-    if(!check4(M, {{1,2}, {21, 22}})){
-        printf("Can't\n");
-    }
-
-    return 0;
 }
+
+// int main(){
+//     vector<int> M (25, 2);
+//     M[22]=1;
+//     M[23]=1;
+//     M[24]=1;
+//     M[9]=1;
+//     M[4]=1;
+//     print(M);
+//     if(newcheck2(M, 1)){
+//         printf("win\n");
+//     } else {
+//         printf("loose\n");
+//     }
+
+//     return 0;
+// }
 
