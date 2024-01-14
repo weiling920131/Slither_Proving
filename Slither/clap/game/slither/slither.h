@@ -29,9 +29,9 @@ class SlitherState final : public State {
   bool test_action_bool(std::vector<Action>, std::vector<std::vector<Action>>&,Player) override;
   std::vector<std::vector<Action>> test_action(std::vector<Action>, std::vector<std::vector<Action>>&,Player) override;
   bool test_board(std::vector<Action>);
-  void slicer(std::vector<std::vector<Action>>) override;
   int test_generate(std::vector<Action>, int, int) override;
   std::vector<int> getboard() override;
+  std::vector<std::vector<int>> get_critical(std::vector<std::vector<int>>);
   // 11/7 modified
   //whp
   void generate_WP() override;

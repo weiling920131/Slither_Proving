@@ -24,7 +24,6 @@ PYBIND11_MODULE(game, m) {  // NOLINT
       .def("test_action", &State::test_action)
       .def("test_action_bool", &State::test_action_bool)
       .def("test_board", &State::test_board)
-      .def("slicer", &State::slicer)
     // 11/7 modified
     //whp
       .def("check_diag", &State::check_diag)
@@ -36,6 +35,7 @@ PYBIND11_MODULE(game, m) {  // NOLINT
       .def("DFS_noBlock", &State::DFS_noBlock)
       .def("get_noBlock", &State::get_noBlock)
       .def("getboard", &State::getboard)
+      .def("get_critical", &State::get_critical)
     //whp
       .def("is_terminal", &State::is_terminal)
       .def("get_winner", &State::get_winner)

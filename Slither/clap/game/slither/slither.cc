@@ -5,6 +5,7 @@
 #include <sstream>
 #include <stack>
 #include <iostream>
+#include <set>
 #include <string>
 #include <fstream>
 #include <stdio.h>
@@ -189,6 +190,94 @@ void SlitherState::manual_action(const Action &action, Player p) {
 
 // 11/7 modified
 
+std::vector<std::vector<int>> SlitherState::get_critical(std::vector<std::vector<int>> pathes) {
+	std::vector<std::vector<int>> pathes_1, pathes_2, all_critical, all_pathes;
+	for(auto& path: pathes){
+		if(path.size() == 1) pathes_1.push_back(path);
+		else if(path.size() == 2) pathes_2.push_back(path);
+	}
+
+	// CLI_agent.py Line: 259 - 287
+	if(pathes_2.size()){
+		// CLI_agent.py Line: 260 - 261
+		std::stack<std::pair<std::set<int> ,int>> s;
+		std::set<int> emp;
+		s.push(std::make_pair(emp, 0));
+		while(!s.empty()){
+			std::set<int> combination = s.top().first;
+			int ind = s.top().second;
+			s.pop();
+			if(ind == pathes_2.size()) {
+				all_critical.push_back(std::vector<int>(combination.begin(), combination.end()));
+				continue;
+			}
+			for(auto &point: pathes_2[ind]){
+				std::set<int> tmp = combination;
+				tmp.insert(point);
+				s.push(std::make_pair(tmp, ind+1));
+			}
+		}
+
+		// CLI_agent.py Line: 263 - 268
+		int max_length = 0;
+		for(int i = 0;i<all_critical.size();i++){
+			for(auto& point: pathes_1){
+				if(std::find(all_critical[i].begin(), all_critical[i].end(), point[0]) == all_critical[i].end()){
+					all_critical[i].push_back(point[0]);
+				}
+			}
+			if(max_length < all_critical[i].size()) max_length = all_critical[i].size();
+		}
+
+		// CLI_agent.py Line: 269 - 271
+		std::vector<std::set<std::set<int>>> pathes_n;
+		for(int i = 1;i<max_length+1;i++){
+			std::set<std::set<int>> tmp;
+			for(auto& j:all_critical){
+				if(j.size() == i){
+					std::set<int> tmp_j(j.begin(), j.end());
+					tmp.insert(tmp_j);
+				}
+			}
+			pathes_n.push_back(tmp);
+		}
+
+		// CLI_agent.py Line: 273 - 278
+		for(int i =0;i<max_length-1;i++){
+			for(int j = i+1;j<max_length;j++){
+				for(auto& setb: pathes_n[i]){
+					std::set<std::set<int>> tmp_pathes_j(pathes_n[j].begin(), pathes_n[j].end());
+					for(auto& seta: tmp_pathes_j){
+						if(std::includes(seta.begin(), seta.end(), setb.begin(), setb.end())) {	// b is a subset of a
+							pathes_n[j].erase(seta);
+						}
+					}
+				}
+			}
+		}
+
+		// CLI_agent.py Line: 280 - 283
+		for(auto& path_n: pathes_n) {
+			if(path_n.size() > 0) {
+				for(auto& p: path_n) {
+					std::vector<int> tmp_p(p.begin(), p.end());
+					all_pathes.push_back(tmp_p);
+				}
+			}
+		}
+
+	}
+	// CLI_agent.py Line: 285 - 287
+	else {
+		for(auto& p: pathes_1) {
+			std::vector<int> tmp_p(p.begin(), p.end());
+			all_pathes.push_back(tmp_p);
+		}
+	}
+
+	return all_pathes;
+}
+
 std::vector<int> SlitherState::getboard() {
 	std::vector<int> board(25);
 	for(int i=0;i<25;i++) board[i] = board_[i];
@@ -224,6 +313,9 @@ bool SlitherState::test_action_bool(std::vector<Action> path, std::vector<std::v
 	int cur_turn = path.size();
 	// std::cout << cur_turn << '\n';
 	if(cur_turn == 3) {
+		// for (auto& p: path) {
+		// 	std::cout << p << ' ';
+		// } std::cout << winner_ << '\n';
 		if(winner_ != -1) {
 			// path.push_back(winner_);
 			// pathes.push_back(path);
@@ -254,6 +346,8 @@ bool SlitherState::test_board(std::vector<Action> board) {
 
 	std::vector<Action> path;
 	std::vector<std::vector<Action>> pathes;
+	for (auto a: cur_state.legal_actions())
+		std::cout << a << ' ';
 	return cur_state.test_action_bool(path, pathes, BLACK);
 }
 
@@ -332,10 +426,6 @@ bool SlitherState::check_blocked(std::vector<int> M, std::vector<std::vector<int
     return blocked;
 }
 
-void SlitherState::slicer(std::vector<std::vector<Action>> M){
-
-}
-
 std::vector<std::vector<int>> SlitherState::match_WP(){
 	std::vector<int> M = getboard();
 	int num = 0;
@@ -359,7 +449,7 @@ std::vector<std::vector<int>> SlitherState::match_WP(){
 			std::vector<int> miss_points;
 			std::vector<int> wp;
 			while (std::getline(ss, point, ' ')) {
-				if(M[std::stoi(point)]!=0){
+				if(M[std::stoi(point)]==2){
 					// std::cout << point << "\n";
 					if(miss_two) 
 					{
@@ -373,6 +463,8 @@ std::vector<std::vector<int>> SlitherState::match_WP(){
 						miss_one = true;
 						miss_points.push_back(std::stoi(point));
 					}
+				} else if (M[std::stoi(point)]==1) {
+					is_wp = false;
 				} else{
 					wp.push_back(std::stoi(point));
 				}

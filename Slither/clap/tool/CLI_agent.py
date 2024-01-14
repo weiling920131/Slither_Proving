@@ -72,7 +72,7 @@ class CLI_agent:
 
     def printBoard(self, board=[]):
         path = self.state.match_WP()
-        CPs = self.get_critical(path)
+        CPs = self.state.get_critical(path)
         print(CPs)
         print("=")
         print(self.state.printBoard(board, CPs))
@@ -251,50 +251,51 @@ class CLI_agent:
 
     #     return pathes
 
-    def get_critical(self, pathes):
-        pathes_1 = [ i for i in pathes if len(i) == 1]
-        pathes_2 = [ i for i in pathes if len(i) == 2]
-        all_critical = []
-        all_pathes = []
-        if len(pathes_2) > 0:
-            for s in list(product(*pathes_2)):
-                all_critical.append(list(set(s)))   # 組內
+    # def get_critical(self, pathes):
+    #     pathes_1 = [ i for i in pathes if len(i) == 1]
+    #     pathes_2 = [ i for i in pathes if len(i) == 2]
+    #     all_critical = []
+    #     all_pathes = []
+    #     if len(pathes_2) > 0:
+    #         for s in list(product(*pathes_2)):
+    #             all_critical.append(list(set(s)))   # 組內
 
-            for i in range(len(all_critical)):
-                for j in pathes_1:
-                    if j[0] not in all_critical[i]:
-                        all_critical[i].append(j[0])
+    #         for i in range(len(all_critical)):
+    #             for j in pathes_1:
+    #                 if j[0] not in all_critical[i]:
+    #                     all_critical[i].append(j[0])
                         
-            max_length = max(len(lst) for lst in all_critical)
-            pathes_n = []
-            for i in range(1, max_length+1):
-                pathes_n.append({ tuple(j) for j in all_critical if len(j) == i})
+    #         max_length = max(len(lst) for lst in all_critical)
+    #         pathes_n = []
+    #         for i in range(1, max_length+1):
+    #             pathes_n.append({ tuple(j) for j in all_critical if len(j) == i})
 
-            for i in range(0, max_length-1):
-                for j in range(i+1, max_length):
-                    for setb in pathes_n[i]:
-                        for seta in pathes_n[j].copy():
-                            if set(setb).issubset(set(seta)):
-                                pathes_n[j].remove(seta)
+    #         for i in range(0, max_length-1):
+    #             for j in range(i+1, max_length):
+    #                 for setb in pathes_n[i]:
+    #                     for seta in pathes_n[j].copy():
+    #                         if set(setb).issubset(set(seta)):
+    #                             pathes_n[j].remove(seta)
 
-            for path_n in pathes_n:
-                if len(path_n) > 0:
-                    for p in path_n:
-                        all_pathes.append(list(p))
+    #         for path_n in pathes_n:
+    #             if len(path_n) > 0:
+    #                 for p in path_n:
+    #                     all_pathes.append(list(p))
 
-        else:
-            for i in pathes_1:
-                all_pathes.append(i)
+    #     else:
+    #         for i in pathes_1:
+    #             all_pathes.append(i)
 
-        return all_pathes
+    #     return all_pathes
             
 
     def test_action(self, input_string: str):
         player = int(input_string[input_string.find("test_action") + len("test_action") + 1])
         path = []
         pathes = []
-        pathes = self.state.test_action(path, pathes, player)
-        return pathes
+        # pathes = self.state.test_action(path, pathes, player)
+        # return pathes
+        return self.state.test_action_bool(path, pathes, player)
 
     # whp
     def test_generate(self, input_string: str):
@@ -329,7 +330,7 @@ class CLI_agent:
                 for point in line.strip().split():
                     self.play_manual('play_manual 0 X X '+self.game.action_to_string(int(point)))
                 
-                CPs = self.get_critical(self.state.match_WP())
+                CPs = self.state.get_critical(self.state.match_WP())
 
                 rlt = "("
                 board = self.state.getboard()
@@ -387,45 +388,7 @@ class CLI_agent:
             print(f"Saved as test_prune/{i}.sgf")
             print(f"Avg: {white_noBlock} / {white_all} = {white_noBlock / white_all}")
             file.close()
-
-    # def save_noblock(self, file_name="noblock.sgf"):
-    #     boards = self.state.get_noBlock()
-    #     if len(boards) < 1:
-    #         print("Error: No board")
-    #         return
-    #     print(f"Number of Branchs: {len(boards)}")
-
-    #     posInt2Char=lambda p: chr(int(p)-1+ord('A'))
-    #     rlt="(;GM[511]"
-
-    #     color = 0  # BLACK
-    #     board = boards[0]
-    #     for i in range(len(board)):
-    #         if board[i] == color:
-    #             piece = self.game.action_to_string(i)
-    #             rlt += ";B"
-    #             rlt += f"[{piece[0]}{posInt2Char(piece[1])}]"
-
-    #     color = 1  # WHITE
-    #     for board in boards:
-    #         rlt += "("
-    #         for i in range(len(board)):
-    #             if board[i] == color:
-    #                 piece = self.game.action_to_string(i)
-    #                 rlt += ";W"
-    #                 rlt += f"[{piece[0]}{posInt2Char(piece[1])}]"
-    #         rlt += ")"
-
-    #     rlt += ")"
-
-    #     with open(file_name, "w") as output:
-    #         output.write(rlt)
-    #     print(f"Saved noblock as {file_name}")
-
     # whp
-    def slicer(self):
-        # print(self.test_action("test_action 1"))
-        self.state.slicer(self.get_critical(self.test_action("test_action 1")))
 
     def loop(self):
         cnt = 0
@@ -455,6 +418,10 @@ class CLI_agent:
 
             elif "showcritical" in string or "sc" in string:
                 self.printBoard()
+
+            elif "tb" in string:
+                b = [0, 0, 0, 0, 1, 1, 0, 2, 2, 2, 1, 0, 1, 0, 0, 2, 2, 2, 2, 1, 1, 1, 0, 1, 1]
+                print(self.state.test_board(b))
                 
             elif "clear" in string or 'reset' in string:
                 self.clear()
@@ -463,9 +430,6 @@ class CLI_agent:
             elif "test_generate" in string:
                 self.test_generate(string)
                 break
-
-            elif "slicer" in string:
-                self.slicer()
 
             elif "genmove" in string or "gen" in string:
                 if len(string.split()) > 1:
@@ -514,14 +478,12 @@ class CLI_agent:
                         os.unlink(path)
             # 11/7 modified
             elif "test_action" in string:
-                # print(self.get_critical(self.test_action(string)))
-                pass
+                print(self.test_action(string))
+                
             elif "test_prune" in string:
                 self.test_prune()
             # 11/7 modified
             # whp
-            # elif "no block" in string or "nb" in string:
-            #     self.save_noblock()
 
             end = time.time()
             print("Command '{}' use".format(string), (end - start), "seconds")                
