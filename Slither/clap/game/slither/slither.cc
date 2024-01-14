@@ -370,7 +370,7 @@ bool SlitherState::check_redundent(std::vector<int> M, int num){
 }
 
 //check win
-bool check_win(std::vector<int> M, int color){
+bool SlitherState::check_win(std::vector<int> M, int color){
     std::vector<bool> m(25, false);
     for(int i=0;i<20;i++){
         if(i<5&&M[i]==color) m[i]=true;
@@ -830,7 +830,7 @@ int SlitherState::test_generate(std::vector<Action> path, int chess_num, int col
 		// std::cout<<'\n';
 		std::vector<std::vector<Action>> pathes = {};
 		if(cur_state.test_action(path, pathes, color).size() >= 1){
-			if(cur_state.check_win(cur_state.getboard())) continue;
+			if(cur_state.check_win(cur_state.getboard(), 0)) continue;
 			pruning_num++;
 			std::vector<int> curBlack;
 			// std::cout<<"\n==================\n";
