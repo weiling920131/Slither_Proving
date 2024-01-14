@@ -354,7 +354,7 @@ class CLI_agent:
 
                 black_num = board.count(0)
                 all_num = 0
-                all_num = self.state.DFS_noBlock(board, black_num, 0, black_num, CPs, all_num)
+                all_num = self.state.DFS_noBlock(board, black_num - 1, 0, black_num, CPs, all_num)
                 boards = self.state.get_noBlock()
                 # cnt = 0
                 for b in boards:

@@ -281,11 +281,7 @@ std::vector<std::vector<int>> SlitherState::get_critical(std::vector<std::vector
 std::vector<int> SlitherState::getboard() {
 	std::vector<int> board(25);//1 2 0 0 1 2
 	for(int i=0;i<25;i++) {
-		if(board_[i] == 0) board[i] = 1;
-		else if(board_[i] == 1) board[i] = 2;
-		else{
-			board[i] = 0;
-		}
+		board[i] = board_[i];
 	}
 	return board;
 }
@@ -685,7 +681,7 @@ int SlitherState::DFS_noBlock(std::vector<int> &M, int cnt, int max, int num, st
     if(cnt<=0){
         if(check_diag(M, 1)){
 			board_num++;
-			if(!check_blocked(M, CPs)){
+			if(!check_blocked(M, CPs) && !check_win(M, 1)){
 				// print(M);
 				noBlock.push_back(M);
 			}
