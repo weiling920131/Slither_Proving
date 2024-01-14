@@ -25,16 +25,15 @@ class SlitherState final : public State {
   StatePtr clone() const override;
   void apply_action(const Action &) override;
   void manual_action(const Action &, Player) override;
-  // 11/7 modified
   bool test_action_bool(std::vector<Action>, std::vector<std::vector<Action>>&,Player) override;
   std::vector<std::vector<Action>> test_action(std::vector<Action>, std::vector<std::vector<Action>>&,Player) override;
   bool test_board(std::vector<Action>);
   int test_generate(std::vector<Action>, int, int) override;
   std::vector<int> getboard() override;
   std::vector<std::vector<int>> get_critical(std::vector<std::vector<int>>);
-  // 11/7 modified
-  //whp
-  void generate_WP() override;
+  // void generate_WP() override;
+  bool check_can_block() override;
+
   std::vector<std::vector<int>> match_WP();
   int DFS_noBlock(std::vector<int> &M, int cnt, int max, int num, std::vector<std::vector<int>>CPs, int&) override;
   std::vector<std::vector<int>> get_noBlock();
@@ -62,7 +61,6 @@ class SlitherState final : public State {
   bool check_redundent(std::vector<int> M, int num);
   std::pair<int, int> *check_win(std::vector<int> M);
   bool check_blocked(std::vector<int> M, std::vector<std::vector<int>>CPs);
-  bool check_can_block(std::vector<int> M, std::vector<std::vector<int>>CPs);
   bool check_move(std::vector<int> M, int pos, int w);
   void DFS_WP(std::vector<int> &M, int cnt, int max, int num);
   std::vector<std::vector<std::vector<int>>> W;

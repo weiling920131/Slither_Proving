@@ -388,7 +388,12 @@ class CLI_agent:
             print(f"Saved as test_prune/{i}.sgf")
             print(f"Avg: {white_noBlock} / {white_all} = {white_noBlock / white_all}")
             file.close()
-    # whp
+
+    def test_white_blockable(self):
+        if(self.state.check_can_block()):
+            print("can block")
+        else :
+            print("can't block")
 
     def loop(self):
         cnt = 0
@@ -476,14 +481,13 @@ class CLI_agent:
                     self.load_manual(Path(path))
                     if is_tfile:
                         os.unlink(path)
-            # 11/7 modified
             elif "test_action" in string:
                 print(self.test_action(string))
                 
             elif "test_prune" in string:
                 self.test_prune()
-            # 11/7 modified
-            # whp
+            elif "test_white_block" in string or "tw" in string:
+                self.test_white_blockable()
 
             end = time.time()
             print("Command '{}' use".format(string), (end - start), "seconds")                

@@ -453,8 +453,10 @@ bool SlitherState::check_move(std::vector<int> M, int pos, int w){
     return false;   
 }
 
-bool SlitherState::check_can_block(std::vector<int> M, std::vector<std::vector<int>> pos){
-    std::vector<int> dir = {-5, -1, 1, 5, -6, -4,  4, 6};
+bool SlitherState::check_can_block(){
+    std::vector<int> M = getboard();
+	std::vector<std::vector<int>> pos = get_critical(match_WP());
+	std::vector<int> dir = {-5, -1, 1, 5, -6, -4,  4, 6};
     for(int j=0;j<pos.size();j++){
         if(pos[j].size()>=3){
             continue;
@@ -761,23 +763,23 @@ void SlitherState::DFS_WP(std::vector<int> &M, int cnt, int max, int num){
     }
 }
 
-void SlitherState::generate_WP(){
-	std::vector<int> M (25, 0);
-    for(int i=5;i<=10;i++){
-		std::string filename = "winning_path/"+std::to_string(i)+".txt";
-        DFS_WP(M, i, 0, i);
-		std::ofstream file;
-		file.open(filename);
-		for(int j=0;j<W[i].size();j++){
-			for(int k=0;k<W[i][j].size();k++){
-				file << W[i][j][k] << " ";
-			}
-			file << "\n";
-		}
-		file.close();
-    }
+// void SlitherState::generate_WP(){
+// 	std::vector<int> M (25, 0);
+//     for(int i=5;i<=10;i++){
+// 		std::string filename = "winning_path/"+std::to_string(i)+".txt";
+//         DFS_WP(M, i, 0, i);
+// 		std::ofstream file;
+// 		file.open(filename);
+// 		for(int j=0;j<W[i].size();j++){
+// 			for(int k=0;k<W[i][j].size();k++){
+// 				file << W[i][j][k] << " ";
+// 			}
+// 			file << "\n";
+// 		}
+// 		file.close();
+//     }
 	
-}
+// }
 
 std::vector<std::vector<int>> SlitherState::generate(int cnt){
 	std::vector<std::vector<int>> MM;
