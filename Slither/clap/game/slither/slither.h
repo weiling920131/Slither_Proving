@@ -62,6 +62,8 @@ class SlitherState final : public State {
   bool check_redundent(std::vector<int> M, int num);
   std::pair<int, int> *check_win(std::vector<int> M);
   bool check_blocked(std::vector<int> M, std::vector<std::vector<int>>CPs);
+  bool check_can_block(std::vector<int> M, std::vector<std::vector<int>>CPs);
+  bool check_move(std::vector<int> M, int pos, int w);
   void DFS_WP(std::vector<int> &M, int cnt, int max, int num);
   std::vector<std::vector<std::vector<int>>> W;
   std::vector<std::vector<std::vector<std::vector<std::vector<int>>>>> W_ht;
