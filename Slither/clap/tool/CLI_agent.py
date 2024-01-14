@@ -300,8 +300,8 @@ class CLI_agent:
     # whp
     def test_generate(self, input_string: str):
         print("begin")
-        chess_num = int(input_string[input_string.find("test_generate") + len("test_generate") + 1])
-        for i in range(5,11):
+        # chess_num = int(input_string[input_string.find("test_generate") + len("test_generate") + 1])
+        for i in range(6, 10):
             self.state.test_generate([], i, 0)
         # self.state.generate_WP()
         print("done")

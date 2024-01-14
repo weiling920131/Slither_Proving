@@ -279,8 +279,14 @@ std::vector<std::vector<int>> SlitherState::get_critical(std::vector<std::vector
 }
 
 std::vector<int> SlitherState::getboard() {
-	std::vector<int> board(25);
-	for(int i=0;i<25;i++) board[i] = board_[i];
+	std::vector<int> board(25);//1 2 0 0 1 2
+	for(int i=0;i<25;i++) {
+		if(board_[i] == 0) board[i] = 1;
+		else if(board_[i] == 1) board[i] = 2;
+		else{
+			board[i] = 0;
+		}
+	}
 	return board;
 }
 
@@ -766,8 +772,8 @@ void SlitherState::DFS_WP(std::vector<int> &M, int cnt, int max, int num){
             for(int i=0;i<25;i++){
                 if(M[i]) w.push_back(i);
             }
-            W[num].push_back(w);
-            W_ht[num][p->first][p->second].push_back(w);
+            // W[num].push_back(w);
+            // W_ht[num][p->first][p->second].push_back(w);
             return;
         }
     }else{
@@ -809,7 +815,7 @@ std::vector<std::vector<int>> SlitherState::generate(int cnt){
 }
 
 int SlitherState::test_generate(std::vector<Action> path, int chess_num, int color){
-	std::cout<<"generating"<<chess_num << "\n";
+	std::cout<<"generating "<<chess_num << "\n";
 	std::string filename = "checkmate/checkmate_"+std::to_string(chess_num)+".txt";
 	std::ofstream file;
 	file.open(filename);
@@ -821,10 +827,18 @@ int SlitherState::test_generate(std::vector<Action> path, int chess_num, int col
 		for(int i=0;i<5;i++){
 			for(int j=0;j<5;j++){
 				cur_state.board_[5*i+j] = m[i*5+j];
+				// std::cout << m[i*5+j]<<' ';
 			}
+			// std::cout<<'\n';
 		}
+		// std::cout<<'\n';
 		std::vector<std::vector<Action>> pathes = {};
 		if(cur_state.test_action(path, pathes, color).size() >= 1){
+			// std::cout << "test_action\n";
+			auto p = cur_state.check_win(cur_state.getboard());
+			if(p != NULL) continue;
+			// else std::cout<<p->first<<' '<<p->second<<'\n';
+			// std::cout<<"check_win\n";
 			pruning_num++;
 			std::vector<int> curBlack;
 			// std::cout<<"\n==================\n";
@@ -832,15 +846,16 @@ int SlitherState::test_generate(std::vector<Action> path, int chess_num, int col
 				// std::cout << 5-i << " ";
 				for(int j=0;j<5;j++){
 					if(cur_state.board_[i * 5 + j]==0) {
-						curBlack.push_back(i*5+j);
-						// file << i * 5 + j << " ";  checkmate
-						file << "X ";
-					} else {
-						file << ". ";
-					}
+						// curBlack.push_back(i*5+j);
+						file << i * 5 + j << " ";  // checkmate
+						// file << "X ";
+					} 
+					// else {
+					// 	file << ". ";
+					// }
 					// std::cout << change[cur_state.board_[i * 5 + j]] <<' ';
 				}
-				file << "\n";
+				// file << "\n";
 				// std::cout<<'\n';
 			}
 			// std::cout << "  A B C D E\n";
