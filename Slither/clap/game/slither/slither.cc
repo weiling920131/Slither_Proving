@@ -432,6 +432,102 @@ bool SlitherState::check_blocked(std::vector<int> M, std::vector<std::vector<int
     return blocked;
 }
 
+bool SlitherState::check_move(std::vector<int> M, int pos, int w){
+    std::vector<int> dir = {-5, -1, 1, 5, -6, -4,  4, 6};
+    //移動到place
+    for(int i=0;i<8;i++){
+        if(M[pos+dir[i]]==1&&pos+dir[i]!=w){
+            M[pos+dir[i]] = 2;
+            M[pos] = 1;
+            if(check_diag(M, 1)){
+                printf("%d -> %d\n", pos+dir[i], pos);
+                return true;
+            }
+            M[pos+dir[i]] = 1;
+            M[pos] = 2;
+        }
+    }
+    //移動在下place
+    if(w!=-1) return false;
+    M[pos] = 1;
+    for(int i=0;i<4;i++){
+        if(M[pos+dir[i]]==2){
+            if(check_move(M, pos+dir[i], pos)) return true;
+        }
+    }
+    
+    return false;   
+}
+
+bool SlitherState::check_can_block(){
+    std::vector<int> M = getboard();
+	std::vector<std::vector<int>> pos = get_critical(match_WP());
+	std::vector<int> dir = {-5, -1, 1, 5, -6, -4,  4, 6};
+    for(int j=0;j<pos.size();j++){
+        if(pos[j].size()>=3){
+            continue;
+        }
+        bool b = false;
+        bool moved = false;
+        if(!check_move(M, pos[j][0], -1)){ //無法移動到pos
+            M[pos[j][0]] = 1; //移動加下
+            for(int i=0;i<4;i++){ //相鄰四格哪一格是空
+                if(M[pos[j][0]+dir[i]]==2){
+                    if(check_move(M, pos[j][0]+dir[i], pos[j][0])) {
+                        if(pos[j].size()==1) return true; //只有1顆
+                        else { //兩顆
+                            b = true;
+                            moved = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }else{
+            if(pos[j].size()==1) return true; // 可以移動到pos
+            else{
+                b = true;
+                moved = true;
+            }
+        }
+        if(!b){ //直接用下的
+            M[pos[j][0]] = 1;
+            if(check_diag(M, 1)) {
+                printf("place %d\n", pos[j][0]);
+                if(pos[j].size()==1) return true; //只有1顆
+                else b = true;
+            }else{ //這個critical point沒法檔
+                M[pos[j][0]] = 2;
+                break;
+            }
+        }
+      
+        if(moved){ //移動過直接用下的
+            M[pos[j][1]] = 1;
+            if(check_diag(M, 1)) {
+                printf("place %d\n", pos[j][0]);
+                return true; 
+            }else{ //這個critical point沒法檔
+                M[pos[j][1]] = 2;
+                break;
+            }
+        }
+        if(!check_move(M, pos[j][1], -1)){ //無法移動到pos
+            M[pos[j][1]] = 1; //移動加下
+            for(int i=0;i<4;i++){ //相鄰四格哪一格是空
+                if(M[pos[j][0]+dir[i]]==2){
+                    if(check_move(M, pos[j][1]+dir[i], pos[j][1])) {
+                        return true;
+                    }
+                }
+            }
+        }else{
+            return true; // 可以移動到pos
+        }
+    }
+    return false;
+}
+
 std::vector<std::vector<int>> SlitherState::match_WP(){
 	std::vector<int> M = getboard();
 	int num = 0;
@@ -673,23 +769,23 @@ void SlitherState::DFS_WP(std::vector<int> &M, int cnt, int max, int num){
     }
 }
 
-void SlitherState::generate_WP(){
-	std::vector<int> M (25, 0);
-    for(int i=5;i<=10;i++){
-		std::string filename = "winning_path/"+std::to_string(i)+".txt";
-        DFS_WP(M, i, 0, i);
-		std::ofstream file;
-		file.open(filename);
-		for(int j=0;j<W[i].size();j++){
-			for(int k=0;k<W[i][j].size();k++){
-				file << W[i][j][k] << " ";
-			}
-			file << "\n";
-		}
-		file.close();
-    }
+// void SlitherState::generate_WP(){
+// 	std::vector<int> M (25, 0);
+//     for(int i=5;i<=10;i++){
+// 		std::string filename = "winning_path/"+std::to_string(i)+".txt";
+//         DFS_WP(M, i, 0, i);
+// 		std::ofstream file;
+// 		file.open(filename);
+// 		for(int j=0;j<W[i].size();j++){
+// 			for(int k=0;k<W[i][j].size();k++){
+// 				file << W[i][j][k] << " ";
+// 			}
+// 			file << "\n";
+// 		}
+// 		file.close();
+//     }
 	
-}
+// }
 
 std::vector<std::vector<int>> SlitherState::generate(int cnt){
 	std::vector<std::vector<int>> MM;
