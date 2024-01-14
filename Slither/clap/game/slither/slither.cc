@@ -366,35 +366,55 @@ bool SlitherState::check_redundent(std::vector<int> M, int num){
     }
     return true;
 }
+
 //check win
-std::pair<int, int> * SlitherState::check_win(std::vector<int> M){
-    std::pair<int, int> *p = new std::pair<int, int>;
-	int head, tail;
-	for(int i=0;i<20;i++){
-        if(M[i]==i/5+1&&M[i+5]) {
-			if(i<5) head = i;
-            M[i+5] = (i+5)/5+1;
-            if(i<15){
-                for(int j=1;j+i%5<=4;j++){
-                    if(M[i+5+j]) M[i+5+j] = (i+5)/5+1;
-                    else break;
-                }
-                for(int j=1;i%5-j>=0;j++){
-                    if(M[i+5-j]) M[i+5-j] = (i+5)/5+1;
-                    else break;
-                }
+bool check_win(std::vector<int> M, int color){
+    std::vector<bool> m(25, false);
+    for(int i=0;i<20;i++){
+        if(i<5&&M[i]==color) m[i]=true;
+        if(m[i]==true) {
+            if(M[i+5]==color&&m[i+5]==false){
+                m[i+5]=true;
+                if(i%5!=0&&M[i+4]==color&&m[i+4]==false) m[i+4]==true;
+                if(i%5!=4&&M[i+6]==color&&m[i+6]==false) m[i+6]==true;
             }
-        }       
-    }
-    for(int i=20;i<25;i++){
-        if(M[i]==5) {
-            tail = i%5;
-            *p=std::make_pair(head, tail);
-            return p;
         }
     }
-    return NULL;
+    for(int i=20;i<25;i++){
+        if(m[i]) return true;
+    }
+    return false;
 }
+
+// std::pair<int, int> * SlitherState::check_win(std::vector<int> M){
+//     std::pair<int, int> *p = new std::pair<int, int>;
+// 	int head, tail;
+// 	for(int i=0;i<20;i++){
+//         if(M[i]==i/5+1&&M[i+5]) {
+// 			if(i<5) head = i;
+//             M[i+5] = (i+5)/5+1;
+//             if(i<15){
+//                 for(int j=1;j+i%5<=4;j++){
+//                     if(M[i+5+j]) M[i+5+j] = (i+5)/5+1;
+//                     else break;
+//                 }
+//                 for(int j=1;i%5-j>=0;j++){
+//                     if(M[i+5-j]) M[i+5-j] = (i+5)/5+1;
+//                     else break;
+//                 }
+//             }
+//         }       
+//     }
+//     for(int i=20;i<25;i++){
+//         if(M[i]==5) {
+//             tail = i%5;
+//             *p=std::make_pair(head, tail);
+//             return p;
+//         }
+//     }
+//     return NULL;
+// }
+
 
 // check diag
 bool SlitherState::check_diag(std::vector<int> M, int color){
@@ -741,8 +761,7 @@ void SlitherState::generate_all(std::vector<std::vector<int>> &MM, std::vector<i
 void SlitherState::DFS_WP(std::vector<int> &M, int cnt, int max, int num){
     // cout << "cnt: " << cnt << "\n";
     if(cnt<=0){
-		std::pair<int, int> *p = check_win(M);
-        if(check_diag(M, 1)&&p&&check_redundent(M, num)){
+        if(check_diag(M, 1)&&check_win(M, 1)&&check_redundent(M, num)){
             std::vector<int> w;
             for(int i=0;i<25;i++){
                 if(M[i]) w.push_back(i);
