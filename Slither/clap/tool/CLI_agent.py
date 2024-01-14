@@ -310,17 +310,18 @@ class CLI_agent:
     def test_prune(self):
         posInt2Char=lambda p: chr(int(p)-1+ord('A'))
 
-        for i in range(4, 11):
-            file = open('./checkmate/'+str(i)+'.txt')
+
+        for i in range(4, 5):
+            output = open(f"./test_prune/result_{i}.txt", "w")
+            file = open('./checkmate/'+'checkmate_'+str(i)+'.txt')
             lines = file.readlines()
             cnt = 1
             white_noBlock = 0
             white_all = 0
 
             print(i)
-            output = open(f"./test_prune/{i}.sgf", "w")
 
-            output.write("(;GM[511]")
+            # output.write("(;GM[511]")
 
             for line in lines:
                 # if cnt >= 210:
@@ -350,7 +351,7 @@ class CLI_agent:
                     rlt += "} "
                 rlt += "]"
 
-                output.write(rlt)
+                # output.write(rlt)
 
                 black_num = board.count(0)
                 all_num = 0
@@ -370,24 +371,26 @@ class CLI_agent:
                         rlt += ";C[black not win]"
                         print("black not win")
                         print(self.state.printBoard(b, []))
+                        output.write(self.state.printBoard(b, []))
                         break
                     else:
                         rlt += ";C[black win]"
                     rlt += ")"
-                    output.write(rlt)
+                    # output.write(rlt)
 
-                output.write(")")
+                # output.write(")")
                 print(f"{cnt}: {len(boards)} / {all_num} = {len(boards) / all_num}") 
                 cnt += 1
                 white_noBlock += len(boards)
                 white_all += all_num
             
-            output.write(")")
-            output.close()
+            # output.write(")")
 
-            print(f"Saved as test_prune/{i}.sgf")
+            # print(f"Saved as test_prune/{i}.sgf")
             print(f"Avg: {white_noBlock} / {white_all} = {white_noBlock / white_all}")
+            output.write(f"{i}: {white_noBlock} / {white_all} = {white_noBlock / white_all}")
             file.close()
+            output.close()
 
     def test_white_blockable(self):
         if(self.state.check_can_block()):

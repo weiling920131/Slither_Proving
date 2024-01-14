@@ -348,8 +348,8 @@ bool SlitherState::test_board(std::vector<Action> board) {
 
 	std::vector<Action> path;
 	std::vector<std::vector<Action>> pathes;
-	for (auto a: cur_state.legal_actions())
-		std::cout << a << ' ';
+	// for (auto a: cur_state.legal_actions())
+	// 	std::cout << a << ' ';
 	return cur_state.test_action_bool(path, pathes, BLACK);
 }
 
