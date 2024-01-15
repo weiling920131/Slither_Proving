@@ -475,8 +475,8 @@ bool SlitherState::check_move(std::vector<int> M, int pos, int w){
     return false;   
 }
 
-bool SlitherState::check_can_block(){
-    std::vector<int> M = getboard();
+bool SlitherState::check_can_block(std::vector<int> M){
+    // std::vector<int> M = getboard();
 	std::vector<std::vector<int>> pos = get_critical(match_WP());
 	std::vector<int> dir = {-5, -1, 1, 5, -6, -4,  4, 6};
     for(int j=0;j<pos.size();j++){

@@ -32,7 +32,7 @@ class SlitherState final : public State {
   std::vector<int> getboard() override;
   std::vector<std::vector<int>> get_critical(std::vector<std::vector<int>>);
   // void generate_WP() override;
-  bool check_can_block() override;
+  bool check_can_block(std::vector<int>) override;
 
   std::vector<std::vector<int>> match_WP();
   int DFS_noBlock(std::vector<int> &M, int cnt, int max, int num, std::vector<std::vector<int>>CPs, int&) override;
