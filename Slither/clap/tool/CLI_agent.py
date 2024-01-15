@@ -311,7 +311,7 @@ class CLI_agent:
         posInt2Char=lambda p: chr(int(p)-1+ord('A'))
 
 
-        for i in range(4, 5):
+        for i in range(7, 8):
             output = open(f"./test_prune/result_{i}.txt", "w")
             file = open('./checkmate/'+'checkmate_'+str(i)+'.txt')
             lines = file.readlines()
@@ -333,49 +333,49 @@ class CLI_agent:
                 
                 CPs = self.state.get_critical(self.state.match_WP())
 
-                rlt = "("
+                # rlt = "("
                 board = self.state.getboard()
-                for b in range(len(board)):
-                    if board[b] == 0:   # BLACK
-                        piece = self.game.action_to_string(b)
-                        rlt += ";B"
-                        rlt += f"[{piece[0]}{posInt2Char(piece[1])}]"
+                # for b in range(len(board)):
+                #     if board[b] == 0:   # BLACK
+                #         piece = self.game.action_to_string(b)
+                #         rlt += ";B"
+                #         rlt += f"[{piece[0]}{posInt2Char(piece[1])}]"
 
-                rlt += ";C["
-                for CP in CPs:
-                    rlt += "{"
-                    for c in range(len(CP)):
-                        if c != 0:
-                            rlt += " "
-                        rlt += self.game.action_to_string(CP[c])
-                    rlt += "} "
-                rlt += "]"
+                # rlt += ";C["
+                # for CP in CPs:
+                #     rlt += "{"
+                #     for c in range(len(CP)):
+                #         if c != 0:
+                #             rlt += " "
+                #         rlt += self.game.action_to_string(CP[c])
+                #     rlt += "} "
+                # rlt += "]"
 
                 # output.write(rlt)
 
                 black_num = board.count(0)
                 all_num = 0
-                all_num = self.state.DFS_noBlock(board, black_num - 1, 0, black_num, CPs, all_num)
+                all_num = self.state.DFS_noBlock(board, black_num, 0, black_num, CPs, all_num)
                 boards = self.state.get_noBlock()
                 # cnt = 0
                 for b in boards:
-                    rlt = "("
-                    for w in range(len(b)):
-                        if b[w] == 1:  # WHITE
-                            piece = self.game.action_to_string(w)
-                            rlt += ";W"
-                            rlt += f"[{piece[0]}{posInt2Char(piece[1])}]"
+                    # rlt = "("
+                    # for w in range(len(b)):
+                    #     if b[w] == 1:  # WHITE
+                    #         piece = self.game.action_to_string(w)
+                    #         rlt += ";W"
+                    #         rlt += f"[{piece[0]}{posInt2Char(piece[1])}]"
                     # print(cnt)
                     # cnt += 1
                     if not self.state.test_board(b):
-                        rlt += ";C[black not win]"
+                        # rlt += ";C[black not win]"
                         print("black not win")
                         print(self.state.printBoard(b, []))
                         output.write(self.state.printBoard(b, []))
                         break
-                    else:
-                        rlt += ";C[black win]"
-                    rlt += ")"
+                    # else:
+                    #     rlt += ";C[black win]"
+                    # rlt += ")"
                     # output.write(rlt)
 
                 # output.write(")")
