@@ -311,7 +311,7 @@ class CLI_agent:
         posInt2Char=lambda p: chr(int(p)-1+ord('A'))
 
 
-        for i in range(7, 8):
+        for i in range(8, 9):
             output = open(f"./test_prune/result_{i}.txt", "w")
             file = open('./checkmate/'+'checkmate_'+str(i)+'.txt')
             lines = file.readlines()
