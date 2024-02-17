@@ -451,8 +451,17 @@ bool SlitherState::check_blocked(std::vector<int> M, std::vector<std::vector<int
 bool SlitherState::check_move(std::vector<int> M, int pos, std::vector<int> w){
     std::vector<int> dir = {-5, -1, 1, 5, -6, -4,  4, 6};
     //移動到place
-
     for(int i=0;i<8;i++){
+		if(pos<5){
+			if(dir[i]==-5||dir[i]==-4||dir[i]==-6) continue;
+		} else if(pos>=20){
+			if(dir[i]==5||dir[i]==4||dir[i]==6) continue;
+		}
+		if(pos%5==0){
+			if(dir[i]==-1||dir[i]==-6||dir[i]==4) continue;
+		}else if(pos%5==4){
+			if(dir[i]==1||dir[i]==-4||dir[i]==6) continue;
+		}
 		bool b = false;
 		for(int j=0;j<w.size();j++){
 			if(pos+dir[i]==w[j]){
@@ -525,6 +534,16 @@ bool SlitherState::check_can_block(/*std::vector<int> M*/){
 			M[pos[j][0]] = 1;
 			blocked.push_back(pos[j][0]);
 			for(int d=0;d<4;d++){
+				if(pos[j][0]<5){
+					if(dir[d]==-5) continue;
+				} else if(pos[j][0]>=20){
+					if(dir[d]==5) continue;
+				}
+				if(pos[j][0]%5==0){
+					if(dir[d]==-1) continue;
+				}else if(pos[j][0]%5==4){
+					if(dir[d]==1) continue;
+				}
 				if(M[pos[j][0]+dir[d]]==2){
 					if(check_move(M, M[pos[j][0]+dir[d]], blocked)){
 						printf("move place %d\n", pos[j][0]);
