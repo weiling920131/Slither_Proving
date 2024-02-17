@@ -475,11 +475,7 @@ bool SlitherState::check_move(std::vector<int> M, int pos, int w){
     return false;   
 }
 
-<<<<<<< HEAD
-bool SlitherState::check_can_block(){
-=======
 bool SlitherState::check_can_block(/*std::vector<int> M*/){
->>>>>>> 1a0b341e82634d13ca7ee626cc7978a5de4edc42
     std::vector<int> M = getboard();
 	std::vector<std::vector<int>> pos = get_critical(match_WP());
 	std::vector<int> dir = {-5, -1, 1, 5};
@@ -521,7 +517,7 @@ bool SlitherState::check_can_block(/*std::vector<int> M*/){
 			M[pos[j][0]] = 1;
 			for(int d=0;d<4;d++){
 				if(M[pos[j][0]+dir[d]]==2){
-					if(check_move(M, [pos[j][0]+dir[d]], M[pos[j][0]])){
+					if(check_move(M, M[pos[j][0]+dir[d]], M[pos[j][0]])){
 						printf("move place %d\n", pos[j][0]);
 						return true;
 					}
