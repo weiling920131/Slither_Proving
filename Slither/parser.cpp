@@ -163,7 +163,7 @@ public:
 		std::ostringstream oss;
 		if (node != getRoot()) {
 			oss << ";" << getPlayerType(node->action_.getPlayer()) << "[" << actionIDToSGFString(node->action_.getActionID(),board_size_) << "]";
-			if (node->comment_ != "") oss << "C[" << node->comment_ << "]";
+			// if (node->comment_ != "") oss << "C[" << node->comment_ << "]";
 		}
 				
 		int num_children = 0; // 這邊是算有幾個兄弟姊妹(分枝)嗎?
@@ -209,13 +209,17 @@ public:
 					<< actionIDToSGFString(parent->action_.getActionID(),board_size_) 
 					<< actionIDToSGFString(node->action_.getActionID(),board_size_) 
 					<< "]";
-				oss << "C[" << parent->getComment() << node->getComment() << "]";
+				// oss << "C[" <<" Parent: " <<parent->getComment() <<" Node: "<< node->getComment() << "]";
+				oss << "C[" << node->getComment() << "]";
+				// oss << "C[" << node->getComment() << "]";
 				comment = "";
 			} else if (cnt_level % 3 == 0) {
 				//std::cerr<<node->action_.getActionID()<<" "<<board_size_<<std::endl;
 				oss << ";" << getPlayerType(node->action_.getPlayer()) 
 					<< "[" << actionIDToSGFString(node->action_.getActionID(),board_size_) << "]";
-				oss << "C[" << comment << node->getComment() << "]";
+				// oss << "C[" << comment << " Node: " << node->getComment() << "]";
+				oss << "C[" << node->getComment() << "]";
+				// oss << "C[" << node->getComment() << "]";
 				comment = "";
 			}
 		}
