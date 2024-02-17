@@ -66,14 +66,16 @@ void Job::PreOrderTraversalDump(std::ofstream& sgf_file_,
   } else {
     sgf_file_ << color[parent_state->current_player()] << "["
               << engine->game->action_to_string(last_action) << "]";
-    sgf_file_ << "\r\nC[Simulation Count: " << current_node.num_visits << "\r\n";
-    sgf_file_ << "MCTS Value: "
-              << current_node.parent_player_value_sum / current_node.num_visits
-              << "\r\n";
-    sgf_file_ << "Prior Probability: " << prior << "\r\n";
-    sgf_file_ << "MCTS Policy: "
-              << (float)current_node.num_visits / (parent_num_visits - 1)
-              << "\r\n]";
+    // sgf_file_ << "\r\nC[Simulation Count: " << current_node.num_visits << "\r\n";
+    // sgf_file_ << "MCTS Value: "
+    //           << current_node.parent_player_value_sum / current_node.num_visits
+    //           << "\r\n";
+    // sgf_file_ << "Prior Probability: " << prior << "\r\n";
+    // sgf_file_ << "MCTS Policy: "
+    //           << (float)current_node.num_visits / (parent_num_visits - 1)
+    //           << "\r\n]";
+    char label_char[] = "BWN";
+    sgf_file_ << "\r\nC[Label: " << label_char[current_node.label] << "\r\n]";
     current_state->apply_action(last_action);
   }
   bool hasBranch = 0;

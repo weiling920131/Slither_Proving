@@ -14,6 +14,7 @@ Node::Node()
     : num_visits(0),
       parent_player_value_sum(0.0F),
       current_player_value_sum(0.0F),
+      label(2),
       expand_state(State::UNEXPANDED) {}
 
 std::tuple<game::Action, Node*> Node::select(std::mt19937& rng) const {
@@ -30,6 +31,8 @@ std::tuple<game::Action, Node*> Node::select(std::mt19937& rng) const {
   const float DEFAULT_Q = current_player_value_sum / num_visits;
 
   for (const auto& [p, action, child] : children) {
+    if(child->label != 2) continue;
+
     const float q = child->num_visits != 0
                         ? child->parent_player_value_sum / child->num_visits
                         : DEFAULT_Q;
@@ -76,6 +79,7 @@ bool Node::acquire_expand() {
 void Node::expand_done() { expand_state.exchange(State::EXPANDED); }
 
 void Node::reset() {
+  label = 2;
   expand_state.exchange(State::UNEXPANDED);
   num_visits = 0;
   parent_player_value_sum = 0.0F;

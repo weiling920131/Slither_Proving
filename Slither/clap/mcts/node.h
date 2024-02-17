@@ -17,6 +17,11 @@ class Node {
 
   ~Node() = default;
 
+  int label;
+  // 2 no win
+  // 0 black win
+  // 1 white win
+
   int num_visits;
   float parent_player_value_sum;
   float current_player_value_sum;
