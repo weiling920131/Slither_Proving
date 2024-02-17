@@ -31,6 +31,7 @@ class Node {
   // 2 no win
   // 0 black win
   // 1 white win
+  int cur_player, pre_player;
   
   std::atomic <int> num_visits;
   std::atomic <float> parent_player_value_sum;
