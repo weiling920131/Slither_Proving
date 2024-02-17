@@ -44,11 +44,11 @@ void Job::select(std::mt19937& rng) {
       }
     }
 
-    if(previous_player == 0 && leaf_state->current_player() == 1) {
-      if(!leaf_state->check_can_block()){
-        leaf_node->label = 0; // black win
-      };
-    }
+    // if(previous_player == 0 && leaf_state->current_player() == 1) {
+    //   if(!leaf_state->check_can_block()){
+    //     leaf_node->label = 0; // black win
+    //   };
+    // }
 
     std::tie(action, leaf_node) = leaf_node->select(rng);
     leaf_state->apply_action(action);
