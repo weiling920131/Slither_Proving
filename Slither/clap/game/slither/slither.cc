@@ -517,7 +517,7 @@ bool SlitherState::check_can_block(/*std::vector<int> M*/){
 			M[pos[j][0]] = 1;
 			for(int d=0;d<4;d++){
 				if(M[pos[j][0]+dir[d]]==2){
-					if(check_move(M, [pos[j][0]+dir[d]], M[pos[j][0]])){
+					if(check_move(M, M[pos[j][0]+dir[d]], M[pos[j][0]])){
 						printf("move place %d\n", pos[j][0]);
 						return true;
 					}
@@ -552,7 +552,7 @@ std::vector<std::vector<int>> SlitherState::match_WP(){
 			std::vector<int> miss_points;
 			std::vector<int> wp;
 			while (std::getline(ss, point, ' ')) {
-				if(M[std::stoi(point)]==2){
+				if(M[std::stoi(point)] != 0){
 					// std::cout << point << "\n";
 					if(miss_two) 
 					{
@@ -566,9 +566,10 @@ std::vector<std::vector<int>> SlitherState::match_WP(){
 						miss_one = true;
 						miss_points.push_back(std::stoi(point));
 					}
-				} else if (M[std::stoi(point)]==1) {
+				}/* else if (M[std::stoi(point)]==1) {
 					is_wp = false;
-				} else{
+				} */
+				else{
 					wp.push_back(std::stoi(point));
 				}
 			}
