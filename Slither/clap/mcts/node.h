@@ -20,6 +20,8 @@ class Node {
   int num_visits;
   float parent_player_value_sum;
   float current_player_value_sum;
+  // blackwin, whitewin
+  int label;
   // prior, action, child
   std::vector<std::tuple<float, game::Action, Node>> children;
 };
