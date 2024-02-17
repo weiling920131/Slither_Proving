@@ -1,0 +1,134 @@
+ 5 x x o · o
+ 4 o x x · ·
+ 3 · · · o x
+ 2 x o · · ·
+ 1 x o o x o
+   A B C D E 
+
+ 5 x o x x o
+ 4 · · x x o
+ 3 o · · · ·
+ 2 · · · o x
+ 1 x o o o x
+   A B C D E
+
+ 5 x o x x o
+ 4 · · · x o
+ 3 o · · · ·
+ 2 · · x o x
+ 1 x o o o x
+   A B C D E
+
+ 5 x o x o x
+ 4 · · · o x
+ 3 o · · · ·
+ 2 · · x x o
+ 1 x o o x o
+   A B C D E
+
+ 5 x o o x x
+ 4 · · · x o
+ 3 o · · · ·
+ 2 · · x o x
+ 1 x o o o x
+   A B C D E
+
+ 5 x o o x o
+ 4 x · · · ·
+ 3 x o x o x
+ 2 · · · · ·
+ 1 o x o x o
+   A B C D E
+
+ 5 x o · o x
+ 4 x · · · ·
+ 3 x o x x o
+ 2 · · · x o
+ 1 o x · o o
+   A B C D E
+
+ 5 x o o o x
+ 4 x · · · ·
+ 3 x o x x o
+ 2 · · · · ·
+ 1 o x x o o
+   A B C D E
+
+ 5 x o o o x
+ 4 x · · · ·
+ 3 x o x x o
+ 2 · · · · ·
+ 1 o x o o x
+   A B C D E
+
+ 5 x o o o x
+ 4 · · · o x
+ 3 o · · · ·
+ 2 · · x x o
+ 1 x o x x o
+   A B C D E
+
+ 5 x o o o x
+ 4 · · · o x
+ 3 o · · · ·
+ 2 · · x x o
+ 1 x o o x x
+   A B C D E
+   
+ 5 x o o o x
+ 4 · · · o x
+ 3 o · · · ·
+ 2 · · x x o
+ 1 o o x x x
+   A B C D E
+   
+ 5 x · · o o
+ 4 x o x x o
+ 3 · · · · ·
+ 2 o x o · x
+ 1 o x x · o
+   A B C D E
+   
+ 5 o x x o o
+ 4 · · · · ·
+ 3 x o o x o
+ 2 · · · x x
+ 1 o x · o x
+   A B C D E
+   
+ 5 o x x o o
+ 4 · · · · o
+ 3 o · o x x
+ 2 x · · · x
+ 1 o · x o x
+   A B C D E
+   
+ 5 o · x x x
+ 4 x · o o x
+ 3 · · · o x
+ 2 o · · · ·
+ 1 o o x x o
+   A B C D E
+   
+ 5 o o x x x
+ 4 · · · x o
+ 3 o · · · ·
+ 2 · · x o x
+ 1 x o o o x
+   A B C D E
+   
+ 5 o o x o x
+ 4 · · · o x
+ 3 o · · · ·
+ 2 · · x x o
+ 1 x o o x x
+   A B C D E
+   
+ 5 o · o o x
+ 4 · · x o x
+ 3 x o · · ·
+ 2 · · · x o
+ 1 o x o x x
+   A B C D E
+
+8: 845330038 / 1335747303 = 0.6328517647772485
