@@ -47,6 +47,8 @@ void Job::select(std::mt19937& rng) {
     if(previous_player == 0 && leaf_state->current_player() == 1) {
       if(!leaf_state->check_can_block()){
         leaf_node->label = 0; // black win
+      }else{
+        leaf_node
       };
     }
 
