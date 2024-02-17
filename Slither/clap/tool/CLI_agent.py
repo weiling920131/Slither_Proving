@@ -83,14 +83,19 @@ class CLI_agent:
 
     def genmove(self):
         # print("serialize:", self.state.serialize())
+        print("+++++\n+++++\n++++\n+++++1")
         self.engine.add_job(self.num_jobs, self.state.serialize())
+        print("+++++\n+++++\n++++\n+++++2")
         raw = self.engine.get_trajectory()
+        print("+++++\n+++++\n++++\n+++++3")
         trajectory = clap_pb2.Trajectory.FromString(raw)
+        print("+++++\n+++++\n++++\n+++++4")
         actions = []
         for state in trajectory.states:
             print("value:", state.evaluation.value)
             # print("policy:", state.evaluation.policy)
             actions.append(state.transition.action)
+        print("+++++\n+++++\n++++\n+++++5")
         return actions
 
     def play(self, actions):

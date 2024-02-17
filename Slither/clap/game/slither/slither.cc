@@ -279,8 +279,8 @@ std::vector<std::vector<int>> SlitherState::get_critical(std::vector<std::vector
 }
 
 std::vector<int> SlitherState::getboard() {
-	std::vector<int> board(25);//1 2 0 0 1 2
-	for(int i=0;i<25;i++) {
+	std::vector<int> board(25); //1 2 0 
+	for(int i=0;i<25;i++) {		//0 1 2
 		board[i] = board_[i];
 	}
 	return board;
@@ -464,82 +464,67 @@ bool SlitherState::check_move(std::vector<int> M, int pos, int w){
         }
     }
     //移動在下place
-    if(w!=-1) return false;
-    M[pos] = 1;
-    for(int i=0;i<4;i++){
-        if(M[pos+dir[i]]==2){
-            if(check_move(M, pos+dir[i], pos)) return true;
-        }
-    }
+    // if(w!=-1) return false;
+    // M[pos] = 1;
+    // for(int i=0;i<4;i++){
+    //     if(M[pos+dir[i]]==2){
+    //         if(check_move(M, pos+dir[i], pos)) return true;
+    //     }
+    // }
     
     return false;   
 }
 
-bool SlitherState::check_can_block(std::vector<int> M){
-    // std::vector<int> M = getboard();
+bool SlitherState::check_can_block(/*std::vector<int> M*/){
+    std::vector<int> M = getboard();
 	std::vector<std::vector<int>> pos = get_critical(match_WP());
-	std::vector<int> dir = {-5, -1, 1, 5, -6, -4,  4, 6};
+	std::vector<int> dir = {-5, -1, 1, 5};
+	for(int i=0;i<pos.size();i++){
+		for(int j = 0;j<pos[i].size();j++){
+			std::cout << pos[i][j]<<' ';
+		}
+		std::cout<<'\n';
+	}
     for(int j=0;j<pos.size();j++){
         if(pos[j].size()>=3){
             continue;
         }
         bool b = false;
         bool moved = false;
-        if(!check_move(M, pos[j][0], -1)){ //無法移動到pos
-            M[pos[j][0]] = 1; //移動加下
-            for(int i=0;i<4;i++){ //相鄰四格哪一格是空
-                if(M[pos[j][0]+dir[i]]==2){
-                    if(check_move(M, pos[j][0]+dir[i], pos[j][0])) {
-                        if(pos[j].size()==1) return true; //只有1顆
-                        else { //兩顆
-                            b = true;
-                            moved = true;
-                            break;
-                        }
-                    }
-                }
-            }
-        }else{
-            if(pos[j].size()==1) return true; // 可以移動到pos
-            else{
-                b = true;
-                moved = true;
-            }
-        }
-        if(!b){ //直接用下的
-            M[pos[j][0]] = 1;
+		if(!check_move(M, pos[j][0], -1)){ //無法移動到pos1
+			if(!check_move(M, pos[j][1], -1)){
+				break;
+			}else{ //移動到pos2下pos1
+				M[pos[j][0]] = 1;
+				if(check_diag(M, 1)) {
+					printf("move %d place %d\n", pos[j][1], pos[j][0]);
+					return true; 
+				}else{ //這個critical point沒法檔
+					M[pos[j][0]] = 2;
+					break;
+				}
+			}
+		}else if(pos[j].size()==2){ //移動到pos1下pos2
+			M[pos[j][1]] = 1;
             if(check_diag(M, 1)) {
-                printf("place %d\n", pos[j][0]);
-                if(pos[j].size()==1) return true; //只有1顆
-                else b = true;
-            }else{ //這個critical point沒法檔
-                M[pos[j][0]] = 2;
-                break;
-            }
-        }
-      
-        if(moved){ //移動過直接用下的
-            M[pos[j][1]] = 1;
-            if(check_diag(M, 1)) {
-                printf("place %d\n", pos[j][0]);
+                printf("move %d place %d\n", pos[j][0], pos[j][1]);
                 return true; 
             }else{ //這個critical point沒法檔
                 M[pos[j][1]] = 2;
                 break;
             }
-        }
-        if(!check_move(M, pos[j][1], -1)){ //無法移動到pos
-            M[pos[j][1]] = 1; //移動加下
-            for(int i=0;i<4;i++){ //相鄰四格哪一格是空
-                if(M[pos[j][0]+dir[i]]==2){
-                    if(check_move(M, pos[j][1]+dir[i], pos[j][1])) {
-                        return true;
-                    }
-                }
-            }
-        }else{
-            return true; // 可以移動到pos
-        }
+		}else{ //移動加下pos1
+			M[pos[j][0]] = 1;
+			for(int d=0;d<4;d++){
+				if(M[pos[j][0]+dir[d]]==2){
+					if(check_move(M, [pos[j][0]+dir[d]], M[pos[j][0]])){
+						printf("move place %d\n", pos[j][0]);
+						return true;
+					}
+				}
+			}
+		}
+        
     }
     return false;
 }

@@ -27,6 +27,11 @@ class Node {
   enum class State { UNEXPANDED, EXPANDING, EXPANDED };
   std::atomic<State> expand_state;
 
+  int label;
+  // 2 no win
+  // 0 black win
+  // 1 white win
+  
   std::atomic <int> num_visits;
   std::atomic <float> parent_player_value_sum;
   std::atomic <float> current_player_value_sum;
