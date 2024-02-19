@@ -100,7 +100,10 @@ void Job::PreOrderTraversalDump(std::ofstream& sgf_file_,
     //           << (float)current_node.num_visits / (parent_num_visits - 1)
     //           << "\r\n]";
     char label_char[] = "BWN";
-    sgf_file_ << "\r\nC[Label: " << label_char[current_node.label] << " Current Player: "<< current_node.cur_player << " Previous Player: "<< current_node.pre_player << "\r\n]";
+    // sgf_file_ << "FUCK";
+    sgf_file_ << "\r\nC[Label: " << label_char[current_node.label] << "\r\n Current Player: "<< current_node.cur_player << "\r\n Previous Player: "<< current_node.pre_player << "\r\n]";
+    // sgf_file_ << "C[Label: "<< label_char[current_node.label]  << " Current Player: "<< " Previous Player: "<<  "]";
+
     current_state->apply_action(last_action);
   }
   int n_child=0;
