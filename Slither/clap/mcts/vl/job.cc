@@ -44,25 +44,26 @@ void Job::select(std::mt19937& rng) {
       }
     }
 
-    // if(previous_player == 0 && leaf_state->current_player() == 1) {
-    //   if(!leaf_state->check_can_block()){
-    //     leaf_node->label = 0; // black win
-    //   };
-    // }
 
     std::tie(action, leaf_node) = leaf_node->select(rng);
     leaf_state->apply_action(action);
     game::Player current_player = leaf_state->current_player();
 
-    leaf_node->cur_player = current_player;
-    leaf_node->pre_player = previous_player;
+    selection_path.emplace_back(previous_player, current_player, leaf_node);
+    
     if((previous_player == 0) && (current_player == 1)) {
       if(!leaf_state->check_can_block()){
+        // std::cout <<"Action: "<<action<< "\n";
         leaf_node->label = 0; // black win
+        selection_path.emplace_back(previous_player, current_player, leaf_node);
+        leaf_policy.clear();
+        leaf_returns = leaf_state->returns();
+        // leaf_observation = leaf_state->observation_tensor();
+        next_step = Step::UPDATE;
+        break;
       }
     }
 
-    selection_path.emplace_back(previous_player, current_player, leaf_node);
     previous_player = current_player;
   }
 }
@@ -106,12 +107,47 @@ void Job::evaluate() {
 }
 
 void Job::update(std::mt19937& rng) {
-  for (const auto& [parent_player, current_player, node] : selection_path) {
+
+  for (auto& [parent_player, current_player, node] : selection_path) {
     node->num_visits -= Engine::virtual_loss - 1;
     atomic_add(node->parent_player_value_sum, leaf_returns[parent_player]);
     atomic_add(node->current_player_value_sum, leaf_returns[current_player]);
   }
 
+  auto pre_label = std::get<2>(selection_path.back())->label;
+  std::cout <<"pre_label: "<<pre_label<< "\n";
+  int i = selection_path.size() - 2;
+  // std::cout << "update1\n";
+  while((i >= 0) && (pre_label != 2)){
+    // std::cout <<"i: " << i << "\n";
+
+    if(std::get<0>(selection_path[i]) == std::get<1>(selection_path[i])){ // parent_player = current_player
+      std::get<2>(selection_path[i])->label = pre_label;
+    }
+    else{
+      if((pre_label == 0) && (std::get<0>(selection_path[i]) == 1)){ // label = 0, OR node
+        std::get<2>(selection_path[i])->label = pre_label;
+      }
+      else if((pre_label == 1) && (std::get<0>(selection_path[i]) == 0)){ // label = 1, AND node
+        std::get<2>(selection_path[i])->label = pre_label;
+      }
+      else{
+        bool needLabel = true;
+        for(auto& child : std::get<2>(selection_path[i])->children){
+          if(std::get<2>(child)->label != pre_label){
+            needLabel = false;
+            break;
+          }
+        }
+        if(needLabel){
+          std::get<2>(selection_path[i])->label = pre_label;
+        }
+      }
+    }
+    pre_label = std::get<2>(selection_path[i])->label;
+    i--; 
+  }
+  // std::cout << "update3\n";
   if (!leaf_policy.empty()) {
     auto& [parent_player, current_player, leaf_node] = selection_path.back();
     const auto legal_actions = leaf_state->legal_actions();
@@ -126,6 +162,8 @@ void Job::update(std::mt19937& rng) {
     // first simulation -> add dirichlet noise to root policy
     if (tree.num_simulations() == 1) tree.add_dirichlet_noise(rng);
   }
+  // std::cout << "update4\n";
+
 
   if (tree.root_node->num_visits >= Engine::max_simulations) {
     if (tree_owner) {
@@ -136,6 +174,8 @@ void Job::update(std::mt19937& rng) {
   } else {
     next_step = Step::SELECT;
   }
+  // std::cout << next_step << "update5\n";
+
 }
 
 void Job::play(std::mt19937& rng) {
