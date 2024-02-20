@@ -503,6 +503,9 @@ bool SlitherState::check_can_block(/*std::vector<int> M*/){
 				blocked.push_back(pos[j][i]);
 			}
 		}
+		if(cp_num==0){
+			return true;
+		}
         if(cp_num>=3){
             continue;
         }

@@ -136,6 +136,7 @@ void Job::update(std::mt19937& rng) {
   } else {
     next_step = Step::SELECT;
   }
+  
 }
 
 void Job::play(std::mt19937& rng) {
