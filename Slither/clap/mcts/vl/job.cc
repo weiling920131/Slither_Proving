@@ -115,7 +115,7 @@ void Job::update(std::mt19937& rng) {
   }
 
   auto pre_label = std::get<2>(selection_path.back())->label;
-  std::cout <<"pre_label: "<<pre_label<< "\n";
+  // std::cout <<"pre_label: "<<pre_label<< "\n";
   int i = selection_path.size() - 2;
   // std::cout << "update1\n";
   while((i >= 0) && (pre_label != 2)){
