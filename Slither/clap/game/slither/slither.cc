@@ -473,7 +473,7 @@ bool SlitherState::check_move(std::vector<int> M, int pos, std::vector<int> w){
             M[pos+dir[i]] = 2;
             M[pos] = 1;
             if(check_diag(M, 1)){
-                printf("%d -> %d\n", pos+dir[i], pos);
+                // printf("%d -> %d\n", pos+dir[i], pos);
                 return true;
             }
             M[pos+dir[i]] = 1;
@@ -489,15 +489,15 @@ bool SlitherState::check_can_block(/*std::vector<int> M*/){
 	std::vector<std::vector<int>> pos = get_critical(match_WP());
 	if(pos.size() == 0) return true;
 	std::vector<int> dir = {-5, -1, 1, 5};
-	for(int i=0;i<pos.size();i++){
-		for(int j = 0;j<pos[i].size();j++){
-			std::cout << pos[i][j]<<' ';
-		}
-		std::cout<<'\n';
-	}
+	// for(int i=0;i<pos.size();i++){
+		// for(int j = 0;j<pos[i].size();j++){
+		// 	std::cout << pos[i][j]<<' ';
+		// }
+		// std::cout<<'\n';
+	// }
     for(int j=0;j<pos.size();j++){
 		int cp_num = pos[j].size();
-		std::vector<int> blocked = {};
+		std::vector<int> blocked;
 		for(int i=0;i<pos[j].size();i++){
 			if(M[pos[j][i]]==1){
 				cp_num--;
@@ -526,7 +526,8 @@ bool SlitherState::check_can_block(/*std::vector<int> M*/){
 				}
 			}
 		}else if(pos[j].size()==2){ //移動到pos1下pos2
-			M[pos[j][1]] = 1;
+			// std::cout<<"slither.cc line 529\n";
+			M[pos[j][1]] = 1; 
             if(check_diag(M, 1)) {
                 printf("move %d place %d\n", pos[j][0], pos[j][1]);
                 return true; 
@@ -535,6 +536,7 @@ bool SlitherState::check_can_block(/*std::vector<int> M*/){
                 break;
             }
 		}else{ //移動加下pos1
+			// std::cout<<"slither.cc line 539\n";
 			M[pos[j][0]] = 1;
 			blocked.push_back(pos[j][0]);
 			for(int d=0;d<4;d++){

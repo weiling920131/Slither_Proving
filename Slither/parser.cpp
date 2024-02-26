@@ -222,6 +222,12 @@ public:
 				// oss << "C[" << node->getComment() << "]";
 				comment = "";
 			}
+			else{
+				if(cnt_level % 3 == 1) {
+				}
+				else if (cnt_level % 3 == 2){
+				}
+			}
 		}
 		
 		int num_children = 0;
@@ -230,9 +236,13 @@ public:
 		}
 		
 		for(SGFTreeNode* child = node->child_; child != NULL; child = child->next_silbing_) {
-			if (num_children > 1) { oss << "("; }
+			int num_grandchildren = 0;
+			for (SGFTreeNode* grandchild = child->child_; grandchild != NULL; grandchild = grandchild->next_silbing_) {
+				++num_grandchildren;
+			}
+			if (num_children > 1 && !((cnt_level+1)%3 == 1 && num_grandchildren == 0)) { oss << "("; }
 			oss << outputEditorTree_r(node, child, cnt_level+1, comment);
-			if (num_children > 1) { oss << ")"; }
+			if (num_children > 1 && !((cnt_level+1)%3 == 1 && num_grandchildren == 0)) { oss << ")"; }
 		}
 		
 		return oss.str();
