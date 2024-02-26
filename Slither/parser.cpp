@@ -185,7 +185,7 @@ public:
 	{
 		std::ostringstream oss;
 		oss << "(;GM[511]SZ["<<board_size_<<"]";
-		oss << outputEditorTree_r(nullptr, getRoot(), 0, "");
+		oss << outputEditorTree_r(nullptr, getRoot(), 0, "", true);
 		oss << ")";
 		return oss.str();
 	}
@@ -195,15 +195,20 @@ public:
 	//直接輸出最後一個點
 	//目前的想法是把是三倍數的層數作記號
 	//然後只要是那一層的東西就得把前面兩層的東西印出來
- 	std::string outputEditorTree_r(const SGFTreeNode* parent, const SGFTreeNode* node, int cnt_level, std::string comment) // two layer
+ 	std::string outputEditorTree_r(const SGFTreeNode* parent, const SGFTreeNode* node, int cnt_level, std::string comment, bool F) // two layer
 	{		
 		if (node == NULL) { return ""; }
 		
 		comment += node->getComment();
 		
 		std::ostringstream oss;
+		bool f = false;
 		if (node != getRoot()) {			
 			if (cnt_level % 3 == 2 && node->action_.getActionID() != pass_location_) {
+				if(F) {
+					oss << "(";
+					f = true;
+				}
 				oss << ";" << getPlayerType(node->action_.getPlayer()) 
 					<< "[" 
 					<< actionIDToSGFString(parent->action_.getActionID(),board_size_) 
@@ -214,6 +219,10 @@ public:
 				// oss << "C[" << node->getComment() << "]";
 				comment = "";
 			} else if (cnt_level % 3 == 0) {
+				if(F) {
+					oss << "(";
+					f = true;
+				}
 				//std::cerr<<node->action_.getActionID()<<" "<<board_size_<<std::endl;
 				oss << ";" << getPlayerType(node->action_.getPlayer()) 
 					<< "[" << actionIDToSGFString(node->action_.getActionID(),board_size_) << "]";
@@ -221,11 +230,12 @@ public:
 				oss << "C[" << node->getComment() << "]";
 				// oss << "C[" << node->getComment() << "]";
 				comment = "";
-			}
-			else{
+			} else{
 				if(cnt_level % 3 == 1) {
+					// oss << "choose";
 				}
 				else if (cnt_level % 3 == 2){
+					// oss << "move";
 				}
 			}
 		}
@@ -236,14 +246,15 @@ public:
 		}
 		
 		for(SGFTreeNode* child = node->child_; child != NULL; child = child->next_silbing_) {
-			int num_grandchildren = 0;
-			for (SGFTreeNode* grandchild = child->child_; grandchild != NULL; grandchild = grandchild->next_silbing_) {
-				++num_grandchildren;
+			bool flag = false;
+			if (num_children > 1) { 
+				// oss << "("; 
+				flag = true;
 			}
-			if (num_children > 1 && !((cnt_level+1)%3 == 1 && num_grandchildren == 0)) { oss << "("; }
-			oss << outputEditorTree_r(node, child, cnt_level+1, comment);
-			if (num_children > 1 && !((cnt_level+1)%3 == 1 && num_grandchildren == 0)) { oss << ")"; }
+			oss << outputEditorTree_r(node, child, cnt_level+1, comment, flag);
+			// if (num_children > 1) { oss << ")"; }
 		}
+		if (f) { oss << ")"; }
 		
 		return oss.str();
 	}
