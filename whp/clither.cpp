@@ -303,14 +303,14 @@ int main(){
     char *s = (char *)malloc(sizeof(char) * 50);
     char *s2 = (char *)malloc(sizeof(char) * 50);
     vector<int> MM(25, 2);
-    for(int i=5;i<=5;i++){
-        // ofstream file;
+    for(int i=12;i<=12;i++){
+        ofstream file;
         // ofstream file2;
         cout << i << "\n";
-        // sprintf(s, "winning_path/winning_path_%d.txt", i);
+        sprintf(s, "winning_path/winning_path_%d.txt", i);
         // sprintf(s2, "check_mate/check_mate_%d.txt", i);
         // sprintf(s2, "DFS/%d.txt", i);
-        // file.open(s);
+        file.open(s);
         // file.open(s2);
         // cout << i <<"====\n";
         DFS(MM, i, 0, i, 0);
@@ -395,3 +395,4 @@ int main(){
 //     return 0;
 // }
 
+// (;GM[CLAP]SZ[5];B[X];B[X];B[C3];W[X];W[X];W[C2];B[C3];B[C4];B[C3];W[X];W[X];W[D2];B[C4];B[B3];B[A3];W[X];W[X];W[B2];B[X];B[X];B[A2];W[B2];W[C1];W[B5];B[X];B[X];B[A1];W[D2];W[D1];W[A5](;B[B3]C+[++Label:  Current Player:  Previous Player: --]-)(;B[C3]C+[++Label:  Current Player:  Previous Player: --]-;B[C4]C+[++Label:  Current Player:  Previous Player: --]-)(;B[X]C+[++Label:  Current Player:  Previous Player: --]-;B[X]C+[++Label:  Current Player:  Previous Player: --]-;B[C5]C+[++Label:  Current Player:  Previous Player: --]-(;W[A5]C+[++Label:  Current Player:  Previous Player: --]-;W[B4]C+[++Label:  Current Player:  Previous Player: --]-;W[C4]C+[++Label:  Current Player:  Previous Player: --]-)(;W[C2]C+[++Label:  Current Player:  Previous Player: --]-)(;W[X]C+[++Label:  Current Player:  Previous Player: --]-))
