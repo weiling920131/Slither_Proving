@@ -26,7 +26,7 @@ std::tuple<game::Action, Node*> Node::select(std::mt19937& rng) const {
   const auto& EPS = Engine::float_error;
 
   int num_candidates = 0;
-  game::Action selected_action;
+  game::Action selected_action = -1;
   Node* selected_node = nullptr;
   float best_score = std::numeric_limits<float>::lowest();
 
