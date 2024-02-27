@@ -44,7 +44,7 @@ void Job::select(std::mt19937& rng) {
       }
     }
 
-
+    
     std::tie(action, leaf_node) = leaf_node->select(rng);
     leaf_state->apply_action(action);
     game::Player current_player = leaf_state->current_player();
@@ -60,6 +60,7 @@ void Job::select(std::mt19937& rng) {
         leaf_node->label = 0; // black win
         selection_path.emplace_back(previous_player, current_player, leaf_node);
         leaf_policy.clear();
+
         leaf_returns = leaf_state->returns();
         // leaf_observation = leaf_state->observation_tensor();
         next_step = Step::UPDATE;
