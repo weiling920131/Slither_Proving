@@ -195,19 +195,19 @@ public:
 	//直接輸出最後一個點
 	//目前的想法是把是三倍數的層數作記號
 	//然後只要是那一層的東西就得把前面兩層的東西印出來
- 	std::string outputEditorTree_r(const SGFTreeNode* parent, const SGFTreeNode* node, int cnt_level, std::string comment, bool F) // two layer
+ 	std::string outputEditorTree_r(const SGFTreeNode* parent, const SGFTreeNode* node, int cnt_level, std::string comment, bool left_flag) // two layer
 	{		
 		if (node == NULL) { return ""; }
 		
 		comment += node->getComment();
 		
 		std::ostringstream oss;
-		bool f = false;
+		bool right_flag = false;
 		if (node != getRoot()) {			
 			if (cnt_level % 3 == 2 && node->action_.getActionID() != pass_location_) {
-				if(F) {
+				if(left_flag) {
 					oss << "(";
-					f = true;
+					right_flag = true;
 				}
 				oss << ";" << getPlayerType(node->action_.getPlayer()) 
 					<< "[" 
@@ -219,9 +219,9 @@ public:
 				// oss << "C[" << node->getComment() << "]";
 				comment = "";
 			} else if (cnt_level % 3 == 0) {
-				if(F) {
+				if(left_flag) {
 					oss << "(";
-					f = true;
+					right_flag = true;
 				}
 				//std::cerr<<node->action_.getActionID()<<" "<<board_size_<<std::endl;
 				oss << ";" << getPlayerType(node->action_.getPlayer()) 
@@ -230,13 +230,6 @@ public:
 				oss << "C[" << node->getComment() << "]";
 				// oss << "C[" << node->getComment() << "]";
 				comment = "";
-			} else{
-				if(cnt_level % 3 == 1) {
-					// oss << "choose";
-				}
-				else if (cnt_level % 3 == 2){
-					// oss << "move";
-				}
 			}
 		}
 		
@@ -254,7 +247,7 @@ public:
 			oss << outputEditorTree_r(node, child, cnt_level+1, comment, flag);
 			// if (num_children > 1) { oss << ")"; }
 		}
-		if (f) { oss << ")"; }
+		if (right_flag) { oss << ")"; }
 		
 		return oss.str();
 	}
@@ -377,7 +370,7 @@ int main(int argc, char* argv[])
 	dt << 1900 + ltm->tm_year << 'Y' << 1 + ltm->tm_mon << 'M' << ltm->tm_mday
 		<< 'D' << ltm->tm_hour << ':' << ltm->tm_min << ':' << ltm->tm_sec;
 
-	f_output2.open(std::string(argv[1]) , ios::out);
+	f_output2.open("after_parser.sgf" , ios::out);
 	f_output2 << loader.outputEditorTree();
 	f_output2.close();
 	// f_output2.open("editor.sgf", ios::out);
