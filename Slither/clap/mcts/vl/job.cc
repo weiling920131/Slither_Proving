@@ -29,7 +29,7 @@ void Job::select(std::mt19937& rng) {
   game::Action action;
   while (true) {
     leaf_node->num_visits += Engine::virtual_loss;
-    if (leaf_node->children.empty()) {
+    if (leaf_node->children.empty() || (std::get<0>(leaf_node->select(rng)) == -1)) {
       if (leaf_state->is_terminal()) {
         leaf_policy.clear();
         leaf_returns = leaf_state->returns();
@@ -60,8 +60,7 @@ void Job::select(std::mt19937& rng) {
         leaf_node->label = 0; // black win
         selection_path.emplace_back(previous_player, current_player, leaf_node);
         leaf_policy.clear();
-
-        leaf_returns = leaf_state->returns();
+        leaf_returns = {1.0, -1.0};
         // leaf_observation = leaf_state->observation_tensor();
         next_step = Step::UPDATE;
         break;
@@ -122,7 +121,7 @@ void Job::update(std::mt19937& rng) {
 
   auto pre_label = std::get<2>(selection_path.back())->label;
   // std::cout <<"pre_label: "<<pre_label<< "\n";
-  int i = selection_path.size() - 2;
+  long int i = selection_path.size() - 2;
   // std::cout << "job.cc line 125\n";
   while((i >= 0) && (pre_label != 2)){
     // std::cout <<"i: " << i << "\n";
