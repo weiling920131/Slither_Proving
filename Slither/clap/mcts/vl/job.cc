@@ -44,9 +44,27 @@ void Job::select(std::mt19937& rng) {
       }
     }
 
+    auto tmp = leaf_node;
     std::tie(action, leaf_node) = leaf_node->select(rng);
     if (action == -1) {
-      std::cout <<"action: -1\n";
+      if (tmp == tree.root_node.get()) {
+        std::cout << "root: " << tmp->label << '\n';
+
+        while(true) {
+          if (tmp->children.size() != 1) {
+            for (auto &[p, action, child]: tmp->children) {
+              std::cout << "action: " << action << " label: " << child->label << "\n";
+            }
+            break;
+          }
+          else {
+            tmp = std::get<2>(tmp->children[0]).get();
+          }
+        }
+        next_step = Step::PLAY;
+        break;
+      }
+      else std::cout <<"action: -1\n";
     }
     leaf_state->apply_action(action);
     game::Player current_player = leaf_state->current_player();
@@ -158,15 +176,16 @@ void Job::update(std::mt19937& rng) {
   }
 
 
-  if (tree.root_node->num_visits >= Engine::max_simulations) {
-    if (tree_owner) {
-      next_step = Step::PLAY;
-    } else {
-      next_step = Step::DONE;
-    }
-  } else {
+  // if (tree.root_node->num_visits >= Engine::max_simulations) {
+  //   if (tree_owner) {
+  //     next_step = Step::PLAY;
+  //   } else {
+  //     next_step = Step::DONE;
+  //   }
+  // } else {
     next_step = Step::SELECT;
-  }
+    std::cout << "update\n";
+  // }
 
 }
 
