@@ -30,7 +30,7 @@ void Job::select(std::mt19937& rng) {
     leaf_node->num_visits += Engine::virtual_loss;
     if (leaf_node->children.empty()) {
       if (leaf_state->is_terminal()) {
-        std::cout<<"job.cc line: 34\n";
+        // std::cout<<"job.cc line: 34\n";
         leaf_node->label = 0;
         
         leaf_policy.clear();
@@ -38,11 +38,11 @@ void Job::select(std::mt19937& rng) {
         next_step = Step::UPDATE;
         break;
       }
-      std::cout<<"job.cc line: 42\n";
+      // std::cout<<"job.cc line: 42\n";
       auto success = leaf_node->acquire_expand();
-      std::cout<<"job.cc line: 44\n";
+      // std::cout<<"job.cc line: 44\n";
       if (success) {
-        std::cout<<"job.cc line: 46\n";
+        // std::cout<<"job.cc line: 46\n";
         leaf_observation = leaf_state->observation_tensor();
         next_step = Step::EVALUATE;
         break;
@@ -52,6 +52,8 @@ void Job::select(std::mt19937& rng) {
     std::tie(action, leaf_node) = leaf_node->select(rng);
     if (action == -1) {
       std::cout <<"action: -1\n";
+    }else{
+      std::cout<<"action: "<<action<<"\n"; 
     }
     leaf_state->apply_action(action);
     game::Player current_player = leaf_state->current_player();
