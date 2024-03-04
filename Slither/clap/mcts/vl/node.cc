@@ -15,8 +15,6 @@ Node::Node()
       parent_player_value_sum(0.0F),
       current_player_value_sum(0.0F),
       label(2),
-      cur_player(0),
-      pre_player(0),
       expand_state(State::UNEXPANDED) {}
 
 std::tuple<game::Action, Node*> Node::select(std::mt19937& rng) const {
@@ -82,8 +80,6 @@ void Node::expand_done() { expand_state.exchange(State::EXPANDED); }
 
 void Node::reset() {
   label = 2;
-  cur_player = 0;
-  pre_player = 0;
   expand_state.exchange(State::UNEXPANDED);
   num_visits = 0;
   parent_player_value_sum = 0.0F;
