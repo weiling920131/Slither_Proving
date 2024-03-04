@@ -208,6 +208,8 @@ public:
 				if(F) {
 					oss << "(";
 					f = true;
+				}else{
+					oss << "C[NO1]";
 				}
 				oss << ";" << getPlayerType(node->action_.getPlayer()) 
 					<< "[" 
@@ -215,27 +217,29 @@ public:
 					<< actionIDToSGFString(node->action_.getActionID(),board_size_) 
 					<< "]";
 				// oss << "C[" <<" Parent: " <<parent->getComment() <<" Node: "<< node->getComment() << "]";
-				oss << "C[" << node->getComment() << "]";
+				// oss << "C[" << node->getComment() << "]";
 				// oss << "C[" << node->getComment() << "]";
 				comment = "";
 			} else if (cnt_level % 3 == 0) {
 				if(F) {
 					oss << "(";
 					f = true;
+				}else{
+					oss << "C[NO2]";
 				}
 				//std::cerr<<node->action_.getActionID()<<" "<<board_size_<<std::endl;
 				oss << ";" << getPlayerType(node->action_.getPlayer()) 
 					<< "[" << actionIDToSGFString(node->action_.getActionID(),board_size_) << "]";
 				// oss << "C[" << comment << " Node: " << node->getComment() << "]";
-				oss << "C[" << node->getComment() << "]";
+				// oss << "C[" << node->getComment() << "]";
 				// oss << "C[" << node->getComment() << "]";
 				comment = "";
 			} else{
 				if(cnt_level % 3 == 1) {
-					// oss << "choose";
+					// oss << "C[choose]";
 				}
 				else if (cnt_level % 3 == 2){
-					// oss << "move";
+					// oss << "C[move]";
 				}
 			}
 		}
