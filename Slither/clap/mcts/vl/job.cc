@@ -102,50 +102,43 @@ void Job::update(std::mt19937& rng) {
 
   auto& [parent_player, current_player, leaf_node] = selection_path.back();
   if((parent_player == 0) && (current_player == 1)) {
-    std::cout<<"check\n";
     if(!leaf_state->check_can_block()) {
       leaf_node->label = 0; // black win
-      std::cout<<"checkcanblock\n";
     }
   }
 
-  // auto pre_label = leaf_node->label;
-  // // std::cout <<"pre_label: "<<pre_label<< "\n";
-  // int i = selection_path.size() - 2;
-  // // std::cout << "i: " << i << '\n';
-  // // std::cout << "job.cc line 125\n";
-  // while((i >= 0) && (pre_label != 2)) {
-  //   // std::cout <<"i: " << i << "\n";
-  //   auto& [p_player, c_player, node] = selection_path[i];
+  auto pre_label = leaf_node->label;
+  int i = selection_path.size() - 2;
+  while((i >= 0) && (pre_label != 2)) {
+    auto& [p_player, c_player, node] = selection_path[i];
 
-  //   if(p_player == c_player){ // parent_player = current_player
-  //     node->label = pre_label;
-  //   }
-  //   else{
-  //     if((pre_label == 0) && (p_player == 1)){ // label = 0, OR node
-  //       node->label = pre_label;
-  //     }
-  //     else if((pre_label == 1) && (p_player == 0)){ // label = 1, AND node
-  //       node->label = pre_label;
-  //     }
-  //     else{
-  //       bool needLabel = true;
-  //       for(auto& [p, action, child] : node->children){
-  //         if(child->label != pre_label){
-  //           needLabel = false;
-  //           break;
-  //         }
-  //       }
-  //       if(needLabel){
-  //         node->label = pre_label;
-  //       }
-  //     }
-  //   }
-  //   pre_label = node->label;
-  //   i--; 
-  // }
-  // std::cout << "update3\n";
-  // std::cout << "job.cc line 156\n";
+    if(p_player == c_player){ // parent_player = current_player
+      node->label = pre_label;
+    }
+    else{
+      if((pre_label == 0) && (p_player == 1)){ // label = 0, OR node
+        node->label = pre_label;
+      }
+      else if((pre_label == 1) && (p_player == 0)){ // label = 1, AND node
+        node->label = pre_label;
+      }
+      else{
+        bool needLabel = true;
+        for(auto& [p, action, child] : node->children){
+          if(child->label != pre_label){
+            needLabel = false;
+            break;
+          }
+        }
+        if(needLabel){
+          node->label = pre_label;
+        }
+      }
+    }
+    pre_label = node->label;
+    i--;
+  }
+  
   if (!leaf_policy.empty()) {
     auto& [parent_player, current_player, leaf_node] = selection_path.back();
     const auto legal_actions = leaf_state->legal_actions();
@@ -160,8 +153,6 @@ void Job::update(std::mt19937& rng) {
     // first simulation -> add dirichlet noise to root policy
     if (tree.num_simulations() == 1) tree.add_dirichlet_noise(rng);
   }
-  // std::cout << "job.cc line 171\n";
-  // std::cout << "update4\n";
 
 
   if (tree.root_node->num_visits >= Engine::max_simulations) {
@@ -173,7 +164,6 @@ void Job::update(std::mt19937& rng) {
   } else {
     next_step = Step::SELECT;
   }
-  // std::cout << next_step << "update5\n";
 
 }
 
