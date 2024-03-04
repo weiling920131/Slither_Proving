@@ -29,7 +29,7 @@ void Job::select(std::mt19937& rng) {
   game::Action action;
   while (true) {
     leaf_node->num_visits += Engine::virtual_loss;
-    if (leaf_node->children.empty() || (std::get<0>(leaf_node->select(rng)) == -1)) {
+    if (leaf_node->children.empty()) {
       if (leaf_state->is_terminal()) {
         leaf_policy.clear();
         leaf_returns = leaf_state->returns();
@@ -44,30 +44,11 @@ void Job::select(std::mt19937& rng) {
       }
     }
 
-    
     std::tie(action, leaf_node) = leaf_node->select(rng);
     leaf_state->apply_action(action);
     game::Player current_player = leaf_state->current_player();
 
     selection_path.emplace_back(previous_player, current_player, leaf_node);
-    
-    if((previous_player == 0) && (current_player == 1)) {
-        // std::cout<<"before\n";
-      if(!leaf_state->check_can_block()){
-        // std::cout<<"after\n";
-
-        // std::cout <<"Action: "<<action<< "\n";
-        leaf_node->label = 0; // black win
-        selection_path.emplace_back(previous_player, current_player, leaf_node);
-        leaf_policy.clear();
-        leaf_returns = {1.0, -1.0};
-        // leaf_observation = leaf_state->observation_tensor();
-        next_step = Step::UPDATE;
-        break;
-      }
-      // std::cout<<"after check can block\n";
-    }
-
     previous_player = current_player;
   }
 }
@@ -119,39 +100,50 @@ void Job::update(std::mt19937& rng) {
     atomic_add(node->current_player_value_sum, leaf_returns[current_player]);
   }
 
-  auto pre_label = std::get<2>(selection_path.back())->label;
-  // std::cout <<"pre_label: "<<pre_label<< "\n";
-  long int i = selection_path.size() - 2;
-  // std::cout << "job.cc line 125\n";
-  while((i >= 0) && (pre_label != 2)){
-    // std::cout <<"i: " << i << "\n";
-
-    if(std::get<0>(selection_path[i]) == std::get<1>(selection_path[i])){ // parent_player = current_player
-      std::get<2>(selection_path[i])->label = pre_label;
+  auto& [parent_player, current_player, leaf_node] = selection_path.back();
+  if((parent_player == 0) && (current_player == 1)) {
+    std::cout<<"check\n";
+    if(!leaf_state->check_can_block()) {
+      leaf_node->label = 0; // black win
+      std::cout<<"checkcanblock\n";
     }
-    else{
-      if((pre_label == 0) && (std::get<0>(selection_path[i]) == 1)){ // label = 0, OR node
-        std::get<2>(selection_path[i])->label = pre_label;
-      }
-      else if((pre_label == 1) && (std::get<0>(selection_path[i]) == 0)){ // label = 1, AND node
-        std::get<2>(selection_path[i])->label = pre_label;
-      }
-      else{
-        bool needLabel = true;
-        for(auto& child : std::get<2>(selection_path[i])->children){
-          if(std::get<2>(child)->label != pre_label){
-            needLabel = false;
-            break;
-          }
-        }
-        if(needLabel){
-          std::get<2>(selection_path[i])->label = pre_label;
-        }
-      }
-    }
-    pre_label = std::get<2>(selection_path[i])->label;
-    i--; 
   }
+
+  // auto pre_label = leaf_node->label;
+  // // std::cout <<"pre_label: "<<pre_label<< "\n";
+  // int i = selection_path.size() - 2;
+  // // std::cout << "i: " << i << '\n';
+  // // std::cout << "job.cc line 125\n";
+  // while((i >= 0) && (pre_label != 2)) {
+  //   // std::cout <<"i: " << i << "\n";
+  //   auto& [p_player, c_player, node] = selection_path[i];
+
+  //   if(p_player == c_player){ // parent_player = current_player
+  //     node->label = pre_label;
+  //   }
+  //   else{
+  //     if((pre_label == 0) && (p_player == 1)){ // label = 0, OR node
+  //       node->label = pre_label;
+  //     }
+  //     else if((pre_label == 1) && (p_player == 0)){ // label = 1, AND node
+  //       node->label = pre_label;
+  //     }
+  //     else{
+  //       bool needLabel = true;
+  //       for(auto& [p, action, child] : node->children){
+  //         if(child->label != pre_label){
+  //           needLabel = false;
+  //           break;
+  //         }
+  //       }
+  //       if(needLabel){
+  //         node->label = pre_label;
+  //       }
+  //     }
+  //   }
+  //   pre_label = node->label;
+  //   i--; 
+  // }
   // std::cout << "update3\n";
   // std::cout << "job.cc line 156\n";
   if (!leaf_policy.empty()) {
