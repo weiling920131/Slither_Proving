@@ -45,6 +45,9 @@ void Job::select(std::mt19937& rng) {
     }
 
     std::tie(action, leaf_node) = leaf_node->select(rng);
+    if (action == -1) {
+      std::cout <<"action: -1\n";
+    }
     leaf_state->apply_action(action);
     game::Player current_player = leaf_state->current_player();
 
