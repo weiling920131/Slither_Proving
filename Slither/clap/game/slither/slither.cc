@@ -513,7 +513,7 @@ bool SlitherState::check_can_block(/*std::vector<int> M*/){
 			}else{ //移動到pos2下pos1
 				M[pos[j][0]] = 1;
 				if(check_diag(M, 1)) {
-					printf("1.move %d place %d\n", pos[j][1], pos[j][0]);
+					// printf("1.move %d place %d\n", pos[j][1], pos[j][0]);
 					return true; 
 				}else{ //這個critical point沒法檔
 					M[pos[j][0]] = 2;
@@ -524,7 +524,7 @@ bool SlitherState::check_can_block(/*std::vector<int> M*/){
 			// std::cout<<"slither.cc line 529\n";
 			M[pos[j][1]] = 1; 
             if(check_diag(M, 1)) {
-                printf("2.move %d place %d\n", pos[j][0], pos[j][1]);
+                // printf("2.move %d place %d\n", pos[j][0], pos[j][1]);
                 return true; 
             }else{ //這個critical point沒法檔
                 M[pos[j][1]] = 2;
@@ -547,7 +547,7 @@ bool SlitherState::check_can_block(/*std::vector<int> M*/){
 				}
 				if(M[pos[j][0]+dir[d]]==2){
 					if(check_move(M, M[pos[j][0]+dir[d]], blocked)){
-						printf("move place %d\n", pos[j][0]);
+						// printf("move place %d\n", pos[j][0]);
 						return true;
 					}
 				}
