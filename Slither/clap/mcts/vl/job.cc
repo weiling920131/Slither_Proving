@@ -66,7 +66,7 @@ void Job::select(std::mt19937& rng) {
             tmp = std::get<2>(tmp->children[0]).get();
           }
         }
-        next_step = Step::DONE;
+        next_step = Step::REPORT;
         break;
       }
       else std::cout <<"action: -1\n";
