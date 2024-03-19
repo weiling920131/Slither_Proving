@@ -487,6 +487,12 @@ bool SlitherState::check_move(std::vector<int> M, int pos, std::vector<int> w){
 bool SlitherState::check_can_block(/*std::vector<int> M*/){
     std::vector<int> M = getboard();
 	std::vector<std::vector<int>> pos = get_critical(match_WP());
+	// for(int i=0;i<pos.size();i++){
+	// 	for(int j=0;j<pos[i].size();j++){
+	// 		std::cout << pos[i][j] << " ";
+	// 	}
+	// 	std::cout << "\n";
+	// }
 	if(pos.size() == 0) return true;
 	std::vector<int> dir = {-5, -1, 1, 5};
     for(int j=0;j<pos.size();j++){
@@ -504,40 +510,16 @@ bool SlitherState::check_can_block(/*std::vector<int> M*/){
         if(cp_num>=3){
             continue;
         }
-        bool b = false;
-        bool moved = false;
-		if(!check_move(M, pos[j][0], blocked)){ //無法移動到pos1
-			if(pos[j].size()<=1) break;
-			if(check_move(M, pos[j][1], blocked)){
-				break;
-			}else{ //移動到pos2下pos1
-				M[pos[j][0]] = 1;
-				if(check_diag(M, 1)) {
-					// printf("1.move %d place %d\n", pos[j][1], pos[j][0]);
-					return true; 
-				}else{ //這個critical point沒法檔
-					M[pos[j][0]] = 2;
-					break;
-				}
-			}
-		}else if(pos[j].size()==2){ //移動到pos1下pos2
-			// std::cout<<"slither.cc line 529\n";
-			M[pos[j][1]] = 1; 
-            if(check_diag(M, 1)) {
-                // printf("2.move %d place %d\n", pos[j][0], pos[j][1]);
-                return true; 
-            }else{ //這個critical point沒法檔
-                M[pos[j][1]] = 2;
-                break;
-            }
-		}else{ //移動加下pos1
-			// std::cout<<"slither.cc line 539\n";
+		if(cp_num==1){ //只有pos1git
 			M[pos[j][0]] = 1;
-			blocked.push_back(pos[j][0]);
-			for(int d=0;d<4;d++){
+			if(check_diag(M, 1)){ //直接下pos1
+				return true; 
+			}
+			M[pos[j][0]] = 2;
+			for(int d=0;d<4;d++){ //移動加下pos1
 				if(pos[j][0]<5){
 					if(dir[d]==-5) continue;
-				} else if(pos[j][0]>=20){
+				}else if(pos[j][0]>=20){
 					if(dir[d]==5) continue;
 				}
 				if(pos[j][0]%5==0){
@@ -547,13 +529,92 @@ bool SlitherState::check_can_block(/*std::vector<int> M*/){
 				}
 				if(M[pos[j][0]+dir[d]]==2){
 					if(check_move(M, M[pos[j][0]+dir[d]], blocked)){
-						// printf("move place %d\n", pos[j][0]);
 						return true;
 					}
 				}
+			}			
+			if(check_move(M, M[pos[j][0]], blocked)){ //移動到pos1
+				return true;				
+			}else{
+				for(int d=0;d<4;d++){ //移動到pos1加下
+					M[pos[j][0]+dir[d]] = 1;
+					if(check_diag(M, 1)){
+						return true;
+					}
+					M[pos[j][0]+dir[d]] = 2;
+				}
 			}
+		}else if(cp_num==2){
+			M[pos[j][0]] = 1; //移動到pos2下pos1
+			blocked.push_back(pos[j][0]);
+			if(check_move(M, M[pos[j][1]], blocked)){ 
+				return true;
+			}
+			M[pos[j][0]] = 2;
 			blocked.pop_back();
+			M[pos[j][1]] = 1; //移動到pos1下pos2
+			blocked.push_back(pos[j][1]);
+			if(check_move(M, M[pos[j][0]], blocked)){ 
+				return true;
+			}
+			M[pos[j][1]] = 2;
+			blocked.pop_back();
+
 		}
+        // bool b = false;
+        // bool moved = false;
+		// if(!check_move(M, pos[j][0], blocked)){ //無法移動到pos1
+		// 	if(pos[j].size()<=1) {
+		// 		M[pos[j][0]] = 1;
+		// 		if(check_diag(M, 1)){
+		// 			return true;
+		// 		}
+		// 	}
+		// 	if(!check_move(M, pos[j][1], blocked)){ //無法移動到pos2
+		// 		break;
+		// 	}else{ //移動到pos2下pos1
+		// 		M[pos[j][0]] = 1;
+		// 		if(check_diag(M, 1)) {
+		// 			// printf("1.move %d place %d\n", pos[j][1], pos[j][0]);
+		// 			return true; 
+		// 		}else{ //這個critical point沒法檔
+		// 			M[pos[j][0]] = 2;
+		// 			break;
+		// 		}
+		// 	}
+		// }else if(pos[j].size()==2){ //移動到pos1下pos2
+		// 	// std::cout<<"slither.cc line 529\n";
+		// 	M[pos[j][1]] = 1; 
+        //     if(check_diag(M, 1)) {
+        //         // printf("2.move %d place %d\n", pos[j][0], pos[j][1]);
+        //         return true; 
+        //     }else{ //這個critical point沒法檔
+        //         M[pos[j][1]] = 2;
+        //         break;
+        //     }
+		// }else{ //移動加下pos1
+		// 	M[pos[j][0]] = 1;
+		// 	blocked.push_back(pos[j][0]);
+		// 	for(int d=0;d<4;d++){
+		// 		if(pos[j][0]<5){
+		// 			if(dir[d]==-5) continue;
+		// 		} else if(pos[j][0]>=20){
+		// 			if(dir[d]==5) continue;
+		// 		}
+		// 		if(pos[j][0]%5==0){
+		// 			if(dir[d]==-1) continue;
+		// 		}else if(pos[j][0]%5==4){
+		// 			if(dir[d]==1) continue;
+		// 		}
+		// 		if(M[pos[j][0]+dir[d]]==2){
+		// 			if(check_move(M, M[pos[j][0]+dir[d]], blocked)){
+		// 				// printf("move place %d\n", pos[j][0]);
+		// 				return true;
+		// 			}
+		// 		}
+		// 	}
+		// 	blocked.pop_back();
+		// }
         
     }
     return false;
