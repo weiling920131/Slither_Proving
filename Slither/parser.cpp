@@ -209,7 +209,7 @@ public:
 					oss << "(";
 					f = true;
 				}else{
-					oss << "C[NO1]";
+					// oss << "C[NO1]";
 				}
 				oss << ";" << getPlayerType(node->action_.getPlayer()) 
 					<< "[" 
@@ -217,22 +217,20 @@ public:
 					<< actionIDToSGFString(node->action_.getActionID(),board_size_) 
 					<< "]";
 				// oss << "C[" <<" Parent: " <<parent->getComment() <<" Node: "<< node->getComment() << "]";
-				// oss << "C[" << node->getComment() << "]";
-				// oss << "C[" << node->getComment() << "]";
+				oss << "C[" << node->getComment() << "]";
 				comment = "";
 			} else if (cnt_level % 3 == 0) {
 				if(F) {
 					oss << "(";
 					f = true;
 				}else{
-					oss << "C[NO2]";
+					// oss << "C[NO2]";
 				}
 				//std::cerr<<node->action_.getActionID()<<" "<<board_size_<<std::endl;
 				oss << ";" << getPlayerType(node->action_.getPlayer()) 
 					<< "[" << actionIDToSGFString(node->action_.getActionID(),board_size_) << "]";
 				// oss << "C[" << comment << " Node: " << node->getComment() << "]";
-				// oss << "C[" << node->getComment() << "]";
-				// oss << "C[" << node->getComment() << "]";
+				oss << "C[" << node->getComment() << "]";
 				comment = "";
 			} else{
 				if(cnt_level % 3 == 1) {
@@ -359,8 +357,9 @@ private:
 int main(int argc, char* argv[])
 {
 	SGFTreeLoader loader;
-	loader.setTreeSize(10000);	
+	loader.setTreeSize(1000000);
 	loader.loadFromFile(argv[1]);
+
 	std::cout << "Number of Tree Node: " << loader.getTreeSize() << std::endl;
 	
 // 	fstream f_output;
@@ -381,7 +380,7 @@ int main(int argc, char* argv[])
 	dt << 1900 + ltm->tm_year << 'Y' << 1 + ltm->tm_mon << 'M' << ltm->tm_mday
 		<< 'D' << ltm->tm_hour << ':' << ltm->tm_min << ':' << ltm->tm_sec;
 
-	f_output2.open(std::string(argv[1]) , ios::out);
+	f_output2.open(std::string(argv[1]) + "_parsed.sgf" , ios::out);
 	f_output2 << loader.outputEditorTree();
 	f_output2.close();
 	// f_output2.open("editor.sgf", ios::out);

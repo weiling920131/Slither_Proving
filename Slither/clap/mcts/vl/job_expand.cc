@@ -84,6 +84,7 @@ void Job::PreOrderTraversalDump(std::ofstream& sgf_file_,
     // GM[CLAP]
     // sgf_file_ << parent_state->serialize();
     sgf_file_ << parent_state->serialize_num_to_char();
+    // sgf_file_ << "\r\nC[Label: " << label_char[current_node.label] << "\r\n]";
 //     ;B[KJ];W[KI];W[LJ];B[MK];B[ML];W[LK];W[LI];B[MI];B[MJ];W[MH];W[NH];B[MM];B[MN]
   }else {
     //if
