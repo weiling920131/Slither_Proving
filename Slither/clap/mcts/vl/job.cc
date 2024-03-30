@@ -23,7 +23,7 @@ void Job::select(std::mt19937& rng) {
   
   game::Player previous_player = leaf_state->current_player();
   selection_path.clear();
-  selection_path.emplace_back(previous_player, previous_player, leaf_node);
+  selection_path.emplace_back(1-previous_player, previous_player, leaf_node);
 
   game::Action action;
   while (true) {    
@@ -52,7 +52,6 @@ void Job::select(std::mt19937& rng) {
     auto tmp = leaf_node;
     std::tie(action, leaf_node) = leaf_node->select(rng);
     if (action == -1) {
-
       // if (tmp == tree.root_node.get()) {
         std::cout << "root: " << tmp->label << '\n';
 
@@ -73,7 +72,11 @@ void Job::select(std::mt19937& rng) {
         }
         leaf_policy.clear();
         leaf_returns = leaf_state->returns();
-        next_step = Step::PLAY;
+        if(tree_owner) {
+          next_step = Step::PLAY;
+        }else {
+          next_step = Step::DONE;
+        }
         break;
       // }
       // else std::cout <<"action: -1\n";
@@ -135,7 +138,9 @@ void Job::update(std::mt19937& rng) {
 
   auto& [parent_player, current_player, leaf_node] = selection_path.back();
   if((parent_player == 0) && (current_player == 1)) {
+    // std::cout<< "before check can block\n";
     if(!leaf_state->check_can_block()) {
+      std::cout<< "after check can block\n";
       leaf_node->label = 0; // black win
     }
   }
@@ -146,6 +151,7 @@ void Job::update(std::mt19937& rng) {
     auto& [p_player, c_player, node] = selection_path[i];
 
     if(p_player == c_player){ // parent_player = current_player
+      // std::cout<<"wrong\n";
       node->label = pre_label;
     }
     else{
@@ -199,13 +205,15 @@ void Job::update(std::mt19937& rng) {
     next_step = Step::SELECT;
     // std::cout << "update\n";
   // }
+  
 
 }
 
 void Job::play(std::mt19937& rng) {
   // std::cerr<<"test"<<std::endl;
   while (tree.root_node.use_count() != 1) {
-    break;
+    // break;
+    std::cout<<"use_count: "<<tree.root_node.use_count()<<'\n';
   }
   const auto player = root_state->current_player();
   const auto root_node = tree.root_node.get();

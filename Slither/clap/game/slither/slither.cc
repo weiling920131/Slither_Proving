@@ -1301,7 +1301,8 @@ bool SlitherState::is_selecting_valid(const Action action, const Player player) 
 			mimic_board[action] = EMPTY;
 			mimic_board[pt_surrounded] = player;
 			if (constrained_points.empty()) {
-				return is_placing_valid(player, &mimic_board);
+				if(is_placing_valid(player, &mimic_board)) return true;
+				else continue;
 			} else if (constrained_points.size() != 1) {
 				for (auto pt: constrained_points) {
 					if (is_placing_valid(pt, player, &mimic_board)) return true;
