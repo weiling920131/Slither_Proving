@@ -269,10 +269,11 @@ std::vector<std::vector<int>> SlitherState::get_critical(std::vector<std::vector
 	}
 	// CLI_agent.py Line: 285 - 287
 	else {
+		std::vector<int> tmp_p;
 		for(auto& p: pathes_1) {
-			std::vector<int> tmp_p(p.begin(), p.end());
-			all_pathes.push_back(tmp_p);
+			tmp_p.push_back(p[0]);
 		}
+		all_pathes.push_back(tmp_p);
 	}
 
 	return all_pathes;
@@ -1253,7 +1254,8 @@ bool SlitherState::is_selecting_valid(const Action action, const Player player) 
 			mimic_board[action] = EMPTY;
 			mimic_board[pt_surrounded] = player;
 			if (constrained_points.empty()) {
-				return is_placing_valid(player, &mimic_board);
+				if(is_placing_valid(player, &mimic_board)) return true;
+				else continue;
 			} else if (constrained_points.size() != 1) {
 				for (auto pt: constrained_points) {
 					if (is_placing_valid(pt, player, &mimic_board)) return true;
