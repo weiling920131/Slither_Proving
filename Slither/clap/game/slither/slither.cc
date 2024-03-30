@@ -269,10 +269,11 @@ std::vector<std::vector<int>> SlitherState::get_critical(std::vector<std::vector
 	}
 	// CLI_agent.py Line: 285 - 287
 	else {
+		std::vector<int> tmp_p;
 		for(auto& p: pathes_1) {
-			std::vector<int> tmp_p(p.begin(), p.end());
-			all_pathes.push_back(tmp_p);
+			tmp_p.push_back(p[0]);
 		}
+		all_pathes.push_back(tmp_p);
 	}
 
 	return all_pathes;
