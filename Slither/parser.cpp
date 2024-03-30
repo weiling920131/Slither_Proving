@@ -40,6 +40,14 @@ protected:
     Player player_;
 };
 
+class TwoLayersNode {
+public:
+	std::string action;
+	std::string player;
+	std::vector<TwoLayersNode*> children;
+	std::string comment;
+};
+
 class SGFTreeLoader{
 public:
     class SGFTreeNode {
@@ -163,7 +171,7 @@ public:
 		std::ostringstream oss;
 		if (node != getRoot()) {
 			oss << ";" << getPlayerType(node->action_.getPlayer()) << "[" << actionIDToSGFString(node->action_.getActionID(),board_size_) << "]";
-			// if (node->comment_ != "") oss << "C[" << node->comment_ << "]";
+			if (node->comment_ != "") oss << "C[" << node->comment_ << "]";
 		}
 				
 		int num_children = 0; // 這邊是算有幾個兄弟姊妹(分枝)嗎?
@@ -180,86 +188,103 @@ public:
 		return oss.str();
 	}
 
+	// --------------------------------------------------------------------------
+	void parseEditorTree(TwoLayersNode* root) // two layer
+	{
+		parseEditorTree_r(getRoot(), root, 0);
+	}
 
-	std::string outputEditorTree() // two layer
+ 	void parseEditorTree_r(const SGFTreeNode* node, TwoLayersNode* new_node_parent, int cnt_level) // two layer
+	{		
+		if (node == NULL) { return; }
+			
+		if (node != getRoot()) {
+			if (cnt_level % 3 == 1) {
+				std::string action = actionIDToSGFString(node->action_.getActionID(),board_size_);
+				if (action != "") {
+					for(SGFTreeNode* child = node->child_; child != NULL; child = child->next_silbing_) {
+						TwoLayersNode* new_node = new TwoLayersNode;
+						new_node->action = action;
+						new_node->player = getPlayerType(node->action_.getPlayer());
+
+						new_node_parent->children.push_back(new_node);
+						parseEditorTree_r(child, new_node_parent, cnt_level+1);
+					}
+				}
+				else {
+					for(SGFTreeNode* child = node->child_; child != NULL; child = child->next_silbing_) {
+						parseEditorTree_r(child, new_node_parent, cnt_level+1);
+					}
+				}
+			}
+			else if (cnt_level % 3 == 2) {
+				std::string action = actionIDToSGFString(node->action_.getActionID(),board_size_);
+				if (action != "") {
+					TwoLayersNode* new_node = new_node_parent->children.back();
+					new_node->action += action;
+					new_node->comment = node->getComment();
+
+					for(SGFTreeNode* child = node->child_; child != NULL; child = child->next_silbing_) {
+						parseEditorTree_r(child, new_node, cnt_level+1);
+					}
+				}
+				else {
+					for(SGFTreeNode* child = node->child_; child != NULL; child = child->next_silbing_) {
+						parseEditorTree_r(child, new_node_parent, cnt_level+1);
+					}
+				}
+			}
+			else {
+				std::string action = actionIDToSGFString(node->action_.getActionID(),board_size_);
+				TwoLayersNode* new_node = new TwoLayersNode;
+				new_node->action = action;
+				new_node->player = getPlayerType(node->action_.getPlayer());
+				new_node->comment = node->getComment();
+				new_node_parent->children.push_back(new_node);
+
+				for(SGFTreeNode* child = node->child_; child != NULL; child = child->next_silbing_) {
+					parseEditorTree_r(child, new_node, cnt_level+1);
+				}
+			}
+		}
+		else {
+			for(SGFTreeNode* child = node->child_; child != NULL; child = child->next_silbing_) {
+				parseEditorTree_r(child, new_node_parent, cnt_level+1);
+			}
+		}
+	}
+
+	std::string outputEditorTree(TwoLayersNode* root) // two layer
 	{
 		std::ostringstream oss;
 		oss << "(;GM[511]SZ["<<board_size_<<"]";
-		oss << outputEditorTree_r(nullptr, getRoot(), 0, "", true);
+		oss << outputEditorTree_r(root, 0);
 		oss << ")";
 		return oss.str();
 	}
-	//something needs to write
-	//把三層轉成兩層
-	//看到同一層的第一個點如果是board_size*board_size的話就不用輸出
-	//直接輸出最後一個點
-	//目前的想法是把是三倍數的層數作記號
-	//然後只要是那一層的東西就得把前面兩層的東西印出來
- 	std::string outputEditorTree_r(const SGFTreeNode* parent, const SGFTreeNode* node, int cnt_level, std::string comment, bool F) // two layer
+
+ 	std::string outputEditorTree_r(const TwoLayersNode* node, int cnt_level) // two layer
 	{		
 		if (node == NULL) { return ""; }
 		
-		comment += node->getComment();
-		
 		std::ostringstream oss;
-		bool f = false;
-		if (node != getRoot()) {			
-			if (cnt_level % 3 == 2 && node->action_.getActionID() != pass_location_) {
-				if(F) {
-					oss << "(";
-					f = true;
-				}else{
-					// oss << "C[NO1]";
-				}
-				oss << ";" << getPlayerType(node->action_.getPlayer()) 
-					<< "[" 
-					<< actionIDToSGFString(parent->action_.getActionID(),board_size_) 
-					<< actionIDToSGFString(node->action_.getActionID(),board_size_) 
-					<< "]";
-				// oss << "C[" <<" Parent: " <<parent->getComment() <<" Node: "<< node->getComment() << "]";
-				oss << "C[" << node->getComment() << "]";
-				comment = "";
-			} else if (cnt_level % 3 == 0) {
-				if(F) {
-					oss << "(";
-					f = true;
-				}else{
-					// oss << "C[NO2]";
-				}
-				//std::cerr<<node->action_.getActionID()<<" "<<board_size_<<std::endl;
-				oss << ";" << getPlayerType(node->action_.getPlayer()) 
-					<< "[" << actionIDToSGFString(node->action_.getActionID(),board_size_) << "]";
-				// oss << "C[" << comment << " Node: " << node->getComment() << "]";
-				oss << "C[" << node->getComment() << "]";
-				comment = "";
-			} else{
-				if(cnt_level % 3 == 1) {
-					// oss << "C[choose]";
-				}
-				else if (cnt_level % 3 == 2){
-					// oss << "C[move]";
-				}
-			}
+		if (cnt_level != 0) {			
+			oss << ";" << node->player 
+				<< "[" << node->action << "]";
+			oss << "C[" << node->comment << "]";
 		}
 		
-		int num_children = 0;
-		for (SGFTreeNode* child = node->child_; child != NULL; child = child->next_silbing_) {
-			++num_children;
-		}
+		int num_children = node->children.size();
 		
-		for(SGFTreeNode* child = node->child_; child != NULL; child = child->next_silbing_) {
-			bool flag = false;
-			if (num_children > 1) { 
-				// oss << "("; 
-				flag = true;
-			}
-			oss << outputEditorTree_r(node, child, cnt_level+1, comment, flag);
-			// if (num_children > 1) { oss << ")"; }
+		for (auto child = node->children.begin(); child != node->children.end(); child++) {
+			if (num_children > 1) { oss << "("; }
+			oss << outputEditorTree_r(*child, cnt_level+1);
+			if (num_children > 1) { oss << ")"; }
 		}
-		if (f) { oss << ")"; }
 		
 		return oss.str();
 	}
+	// --------------------------------------------------------------------------
  
 
 	inline const SGFTreeNode* getRoot() const { return &sgf_tree_nodes_[0]; }	
@@ -357,16 +382,17 @@ private:
 int main(int argc, char* argv[])
 {
 	SGFTreeLoader loader;
-	loader.setTreeSize(1000000);
+	loader.setTreeSize(10000);	
 	loader.loadFromFile(argv[1]);
-
 	std::cout << "Number of Tree Node: " << loader.getTreeSize() << std::endl;
 	
 // 	fstream f_output;
 // 	f_output.open("tree.sgf", ios::out);
 // 	f_output << loader.outputTree();
 //    f_output.close();
-	
+
+	TwoLayersNode* root = new TwoLayersNode;
+	loader.parseEditorTree(root);
  
  	fstream f_output2;
 
@@ -380,8 +406,8 @@ int main(int argc, char* argv[])
 	dt << 1900 + ltm->tm_year << 'Y' << 1 + ltm->tm_mon << 'M' << ltm->tm_mday
 		<< 'D' << ltm->tm_hour << ':' << ltm->tm_min << ':' << ltm->tm_sec;
 
-	f_output2.open(std::string(argv[1]) + "_parsed.sgf" , ios::out);
-	f_output2 << loader.outputEditorTree();
+	f_output2.open(std::string(argv[1]), ios::out);
+	f_output2 << loader.outputEditorTree(root);
 	f_output2.close();
 	// f_output2.open("editor.sgf", ios::out);
 	// f_output2 << loader.outputEditorTree();
