@@ -382,7 +382,7 @@ private:
 int main(int argc, char* argv[])
 {
 	SGFTreeLoader loader;
-	loader.setTreeSize(10000);	
+	loader.setTreeSize(1000000);	
 	loader.loadFromFile(argv[1]);
 	std::cout << "Number of Tree Node: " << loader.getTreeSize() << std::endl;
 	
