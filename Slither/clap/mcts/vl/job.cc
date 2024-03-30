@@ -78,8 +78,11 @@ void Job::select(std::mt19937& rng) {
           next_step = Step::DONE;
         }
         break;
+      }
+      // else {
+      //   next_step = Step::DONE;
+      //   break;
       // }
-      // else std::cout <<"action: -1\n";
     }
     leaf_state->apply_action(action);
     game::Player current_player = leaf_state->current_player();
