@@ -37,7 +37,7 @@ class Job {
   game::StatePtr leaf_state;
   std::vector<float> leaf_observation;
   // previous player, current player, node ptr
-  std::vector<std::tuple<game::Player, game::Player, Node*>> selection_path;
+  std::vector<std::tuple<game::Player, game::Player, Node*, game::Action>> selection_path;
   // evaluate
   std::vector<float> leaf_policy;
   std::vector<float> leaf_returns;
