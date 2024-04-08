@@ -23,7 +23,7 @@ void Job::select(std::mt19937& rng) {
   
   game::Player previous_player = leaf_state->current_player();
   selection_path.clear();
-  selection_path.emplace_back(1-previous_player, previous_player, leaf_node);
+  selection_path.emplace_back(1-previous_player, previous_player, leaf_node, -1);
 
   game::Action action;
   while (true) {    
@@ -83,10 +83,11 @@ void Job::select(std::mt19937& rng) {
       //   break;
       // }
     }
+    
     leaf_state->apply_action(action);
     game::Player current_player = leaf_state->current_player();
 
-    selection_path.emplace_back(previous_player, current_player, leaf_node);
+    selection_path.emplace_back(previous_player, current_player, leaf_node, action);
     previous_player = current_player;
   }
 }
@@ -132,46 +133,54 @@ void Job::evaluate() {
 
 void Job::update(std::mt19937& rng) {
 
-  for (auto& [parent_player, current_player, node] : selection_path) {
+  for (auto& [parent_player, current_player, node, act] : selection_path) {
     node->num_visits -= Engine::virtual_loss - 1;
     atomic_add(node->parent_player_value_sum, leaf_returns[parent_player]);
     atomic_add(node->current_player_value_sum, leaf_returns[current_player]);
   }
 
-  auto& [parent_player, current_player, leaf_node] = selection_path.back();
+  auto& [parent_player, current_player, leaf_node, act] = selection_path.back();
   if((parent_player == 0) && (current_player == 1)) {
     // std::cout<< "before check can block\n";
     if(!leaf_state->check_can_block()) {
-      std::cout<< "after check can block\n";
+      // std::cout<< "after check can block\n";
       leaf_node->label = 0; // black win
     }
   }
 
   auto pre_label = leaf_node->label;
   int i = selection_path.size() - 2;
+  if ((i >= 0) && (pre_label != 2)) {
+    std::cout << leaf_state->printBoard({}, {}) << '\n';
+    auto& [p_player, c_player, node, act] = selection_path[i+1];
+    std::cout << "last action: " << act << " pre_label: " << pre_label << " prev: " << p_player << " cur: " << c_player << '\n';
+  }
   while((i >= 0) && (pre_label != 2)) {
-    auto& [p_player, c_player, node] = selection_path[i];
+    auto& [p_player, c_player, node, act] = selection_path[i];
+    std::cout << "action: " << act << " pre_label: " << pre_label << " prev: " << p_player << " cur: " << c_player << '\n';
 
-    if(p_player == c_player){ // parent_player = current_player
-      // std::cout<<"wrong\n";
+    if((p_player == 0) && (c_player == 0)){ // black choose, black move
       node->label = pre_label;
     }
     else{
-      if((pre_label == 0) && (p_player == 1)){ // label = 0, OR node
-        std::cout<< "label\n";
+      if((pre_label == 0) && (p_player == 1) && (c_player == 0)){ // label = 0, OR node (white place)
+        // std::cout<< "label\n";
         node->label = pre_label;
       }
-      else if((pre_label == 1) && (p_player == 0)){ // label = 1, AND node
+      else if((pre_label == 1) && (p_player == 0) && (c_player == 1)){ // label = 1, AND node (black place)
         node->label = pre_label;
       }
       else{
         bool needLabel = true;
+        std::cout << "child:\n";
         for(auto& [p, action, child] : node->children){
+          std::cout << action << " label: " << child->label << '\n';
           if(child->label != pre_label){
             needLabel = false;
             break;
           }
         }
+        std::cout << '\n';
         if(needLabel){
           node->label = pre_label;
         }
@@ -182,7 +191,7 @@ void Job::update(std::mt19937& rng) {
   }
   
   if (!leaf_policy.empty()) {
-    auto& [parent_player, current_player, leaf_node] = selection_path.back();
+    auto& [parent_player, current_player, leaf_node, act] = selection_path.back();
     const auto legal_actions = leaf_state->legal_actions();
     leaf_node->expand(legal_actions);
     // extract legal action policy and normalize
@@ -215,7 +224,7 @@ void Job::play(std::mt19937& rng) {
   // std::cerr<<"test"<<std::endl;
   while (tree.root_node.use_count() != 1) {
     // break;
-    std::cout<<"use_count: "<<tree.root_node.use_count()<<'\n';
+    // std::cout<<"use_count: "<<tree.root_node.use_count()<<'\n';
   }
   const auto player = root_state->current_player();
   const auto root_node = tree.root_node.get();
