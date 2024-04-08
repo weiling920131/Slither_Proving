@@ -78,7 +78,6 @@ void Job::select(std::mt19937& rng) {
           next_step = Step::DONE;
         }
         break;
-      }
       // else {
       //   next_step = Step::DONE;
       //   break;
