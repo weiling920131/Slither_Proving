@@ -406,7 +406,7 @@ int main(int argc, char* argv[])
 	dt << 1900 + ltm->tm_year << 'Y' << 1 + ltm->tm_mon << 'M' << ltm->tm_mday
 		<< 'D' << ltm->tm_hour << ':' << ltm->tm_min << ':' << ltm->tm_sec;
 
-	f_output2.open(std::string(argv[1]), ios::out);
+	f_output2.open(std::string(argv[1])+"_parsed", ios::out);
 	f_output2 << loader.outputEditorTree(root);
 	f_output2.close();
 	// f_output2.open("editor.sgf", ios::out);

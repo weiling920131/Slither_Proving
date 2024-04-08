@@ -488,17 +488,17 @@ bool SlitherState::check_move(std::vector<int> M, int pos, std::vector<int> w){
 bool SlitherState::check_can_block(/*std::vector<int> M*/){
     std::vector<int> M = getboard();
 	std::vector<std::vector<int>> pos = get_critical(match_WP());
-	for(int i=0;i<pos.size();i++){
-		std::cout << "cp set" << i << ": ";
-		for(int j=0;j<pos[i].size();j++){
-			std::cout << pos[i][j] << " ";
-		}
-		std::cout << "\n";
-	}
+	// for(int i=0;i<pos.size();i++){
+	// 	std::cout << "cp set" << i << ": ";
+	// 	for(int j=0;j<pos[i].size();j++){
+	// 		std::cout << pos[i][j] << " ";
+	// 	}
+	// 	std::cout << "\n";
+	// }
 	if(pos.size() == 0) return true;
 	std::vector<int> dir = {-5, -1, 1, 5};
     for(int j=0;j<pos.size();j++){
-		std::cout << "cp set" << j << ": ";
+		// std::cout << "cp set" << j << ": ";
 		int cp_num = pos[j].size();
 		std::vector<int> blocked;
 		for(int i=0;i<pos[j].size();i++){
@@ -516,7 +516,7 @@ bool SlitherState::check_can_block(/*std::vector<int> M*/){
 		if(cp_num==1){ //只有pos1git
 			M[pos[j][0]] = 1;
 			if(check_diag(M, 1)){ //直接下pos1
-				std::cout << "直接下pos1\n"; 
+				// std::cout << "直接下pos1\n"; 
 				return true;
 			}
 			M[pos[j][0]] = 2;
@@ -533,19 +533,19 @@ bool SlitherState::check_can_block(/*std::vector<int> M*/){
 				}
 				if(M[pos[j][0]+dir[d]]==2){
 					if(check_move(M, M[pos[j][0]+dir[d]], blocked)){
-						std::cout << "移動加下pos1\n"; 
+						// std::cout << "移動加下pos1\n"; 
 						return true;
 					}
 				}
 			}			
 			if(check_move(M, M[pos[j][0]], blocked)){ //移動到pos1
-				std::cout << "移動到pos1\n"; 
+				// std::cout << "移動到pos1\n"; 
 				return true;	
 			}else{
 				for(int d=0;d<4;d++){ //移動到pos1加下
 					M[pos[j][0]+dir[d]] = 1;
 					if(check_diag(M, 1)){
-						std::cout << "移動到pos1加下\n"; 
+						// std::cout << "移動到pos1加下\n"; 
 						return true;
 					}
 					M[pos[j][0]+dir[d]] = 2;
@@ -555,7 +555,7 @@ bool SlitherState::check_can_block(/*std::vector<int> M*/){
 			M[pos[j][0]] = 1; //移動到pos2下pos1
 			blocked.push_back(pos[j][0]);
 			if(check_move(M, M[pos[j][1]], blocked)){ 
-				std::cout << "移動到pos2下pos1\n"; 
+				// std::cout << "移動到pos2下pos1\n"; 
 				return true;
 			}
 			M[pos[j][0]] = 2;
@@ -563,7 +563,7 @@ bool SlitherState::check_can_block(/*std::vector<int> M*/){
 			M[pos[j][1]] = 1; //移動到pos1下pos2
 			blocked.push_back(pos[j][1]);
 			if(check_move(M, M[pos[j][0]], blocked)){ 
-				std::cout << "移動到pos1下pos2\n"; 
+				// std::cout << "移動到pos1下pos2\n"; 
 				return true;
 			}
 			M[pos[j][1]] = 2;

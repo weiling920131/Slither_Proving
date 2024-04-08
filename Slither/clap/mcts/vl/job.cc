@@ -78,7 +78,6 @@ void Job::select(std::mt19937& rng) {
           next_step = Step::DONE;
         }
         break;
-      }
       // else {
       //   next_step = Step::DONE;
       //   break;
@@ -104,7 +103,7 @@ void Job::evaluate() {
   // calculate input shape & size
   const int input_size = std::accumulate(input_shape.begin(), input_shape.end(),
                                          1, std::multiplies<>());
-
+  
   // construct input tensor
   std::vector<float> input_vector;
   input_vector.reserve(input_size);
