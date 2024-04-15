@@ -27,6 +27,7 @@ void Job::select(std::mt19937& rng) {
 
   game::Action action;
   while (true) {    
+
     leaf_node->num_visits += Engine::virtual_loss;
     if (leaf_node->children.empty()) {
       if (leaf_state->is_terminal()) {
@@ -38,16 +39,19 @@ void Job::select(std::mt19937& rng) {
         next_step = Step::UPDATE;
         break;
       }
+      
       // std::cout<<"job.cc line: 42\n";
       auto success = leaf_node->acquire_expand();
       // std::cout<<"job.cc line: 44\n";
       if (success) {
         // std::cout<<"job.cc line: 46\n";
         leaf_observation = leaf_state->observation_tensor();
+        // std::cout << "select12\n";
         next_step = Step::EVALUATE;
         break;
       }
     }
+
 
     auto tmp = leaf_node;
     std::tie(action, leaf_node) = leaf_node->select(rng);
@@ -83,6 +87,7 @@ void Job::select(std::mt19937& rng) {
       //   break;
       // }
     }
+
     
     leaf_state->apply_action(action);
     game::Player current_player = leaf_state->current_player();
@@ -90,9 +95,11 @@ void Job::select(std::mt19937& rng) {
     selection_path.emplace_back(previous_player, current_player, leaf_node, action);
     previous_player = current_player;
   }
+  
 }
 
 void Job::evaluate() {
+  std::cout << "evaluate\n";
   // std::cout<<"job.cc line: 76\n";
   const auto& observation_tensor_shape =
       engine->game->observation_tensor_shape();
@@ -184,6 +191,7 @@ void Job::update(std::mt19937& rng) {
         if(needLabel){
           node->label = pre_label;
         }
+
       }
     }
     pre_label = node->label;
@@ -204,8 +212,7 @@ void Job::update(std::mt19937& rng) {
     // first simulation -> add dirichlet noise to root policy
     if (tree.num_simulations() == 1) tree.add_dirichlet_noise(rng);
   }
-
-
+  // std::cout << "Update done\n";
   // if (tree.root_node->num_visits >= Engine::max_simulations) {
   //   if (tree_owner) {
   //     next_step = Step::PLAY;
@@ -214,9 +221,7 @@ void Job::update(std::mt19937& rng) {
   //   }
   // } else {
     next_step = Step::SELECT;
-    // std::cout << "update\n";
   // }
-  
 
 }
 
