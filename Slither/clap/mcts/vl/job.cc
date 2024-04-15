@@ -52,36 +52,40 @@ void Job::select(std::mt19937& rng) {
     auto tmp = leaf_node;
     std::tie(action, leaf_node) = leaf_node->select(rng);
     if (action == -1) {
-      // if (tmp == tree.root_node.get()) {
-        std::cout << "root: " << tmp->label << '\n';
-
-        while(true) {
-          bool list = false;
-          if (tmp->children.size() != 1) {
-            for (auto &[p, action, child]: tmp->children) {
-              if (child->label == 0) {
-                std::cout << "action: " << action << " label: " << std::to_string(child->label) << "\n";
-                break;
-              }
-            }
-            break;
-          }
-          else {
-            tmp = std::get<2>(tmp->children[0]).get();
-          }
-        }
-        leaf_policy.clear();
-        leaf_returns = leaf_state->returns();
-        if(tree_owner) {
-          next_step = Step::PLAY;
-        }else {
-          next_step = Step::DONE;
-        }
+      if (tmp->label == 2) {
+        next_step = Step::DONE;
         break;
-      // else {
-      //   next_step = Step::DONE;
-      //   break;
+      }
+      std::cout << leaf_state->printBoard({}, {}) << '\n';
+      // for (auto a: leaf_state->legal_actions()) {
+      //   std::cout << a << " ";
       // }
+      // std::cout << '\n';
+      std::cout << "root: " << tmp->label << '\n';
+
+      // while(true) {
+      //   bool list = false;
+      //   if (tmp->children.size() != 1) {
+      //     for (auto &[p, action, child]: tmp->children) {
+      //       if (child->label == 0) {
+      //         std::cout << "action: " << action << " label: " << std::to_string(child->label) << "\n";
+      //         break;
+      //       }
+      //     }
+      //     break;
+      //   }
+      //   else {
+      //     tmp = std::get<2>(tmp->children[0]).get();
+      //   }
+      // }
+      leaf_policy.clear();
+      leaf_returns = leaf_state->returns();
+      if(tree_owner) {
+        next_step = Step::PLAY;
+      }else {
+        next_step = Step::DONE;
+      }
+      break;
     }
     
     leaf_state->apply_action(action);
@@ -150,16 +154,19 @@ void Job::update(std::mt19937& rng) {
 
   auto pre_label = leaf_node->label;
   int i = selection_path.size() - 2;
-  if ((i >= 0) && (pre_label != 2)) {
-    std::cout << leaf_state->printBoard({}, {}) << '\n';
-    auto& [p_player, c_player, node, act] = selection_path[i+1];
-    std::cout << "last action: " << act << " pre_label: " << pre_label << " prev: " << p_player << " cur: " << c_player << '\n';
-  }
+  // if ((i >= 0) && (pre_label != 2)) {
+  //   std::cout << leaf_state->printBoard({}, {}) << '\n';
+  //   auto& [p_player, c_player, node, act] = selection_path[i+1];
+  //   std::cout << "last action: " << act << " pre_label: " << pre_label << " prev: " << p_player << " cur: " << c_player << '\n';
+  // }
   while((i >= 0) && (pre_label != 2)) {
     auto& [p_player, c_player, node, act] = selection_path[i];
-    std::cout << "action: " << act << " pre_label: " << pre_label << " prev: " << p_player << " cur: " << c_player << '\n';
+    // std::cout << "action: " << act << " pre_label: " << pre_label << " prev: " << p_player << " cur: " << c_player << '\n';
 
-    if((p_player == 0) && (c_player == 0)){ // black choose, black move
+    if((pre_label == 0) && (p_player == 0) && (c_player == 0)){ // black choose, black move
+      node->label = pre_label;
+    }
+    else if((pre_label == 1) && (p_player == 1) && (c_player == 1)){ // white choose, white move
       node->label = pre_label;
     }
     else{
@@ -172,15 +179,15 @@ void Job::update(std::mt19937& rng) {
       }
       else{
         bool needLabel = true;
-        std::cout << "child:\n";
+        // std::cout << "child:\n";
         for(auto& [p, action, child] : node->children){
-          std::cout << action << " label: " << child->label << '\n';
+          // std::cout << action << " label: " << child->label << '\n';
           if(child->label != pre_label){
             needLabel = false;
             break;
           }
         }
-        std::cout << '\n';
+        // std::cout << '\n';
         if(needLabel){
           node->label = pre_label;
         }
@@ -214,7 +221,7 @@ void Job::update(std::mt19937& rng) {
   //   }
   // } else {
     next_step = Step::SELECT;
-    // std::cout << "update\n";
+    // std::cout << tree.root_node->num_visits << '\n';
   // }
   
 
