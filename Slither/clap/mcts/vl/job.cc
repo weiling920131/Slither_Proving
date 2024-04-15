@@ -52,8 +52,9 @@ void Job::select(std::mt19937& rng) {
     auto tmp = leaf_node;
     std::tie(action, leaf_node) = leaf_node->select(rng);
     if (action == -1) {
-      // if (tmp == tree.root_node.get()) {
+      if (tmp == tree.root_node.get()) {
         std::cout << "root: " << tmp->label << '\n';
+      }
 
         while(true) {
           bool list = false;
@@ -132,7 +133,7 @@ void Job::evaluate() {
 }
 
 void Job::update(std::mt19937& rng) {
-
+  // std::cout<<"job.cc line: 135\n";
   for (auto& [parent_player, current_player, node, act] : selection_path) {
     node->num_visits -= Engine::virtual_loss - 1;
     atomic_add(node->parent_player_value_sum, leaf_returns[parent_player]);
@@ -150,14 +151,14 @@ void Job::update(std::mt19937& rng) {
 
   auto pre_label = leaf_node->label;
   int i = selection_path.size() - 2;
-  if ((i >= 0) && (pre_label != 2)) {
-    std::cout << leaf_state->printBoard({}, {}) << '\n';
-    auto& [p_player, c_player, node, act] = selection_path[i+1];
-    std::cout << "last action: " << act << " pre_label: " << pre_label << " prev: " << p_player << " cur: " << c_player << '\n';
-  }
+  // if ((i >= 0) && (pre_label != 2)) {
+  //   std::cout << leaf_state->printBoard({}, {}) << '\n';
+  //   auto& [p_player, c_player, node, act] = selection_path[i+1];
+  //   std::cout << "last action: " << act << " pre_label: " << pre_label << " prev: " << p_player << " cur: " << c_player << '\n';
+  // }
   while((i >= 0) && (pre_label != 2)) {
     auto& [p_player, c_player, node, act] = selection_path[i];
-    std::cout << "action: " << act << " pre_label: " << pre_label << " prev: " << p_player << " cur: " << c_player << '\n';
+    // std::cout << "action: " << act << " pre_label: " << pre_label << " prev: " << p_player << " cur: " << c_player << '\n';
 
     if((p_player == 0) && (c_player == 0)){ // black choose, black move
       node->label = pre_label;
@@ -172,15 +173,15 @@ void Job::update(std::mt19937& rng) {
       }
       else{
         bool needLabel = true;
-        std::cout << "child:\n";
+        // std::cout << "child:\n";
         for(auto& [p, action, child] : node->children){
-          std::cout << action << " label: " << child->label << '\n';
+          // std::cout << action << " label: " << child->label << '\n';
           if(child->label != pre_label){
             needLabel = false;
             break;
           }
         }
-        std::cout << '\n';
+        // std::cout << '\n';
         if(needLabel){
           node->label = pre_label;
         }
