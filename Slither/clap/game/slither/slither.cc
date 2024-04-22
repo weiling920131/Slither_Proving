@@ -519,7 +519,7 @@ bool SlitherState::check_can_block(/*std::vector<int> M*/){
 				// std::cout << "直接下pos1\n"; 
 				return true;
 			}
-			M[pos[j][0]] = 2;
+
 			for(int d=0;d<4;d++){ //移動加下pos1
 				if(pos[j][0]<5){
 					if(dir[d]==-5) continue;
@@ -532,17 +532,30 @@ bool SlitherState::check_can_block(/*std::vector<int> M*/){
 					if(dir[d]==1) continue;
 				}
 				if(M[pos[j][0]+dir[d]]==2){
+					blocked.push_back(pos[j][0]);
 					if(check_move(M, M[pos[j][0]+dir[d]], blocked)){
 						// std::cout << "移動加下pos1\n"; 
 						return true;
 					}
+					blocked.pop_back();
 				}
-			}			
+			}
+			M[pos[j][0]] = 2;
 			if(check_move(M, M[pos[j][0]], blocked)){ //移動到pos1
 				// std::cout << "移動到pos1\n"; 
 				return true;	
 			}else{
 				for(int d=0;d<4;d++){ //移動到pos1加下
+					if(pos[j][0]<5){
+						if(dir[d]==-5) continue;
+					}else if(pos[j][0]>=20){
+						if(dir[d]==5) continue;
+					}
+					if(pos[j][0]%5==0){
+						if(dir[d]==-1) continue;
+					}else if(pos[j][0]%5==4){
+						if(dir[d]==1) continue;
+					}
 					M[pos[j][0]+dir[d]] = 1;
 					if(check_diag(M, 1)){
 						// std::cout << "移動到pos1加下\n"; 
@@ -572,7 +585,6 @@ bool SlitherState::check_can_block(/*std::vector<int> M*/){
     }
     return false;
 }
-
 std::vector<std::vector<int>> SlitherState::match_WP(){
 	std::vector<int> M = getboard();
 	int num = 0;
@@ -718,6 +730,7 @@ std::vector<std::vector<int>> SlitherState::match_WP(){
         }
         file.close();
 	}
+	std::cout << 7 << " ";
 	// for(auto path:pathes) {
 	// 	for(auto mp:path) {
 	// 		std::cout << mp << ' ';
