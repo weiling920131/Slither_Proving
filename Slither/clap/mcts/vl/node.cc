@@ -61,7 +61,7 @@ void Node::expand(const std::vector<game::Action>& legal_actions) {
   children.reserve(legal_actions.size());
   for (const auto& action : legal_actions)
     children.emplace_back(0.0F, action, std::make_unique<Node>());
-
+  
   expand_done();
 }
 
