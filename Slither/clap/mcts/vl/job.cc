@@ -189,7 +189,7 @@ void Job::update(std::mt19937& rng) {
         // std::cout<< "label\n";
         node->label = pre_label;
       }
-      else if((pre_label == 1) && (p_player == 0) && (c_player == 1)){ // label = 1, AND node (black place)
+      // else if((pre_label == 1) && (p_player == 0) && (c_player == 1)){ // label = 1, AND node (black place)
       else if((pre_label == 1) && (p_player == 0) && (c_player == 1)){ // label = 1, AND node (black place)
         node->label = pre_label;
       }
