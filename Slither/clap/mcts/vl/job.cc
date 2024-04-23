@@ -29,6 +29,7 @@ void Job::select(std::mt19937& rng) {
   game::Action action;
   //std::cout<<"before select while\n";
   while (true) {    
+
     leaf_node->num_visits += Engine::virtual_loss;
     //std::cout<<"job.cc line: 33\n";
     if (leaf_node->children.empty()) {
@@ -46,12 +47,15 @@ void Job::select(std::mt19937& rng) {
         //std::cout<<"job.cc line: 46\n";
         break;
       }
+      
+      // std::cout<<"job.cc line: 42\n";
       //std::cout<<"job.cc line: 49\n";
       auto success = leaf_node->acquire_expand();
       //std::cout<<"job.cc line: 51\n";
       if (success) {
         //std::cout<<"job.cc line: 53\n";
         leaf_observation = leaf_state->observation_tensor();
+        // std::cout << "select12\n";
         next_step = Step::EVALUATE;
         //std::cout<<"job.cc line: 56\n";
         break;
@@ -103,6 +107,7 @@ void Job::select(std::mt19937& rng) {
       //   break;
       // }
     }
+
     
     leaf_state->apply_action(action);
     //std::cout<<"job.cc line: 106\n";
@@ -112,10 +117,13 @@ void Job::select(std::mt19937& rng) {
     previous_player = current_player;
   }
   //std::cout<<"select end\n";
+  
 }
 
 void Job::evaluate() {
   // //std::cout<<"job.cc line: 76\n";
+  std::cout << "evaluate\n";
+  // std::cout<<"job.cc line: 76\n";
   const auto& observation_tensor_shape =
       engine->game->observation_tensor_shape();
   std::vector<int64_t> input_shape(observation_tensor_shape.begin(),
@@ -177,11 +185,20 @@ void Job::update(std::mt19937& rng) {
   //   auto& [p_player, c_player, node, act] = selection_path[i+1];
   //   std::cout << "last action: " << act << " pre_label: " << pre_label << " prev: " << p_player << " cur: " << c_player << '\n';
   // }
+  // if ((i >= 0) && (pre_label != 2)) {
+  //   std::cout << leaf_state->printBoard({}, {}) << '\n';
+  //   auto& [p_player, c_player, node, act] = selection_path[i+1];
+  //   std::cout << "last action: " << act << " pre_label: " << pre_label << " prev: " << p_player << " cur: " << c_player << '\n';
+  // }
   while((i >= 0) && (pre_label != 2)) {
     auto& [p_player, c_player, node, act] = selection_path[i];
     // std::cout << "action: " << act << " pre_label: " << pre_label << " prev: " << p_player << " cur: " << c_player << '\n';
+    // std::cout << "action: " << act << " pre_label: " << pre_label << " prev: " << p_player << " cur: " << c_player << '\n';
 
-    if((p_player == 0) && (c_player == 0)){ // black choose, black move
+    if((pre_label == 0) && (p_player == 0) && (c_player == 0)){ // black choose, black move
+      node->label = pre_label;
+    }
+    else if((pre_label == 1) && (p_player == 1) && (c_player == 1)){ // white choose, white move
       node->label = pre_label;
     }
     else{
@@ -197,7 +214,9 @@ void Job::update(std::mt19937& rng) {
         bool needLabel = true;
         // std::cout << "child:\n";
         // std::cout << "child:\n";
+        // std::cout << "child:\n";
         for(auto& [p, action, child] : node->children){
+          // std::cout << action << " label: " << child->label << '\n';
           // std::cout << action << " label: " << child->label << '\n';
           // std::cout << action << " label: " << child->label << '\n';
           if(child->label != pre_label){
@@ -205,6 +224,7 @@ void Job::update(std::mt19937& rng) {
             break;
           }
         }
+        // std::cout << '\n';
         // std::cout << '\n';
         // std::cout << "i: " << i << '\n';
         if(needLabel){
@@ -233,6 +253,7 @@ void Job::update(std::mt19937& rng) {
     // first simulation -> add dirichlet noise to root policy
     if (tree.num_simulations() == 1) tree.add_dirichlet_noise(rng);
   }
+  // std::cout << "Update done\n";
   // //std::cout<<"after if\n";
 
 

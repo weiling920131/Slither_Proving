@@ -730,6 +730,7 @@ std::vector<std::vector<int>> SlitherState::match_WP(){
         }
         file.close();
 	}
+	std::cout << 7 << " ";
 	// for(auto path:pathes) {
 	// 	for(auto mp:path) {
 	// 		std::cout << mp << ' ';
