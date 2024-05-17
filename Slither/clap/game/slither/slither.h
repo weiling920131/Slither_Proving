@@ -1,6 +1,7 @@
 #pragma once
 #include <array>
 #include <map>
+#include <unordered_map>
 
 #include "clap/game/game.h"
 
@@ -55,6 +56,7 @@ class SlitherState final : public State {
   std::string serialize() const override;
   std::string serialize_num_to_char() const override;
   //bool has_piece(const Player &) const;
+  std::unordered_map<std::string, int> board2Label;
 
  private:
   // whp

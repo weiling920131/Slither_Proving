@@ -170,13 +170,13 @@ void Job::update(std::mt19937& rng) {
   }
 
   auto& [parent_player, current_player, leaf_node, act] = selection_path.back();
-  if((parent_player == 0) && (current_player == 1)) {
-    // //std::cout<< "before check can block\n";
-    if(!leaf_state->check_can_block()) {
-      // std::cout<< "after check can block\n";
-      leaf_node->label = 0; // black win
-    }
-  }
+  // if((parent_player == 0) && (current_player == 1)) {
+  //   // //std::cout<< "before check can block\n";
+  //   if(!leaf_state->check_can_block()) {
+  //     // std::cout<< "after check can block\n";
+  //     leaf_node->label = 0; // black win
+  //   }
+  // }
 
   auto pre_label = leaf_node->label;
   int i = selection_path.size() - 2;
@@ -195,6 +195,7 @@ void Job::update(std::mt19937& rng) {
     // std::cout << "action: " << act << " pre_label: " << pre_label << " prev: " << p_player << " cur: " << c_player << '\n';
     // std::cout << "action: " << act << " pre_label: " << pre_label << " prev: " << p_player << " cur: " << c_player << '\n';
 
+    bool needLabel = true;
     if((pre_label == 0) && (p_player == 0) && (c_player == 0)){ // black choose, black move
       node->label = pre_label;
     }
@@ -211,7 +212,6 @@ void Job::update(std::mt19937& rng) {
         node->label = pre_label;
       }
       else{
-        bool needLabel = true;
         // std::cout << "child:\n";
         // std::cout << "child:\n";
         // std::cout << "child:\n";
@@ -234,6 +234,9 @@ void Job::update(std::mt19937& rng) {
         // //std::cout<<"while done\n";
       }
     }
+    // if (needLabel) {
+    //   std::cout << leaf_state->printBoard({}, {}) << '\n';
+    // }
     pre_label = node->label;
     i--;
   }
@@ -266,6 +269,9 @@ void Job::update(std::mt19937& rng) {
   // } else {
     next_step = Step::SELECT;
     std::cout<< tree.root_node->num_visits << '\n';
+    if (tree.root_node->num_visits > 15000000) {
+      next_step = Step::DONE;
+    }
     // std::cout << "update\n";
   // }
 
