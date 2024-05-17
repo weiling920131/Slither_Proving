@@ -1,8 +1,8 @@
 #include <algorithm>
+#include <ctime>
 #include <fstream>
 #include <iostream>
 #include <sstream>
-#include <ctime>
 
 #include "clap/game/game.h"
 #include "clap/mcts/vl/engine.h"
@@ -51,20 +51,20 @@ void Job::dump_mcts() const {
   std::time_t now = std::time(0);
   std::tm* ltm = localtime(&now);
   std::stringstream dt;
-  std::string folder="mcts_sgf/";
-  system(("mkdir -p "+folder).c_str());
+  std::string folder = "mcts_sgf/";
+  system(("mkdir -p " + folder).c_str());
   dt << 1900 + ltm->tm_year << 'Y' << 1 + ltm->tm_mon << 'M' << ltm->tm_mday
      << 'D' << ltm->tm_hour << ':' << ltm->tm_min << ':' << ltm->tm_sec;
   std::string filename = folder + "MCTS_" + dt.str() + ".sgf";
   sgf_file_.open(folder + "MCTS_" + dt.str() + ".sgf");
-//  sgf_file_.open("MCTS_" + dt.str() + ".sgf");
+  //  sgf_file_.open("MCTS_" + dt.str() + ".sgf");
   sgf_file_ << "(";
   PreOrderTraversalDump(sgf_file_, *tree.root_node.get(), root_state, 1.0,
                         (tree.root_node.get())->num_visits, 0);
   sgf_file_.close();
-  system(("./parser "+filename).c_str());
+  system(("./parser " + filename).c_str());
   std::cerr << game->name() << std::endl;
-  
+
   // (;GM[7]FF[4];B[KJ];W[KI];W[LJ];B[MK];B[ML];W[LK];W[LI];B[MI];B[MJ];W[MH];W[NH];B[MM];B[MN])
   // (;GM[511];B[JJ](;W[JH];W[MK])(;W[JH];W[JN])(;W[JH];W[FK];B[FF])(;W[JH];W[PO](;B[NH];B[PJ];W[MM];W[KL])(;B[NH];B[MK])))
 }
@@ -77,24 +77,25 @@ void Job::PreOrderTraversalDump(std::ofstream& sgf_file_,
                                 const int& parent_num_visits,
                                 const game::Action& last_action) const {
   game::StatePtr current_state = parent_state->clone();
-  //sgf_file_ << "(;";
-  Node * test = tree.root_node.get();
+  // sgf_file_ << "(;";
+  Node* test = tree.root_node.get();
   if (&current_node == test) {
     sgf_file_ << ";GM[CLAP]";
     // GM[CLAP]
     // sgf_file_ << parent_state->serialize();
     sgf_file_ << parent_state->serialize_num_to_char();
-    // sgf_file_ << "\r\nC[Label: " << label_char[current_node.label] << "\r\n]";
-//     ;B[KJ];W[KI];W[LJ];B[MK];B[ML];W[LK];W[LI];B[MI];B[MJ];W[MH];W[NH];B[MM];B[MN]
-  }else {
-    //if
+    // sgf_file_ << "\r\nC[Label: " << label_char[current_node.label] <<
+    // "\r\n]";
+    //     ;B[KJ];W[KI];W[LJ];B[MK];B[ML];W[LK];W[LI];B[MI];B[MJ];W[MH];W[NH];B[MM];B[MN]
+  } else {
+    // if
 
-
-    sgf_file_ <<";"<<color[parent_state->current_player()] << "["
-     << engine->game->action_to_string(last_action) << "]";
-    // sgf_file_ << "\r\nC[Simulation Count: " << current_node.num_visits << "\r\n";
-    // sgf_file_ << "MCTS Value: "
-    //           << current_node.parent_player_value_sum / current_node.num_visits
+    sgf_file_ << ";" << color[parent_state->current_player()] << "["
+              << engine->game->action_to_string(last_action) << "]";
+    // sgf_file_ << "\r\nC[Simulation Count: " << current_node.num_visits <<
+    // "\r\n"; sgf_file_ << "MCTS Value: "
+    //           << current_node.parent_player_value_sum /
+    //           current_node.num_visits
     //           << "\r\n";
     // sgf_file_ << "Prior Probability: " << prior << "\r\n";
     // sgf_file_ << "MCTS Policy: "
@@ -105,32 +106,27 @@ void Job::PreOrderTraversalDump(std::ofstream& sgf_file_,
 
     current_state->apply_action(last_action);
   }
-  int n_child=0;
-  for (auto &child : current_node.children)
-  {
-      if(std::get<2>(child)->num_visits != 0){n_child++;}
-  } 
+  int n_child = 0;
+  for (auto& child : current_node.children) {
+    if (std::get<2>(child)->num_visits != 0) {
+      n_child++;
+    }
+  }
 
-  for (auto &child : current_node.children) 
-  {
-    if (std::get<2>(child)->num_visits != 0) 
-    {
+  for (auto& child : current_node.children) {
+    if (std::get<2>(child)->num_visits != 0) {
       float prior = std::get<0>(child);
       game::Action last_action = std::get<1>(child);
-      if(n_child>1)
-      {
+      if (n_child > 1) {
         sgf_file_ << "(";
       }
-      PreOrderTraversalDump(sgf_file_, *(std::get<2>(child)), current_state, prior,
-                            current_node.num_visits, last_action);
-      if(n_child>1)
-      {
+      PreOrderTraversalDump(sgf_file_, *(std::get<2>(child)), current_state,
+                            prior, current_node.num_visits, last_action);
+      if (n_child > 1) {
         sgf_file_ << ")";
       }
     }
   }
-  
 }
-
 
 }  // namespace clap::mcts::vl

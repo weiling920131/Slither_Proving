@@ -59,9 +59,12 @@ std::tuple<game::Action, Node*> Node::select(std::mt19937& rng) const {
 
 void Node::expand(const std::vector<game::Action>& legal_actions) {
   children.reserve(legal_actions.size());
-  for (const auto& action : legal_actions)
+  for (const auto& action : legal_actions) 
+    auto node = std::make_unique<Node>();
+    node.get()->label = 2;
+    
     children.emplace_back(0.0F, action, std::make_unique<Node>());
-
+  
   expand_done();
 }
 
