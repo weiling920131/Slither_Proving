@@ -147,11 +147,11 @@ void Job::update(std::mt19937& rng) {
     atomic_add(node->current_player_value_sum, leaf_returns[current_player]);
   }
   auto& [parent_player, current_player, leaf_node, act] = selection_path.back();
-  if((parent_player == 0) && (current_player == 1)) {
-    if(!leaf_state->check_can_block()) {
-      leaf_node->label = 0; // black win
-    }
-  }
+  // if((parent_player == 0) && (current_player == 1)) {
+  //   if(!leaf_state->check_can_block()) {
+  //     leaf_node->label = 0; // black win
+  //   }
+  // }
   auto pre_label = leaf_node->label;
   int i = selection_path.size() - 2;
   // if ((i >= 0) && (pre_label != 2)) {
@@ -212,16 +212,16 @@ void Job::update(std::mt19937& rng) {
     if (tree.num_simulations() == 1) tree.add_dirichlet_noise(rng);
   }
   // std::cout << "Update done\n";
-  // if (tree.root_node->num_visits >= Engine::max_simulations) {
-  //   if (tree_owner) {
-  //     next_step = Step::PLAY;
-  //   } else {
-  //     next_step = Step::DONE;
-  //   }
-  // } else {
+  if (tree.root_node->num_visits >= 15000000) {
+    if (tree_owner) {
+      next_step = Step::PLAY;
+    } else {
+      next_step = Step::DONE;
+    }
+  } else {
     next_step = Step::SELECT;
     // std::cout << "update\n";
-  // }
+  }
 }
 
 void Job::play(std::mt19937& rng) {
