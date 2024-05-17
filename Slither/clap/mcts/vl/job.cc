@@ -103,7 +103,6 @@ void Job::select(std::mt19937& rng) {
 }
 
 void Job::evaluate() {
-  std::cout << "evaluate\n";
   // std::cout<<"job.cc line: 76\n";
   const auto& observation_tensor_shape =
       engine->game->observation_tensor_shape();
@@ -138,27 +137,21 @@ void Job::evaluate() {
   const auto& value_ptr = batch_value[0].data_ptr<float>();
   const auto& value_size = batch_value[0].numel();
   leaf_returns.assign(value_ptr, value_ptr + value_size);
-
   next_step = Job::Step::UPDATE;
 }
 
 void Job::update(std::mt19937& rng) {
-
   for (auto& [parent_player, current_player, node, act] : selection_path) {
     node->num_visits -= Engine::virtual_loss - 1;
     atomic_add(node->parent_player_value_sum, leaf_returns[parent_player]);
     atomic_add(node->current_player_value_sum, leaf_returns[current_player]);
   }
-
   auto& [parent_player, current_player, leaf_node, act] = selection_path.back();
   if((parent_player == 0) && (current_player == 1)) {
-    // std::cout<< "before check can block\n";
     if(!leaf_state->check_can_block()) {
-      // std::cout<< "after check can block\n";
       leaf_node->label = 0; // black win
     }
   }
-
   auto pre_label = leaf_node->label;
   int i = selection_path.size() - 2;
   // if ((i >= 0) && (pre_label != 2)) {
@@ -204,7 +197,6 @@ void Job::update(std::mt19937& rng) {
     pre_label = node->label;
     i--;
   }
-  
   if (!leaf_policy.empty()) {
     auto& [parent_player, current_player, leaf_node, act] = selection_path.back();
     const auto legal_actions = leaf_state->legal_actions();
@@ -230,7 +222,6 @@ void Job::update(std::mt19937& rng) {
     next_step = Step::SELECT;
     // std::cout << "update\n";
   // }
-
 }
 
 void Job::play(std::mt19937& rng) {
