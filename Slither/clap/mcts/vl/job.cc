@@ -242,7 +242,7 @@ void Job::update(std::mt19937& rng) {
       next_step = Step::DONE;
     }
     // std::cout << "update\n";
-  }
+  
 }
 
 void Job::play(std::mt19937& rng) {
