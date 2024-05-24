@@ -169,7 +169,7 @@ void Job::update(std::mt19937& rng) {
   auto& [parent_player, current_player, leaf_node, act] = selection_path.back();
   if((parent_player == 0) && (current_player == 1)) {
     // std::cout<< "before check can block\n";
-    if(!leaf_state->check_can_block()) {
+    if(!leaf_state->check_can_block(TT)) {
       // std::cout<< "after check can block\n";
       // 
       leaf_node->label = 0; // black win
@@ -217,7 +217,7 @@ void Job::update(std::mt19937& rng) {
   if (!leaf_policy.empty()) {
     auto& [parent_player, current_player, leaf_node, act] = selection_path.back();
     const auto legal_actions = leaf_state->legal_actions();
-    leaf_node->expand(legal_actions);
+    leaf_node->expand(leaf_state, legal_actions);
     // extract legal action policy and normalize
     float policy_sum = 0.0F;
     for (auto& [p, action, child] : leaf_node->children) {

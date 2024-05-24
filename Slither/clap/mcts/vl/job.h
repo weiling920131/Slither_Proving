@@ -12,6 +12,9 @@
 
 namespace clap::mcts::vl {
 
+std::unordered_map<uint64_t, int> TT;
+
+
 class Node;
 class Engine;
 
@@ -50,7 +53,6 @@ class Job {
   game::StatePtr root_state;
   // report
   clap::pb::Trajectory trajectory;
-  std::unordered_map<uint64_t, int> TT;
 };
 
 }  // namespace clap::mcts::vl
