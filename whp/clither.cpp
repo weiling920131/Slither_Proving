@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <vector>
 #include <fstream>
+#include <unordered_map>
 #include <queue>
 using namespace std;
 vector<vector<int>> P;
@@ -297,102 +298,55 @@ void DFSW(vector<int> &M, int cnt, int max, int num, vector<vector<int>>CPs){
     }
 }
 
+unordered_map<uint64_t, int> TT;
 
-
-int main(){
-    char *s = (char *)malloc(sizeof(char) * 50);
-    char *s2 = (char *)malloc(sizeof(char) * 50);
-    vector<int> MM(25, 2);
-    for(int i=12;i<=12;i++){
-        ofstream file;
-        // ofstream file2;
-        cout << i << "\n";
-        sprintf(s, "winning_path/winning_path_%d.txt", i);
-        // sprintf(s2, "check_mate/check_mate_%d.txt", i);
-        // sprintf(s2, "DFS/%d.txt", i);
-        file.open(s);
-        // file.open(s2);
-        // cout << i <<"====\n";
-        DFS(MM, i, 0, i, 0);
-        // file << "total: " << W[i].size() << "\n";
-        // total+=W[i].size();
-        // for(int j=0;j<W[i].size();j++){
-        //     int k=0;
-        //     for(int index=0;index<25;index++){
-        //         if(index==W[i][j][k]) {
-        //             file << "1 ";
-        //             k++;
-        //         }
-        //         else file << "0 ";
-        //         if(index%5==4) file << '\n';
-        //     }
-        //     if(j!=W[i].size()-1) file << "----------\n";
-        // }
-        // file.close();
-        // for(int h=0;h<5;h++){
-        //     for(int t=0;t<5;t++){
-        //         file << "head: " << h << " ";
-        //         file << "tail: " << t << "\n";
-        //         // cout << "head: " << h << " ";
-        //         // cout << "tail: " << t << "\n";
-        //         for(int j=0;j<WW[i][h][t].size();j++){
-        //             int k=0;
-        //             for(int index=0;index<25;index++){
-        //                 if(index==WW[i][h][t][j][k]) {
-        //                     file << "1 ";
-        //                     cout << "1 ";
-        //                     k++;
-        //                 }
-        //                 else {
-        //                     file << "0 ";
-        //                     cout << "0 ";
-        //                 }
-        //                 if(index%5==4) {
-        //                     file << '\n';
-        //                     cout << '\n';
-        //                 }
-        //             }
-        //             if(j!=WW[i][h][t].size()-1) {
-        //                 file << "----------\n";
-        //                 cout << "----------\n";
-        //             }
-        //         }
-        //     }
-        // }
-        // file.close();
+uint64_t convert_to_uint64_t(const vector<int>& M) {
+    uint64_t board = 0;
+    for (int i = 0; i < 25; i++) {
+        if (M[i] == 0) {
+            board |= (uint64_t(1) << i);
+        } else if (M[i] == 1) {
+            board |= (uint64_t(1) << (i + 25));
+        }
     }
-
-    // vector<int> V(25, 0);
-    // //criticle point sets
-    // vector<vector<int>> cps = {{5, 6}, {10, 6}};
-    // V[0] = 1;
-    // V[1] = 1;
-    // V[21] = 1;
-    // V[11] = 1;
-    // V[16] = 1;
-    // print(V);
-    // DFSW(V, 5, 0, 5, cps);
-    // for(int i=0;i<P.size();i++){
-    //     print(P[i]);
-    // }
-    // cout << "all: " << total << "\n";  
+    return board;
 }
 
-// int main(){
-//     vector<int> M (25, 2);
-//     M[22]=1;
-//     M[23]=1;
-//     M[24]=1;
-//     M[9]=1;
-//     M[4]=1;
-//     print(M);
-//     if(newcheck2(M, 1)){
-//         printf("win\n");
-//     } else {
-//         printf("loose\n");
-//     }
+void store_in_TT(vector<int> M, int label){
+	uint64_t board = convert_to_uint64_t(M);
+    TT[board] = {label};
+}
 
-//     return 0;
-// }
+bool lookup_TT(vector<int> M){
+    uint64_t board = convert_to_uint64_t(M);
+    auto it = TT.find(board);
+    if (it != TT.end()) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
-// (;GM[CLAP]SZ[5];B[X];B[X];B[C3];W[X];W[X];W[C2];B[C3];B[C4];B[C3];W[X];W[X];W[D2];B[C4];B[B3];B[A3];W[X];W[X];W[B2];B[X];B[X];B[A2];W[B2];W[C1];W[B5];B[X];B[X];B[A1];W[D2];W[D1];W[A5](;B[B3]C+[++Label:  Current Player:  Previous Player: --]-)(;B[C3]C+[++Label:  Current Player:  Previous Player: --]-;B[C4]C+[++Label:  Current Player:  Previous Player: --]-)(;B[X]C+[++Label:  Current Player:  Previous Player: --]-;B[X]C+[++Label:  Current Player:  Previous Player: --]-;B[C5]C+[++Label:  Current Player:  Previous Player: --]-(;W[A5]C+[++Label:  Current Player:  Previous Player: --]-;W[B4]C+[++Label:  Current Player:  Previous Player: --]-;W[C4]C+[++Label:  Current Player:  Previous Player: --]-)(;W[C2]C+[++Label:  Current Player:  Previous Player: --]-)(;W[X]C+[++Label:  Current Player:  Previous Player: --]-))
+int main(){
+    vector<int> M(25);
+    vector<int> M2(25);
+    M ={2, 2, 2, 2, 2,
+        1, 2, 0, 0, 2,
+        1, 2, 0, 2, 2,
+        1, 2, 0, 2, 2,
+        1, 2, 0, 2, 2};
+    M2 ={2, 2, 2, 2, 2,
+        1, 2, 0, 0, 2,
+        1, 2, 0, 2, 2,
+        1, 2, 0, 2, 2,
+        1, 2, 0, 2, 2};
+    store_in_TT(M, 0);
+    bool label = lookup_TT(M2);
+    if (label) {
+        cout << "Found in transposition table with label"<< endl;
+    } else {
+        cout << "Not found in transposition table" << endl;
+    }
+
+    return 0;
+}
