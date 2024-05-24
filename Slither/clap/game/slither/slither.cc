@@ -497,13 +497,13 @@ uint64_t convert_to_uint64_t(const std::vector<int>& M) {
     return board;
 }
 
-void SlitherState::store_TT(std::vector<int> M, int label){
+void SlitherState::store_TT(std::unordered_map<uint64_t, int> &TT, std::vector<int> M, int label){
 	uint64_t board = convert_to_uint64_t(M);
     TT[board] = {label};
 	return;
 }
 
-bool SlitherState::lookup_TT(std::vector<int> M){
+bool SlitherState::lookup_TT(std::unordered_map<uint64_t, int> &TT, std::vector<int> M){
     uint64_t board = convert_to_uint64_t(M);
     auto it = TT.find(board);
     if (it != TT.end()) {
@@ -513,7 +513,7 @@ bool SlitherState::lookup_TT(std::vector<int> M){
     }
 }
 
-bool SlitherState::check_can_block(/*std::vector<int> M*/){
+bool SlitherState::check_can_block(std::unordered_map<uint64_t, int> &TT){
     std::vector<int> M = getboard();
 	std::vector<std::vector<int>> pos = get_critical(match_WP());
 	if(pos.size() == 0) return true;
@@ -605,7 +605,7 @@ bool SlitherState::check_can_block(/*std::vector<int> M*/){
 		}
     }
 	//can't block, store in TT
-	store_TT(M, 0);
+	store_TT(TT, M, 0);
     return false;
 }
 

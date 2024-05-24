@@ -242,7 +242,7 @@ void Job::update(std::mt19937& rng) {
       next_step = Step::DONE;
     }
     // std::cout << "update\n";
-  
+
 }
 
 void Job::play(std::mt19937& rng) {
@@ -377,6 +377,7 @@ void Job::report() {
     tree.reset();
     root_state = engine->game->new_initial_state();
     trajectory.Clear();
+    TT.clear();
   } else {
     next_step = Step::DONE;
   }
