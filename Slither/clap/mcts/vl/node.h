@@ -14,7 +14,7 @@ class Node {
  public:
   Node();
   std::tuple<game::Action, Node*> select(std::mt19937& rng) const;
-  void expand(const std::vector<game::Action>& legal_actions);
+  void expand(game::StatePtr state, const std::vector<game::Action>& legal_actions);
 
   void wait_expand() const;
   bool acquire_expand();
