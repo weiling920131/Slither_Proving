@@ -170,30 +170,16 @@ void Job::update(std::mt19937& rng) {
   }
 
   auto& [parent_player, current_player, leaf_node, act] = selection_path.back();
-  if((parent_player == 0) && (current_player == 1)) {
-    // //std::cout<< "before check can block\n";
-    if(!leaf_state->check_can_block()) {
-      // std::cout<< "after check can block\n";
-      leaf_node->label = 0; // black win
-    }
-  }
+  // if((parent_player == 0) && (current_player == 1)) {
+  //   if(!leaf_state->check_can_block()) {
+  //     leaf_node->label = 0; // black win
+  //   }
+  // }
 
   auto pre_label = leaf_node->label;
   int i = selection_path.size() - 2;
-  // if ((i >= 0) && (pre_label != 2)) {
-  //   std::cout << leaf_state->printBoard({}, {}) << '\n';
-  //   auto& [p_player, c_player, node, act] = selection_path[i+1];
-  //   std::cout << "last action: " << act << " pre_label: " << pre_label << " prev: " << p_player << " cur: " << c_player << '\n';
-  // }
-  // if ((i >= 0) && (pre_label != 2)) {
-  //   std::cout << leaf_state->printBoard({}, {}) << '\n';
-  //   auto& [p_player, c_player, node, act] = selection_path[i+1];
-  //   std::cout << "last action: " << act << " pre_label: " << pre_label << " prev: " << p_player << " cur: " << c_player << '\n';
-  // }
   while((i >= 0) && (pre_label != 2)) {
     auto& [p_player, c_player, node, act] = selection_path[i];
-    // std::cout << "action: " << act << " pre_label: " << pre_label << " prev: " << p_player << " cur: " << c_player << '\n';
-    // std::cout << "action: " << act << " pre_label: " << pre_label << " prev: " << p_player << " cur: " << c_player << '\n';
 
     if((pre_label == 0) && (p_player == 0) && (c_player == 0)){ // black choose, black move
       node->label = pre_label;
@@ -201,43 +187,28 @@ void Job::update(std::mt19937& rng) {
     else if((pre_label == 1) && (p_player == 1) && (c_player == 1)){ // white choose, white move
       node->label = pre_label;
     }
+    else if((pre_label == 0) && (p_player == 1) && (c_player == 0)){ // label = 0, OR node (white place)
+      node->label = pre_label;
+    }
+    else if((pre_label == 1) && (p_player == 0) && (c_player == 1)){ // label = 1, AND node (black place)
+      node->label = pre_label;
+    }
     else{
-      if((pre_label == 0) && (p_player == 1) && (c_player == 0)){ // label = 0, OR node (white place)
-        // std::cout<< "label\n";
-        node->label = pre_label;
-      }
-      // else if((pre_label == 1) && (p_player == 0) && (c_player == 1)){ // label = 1, AND node (black place)
-      else if((pre_label == 1) && (p_player == 0) && (c_player == 1)){ // label = 1, AND node (black place)
-        node->label = pre_label;
-      }
-      else{
-        bool needLabel = true;
-        // std::cout << "child:\n";
-        // std::cout << "child:\n";
-        // std::cout << "child:\n";
-        for(auto& [p, action, child] : node->children){
-          // std::cout << action << " label: " << child->label << '\n';
-          // std::cout << action << " label: " << child->label << '\n';
-          // std::cout << action << " label: " << child->label << '\n';
-          if(child->label != pre_label){
-            needLabel = false;
-            break;
-          }
+      bool needLabel = true;
+      for(auto& [p, action, child] : node->children){
+        if(child->label != pre_label){
+          needLabel = false;
+          break;
         }
-        // std::cout << '\n';
-        // std::cout << '\n';
-        // std::cout << "i: " << i << '\n';
-        if(needLabel){
-          node->label = pre_label;
-          //std::cout<<"成功update\n";
-        }
-        // //std::cout<<"while done\n";
+      }
+      if(needLabel){
+        node->label = pre_label;
+        //std::cout<<"成功update\n";
       }
     }
     pre_label = node->label;
     i--;
   }
-  // //std::cout<<"while break\n";
   
   if (!leaf_policy.empty()) {
     auto& [parent_player, current_player, leaf_node, act] = selection_path.back();
@@ -257,17 +228,17 @@ void Job::update(std::mt19937& rng) {
   // //std::cout<<"after if\n";
 
 
-  // if (tree.root_node->num_visits >= Engine::max_simulations) {
-  //   if (tree_owner) {
-  //     next_step = Step::PLAY;
-  //   } else {
-  //     next_step = Step::DONE;
-  //   }
-  // } else {
+  if (tree.root_node->num_visits >= Engine::max_simulations) {
+    if (tree_owner) {
+      next_step = Step::PLAY;
+    } else {
+      next_step = Step::DONE;
+    }
+  } else {
     next_step = Step::SELECT;
     std::cout<< tree.root_node->num_visits << '\n';
     // std::cout << "update\n";
-  // }
+  }
 
 }
 
