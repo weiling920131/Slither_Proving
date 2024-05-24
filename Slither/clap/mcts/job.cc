@@ -27,9 +27,9 @@ void Job::select(std::mt19937& rng) {
   game::Action action;
   while (!leaf_node->children.empty()) {
     if(previous_player == 0 && leaf_state->current_player() == 1) {
-      if(!leaf_state->check_can_block()){
-        leaf_node->label = 0; // black win
-      };
+      // if(!leaf_state->check_can_block()){
+      //   leaf_node->label = 0; // black win
+      // };
     }
 
     std::tie(action, leaf_node) = leaf_node->select(rng);
