@@ -485,16 +485,37 @@ bool SlitherState::check_move(std::vector<int> M, int pos, std::vector<int> w){
     return false;   
 }
 
+uint64_t convert_to_uint64_t(const std::vector<int>& M) {
+    uint64_t board = 0;
+    for (int i = 0; i < 25; i++) {
+        if (M[i] == 0) {
+            board |= (uint64_t(1) << i);
+        } else if (M[i] == 1) {
+            board |= (uint64_t(1) << (i + 25));
+        }
+    }
+    return board;
+}
+
+void SlitherState::store_TT(std::vector<int> M, int label){
+	uint64_t board = convert_to_uint64_t(M);
+    TT[board] = {label};
+	return;
+}
+
+bool SlitherState::lookup_TT(std::vector<int> M){
+    uint64_t board = convert_to_uint64_t(M);
+    auto it = TT.find(board);
+    if (it != TT.end()) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 bool SlitherState::check_can_block(/*std::vector<int> M*/){
     std::vector<int> M = getboard();
 	std::vector<std::vector<int>> pos = get_critical(match_WP());
-	// for(int i=0;i<pos.size();i++){
-	// 	std::cout << "cp set" << i << ": ";
-	// 	for(int j=0;j<pos[i].size();j++){
-	// 		std::cout << pos[i][j] << " ";
-	// 	}
-	// 	std::cout << "\n";
-	// }
 	if(pos.size() == 0) return true;
 	std::vector<int> dir = {-5, -1, 1, 5};
     for(int j=0;j<pos.size();j++){
@@ -583,8 +604,12 @@ bool SlitherState::check_can_block(/*std::vector<int> M*/){
 			blocked.pop_back();
 		}
     }
+	//can't block, store in TT
+	store_TT(M, 0);
     return false;
 }
+
+
 std::vector<std::vector<int>> SlitherState::match_WP(){
 	std::vector<int> M = getboard();
 	int num = 0;

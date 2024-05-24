@@ -171,6 +171,7 @@ void Job::update(std::mt19937& rng) {
     // std::cout<< "before check can block\n";
     if(!leaf_state->check_can_block()) {
       // std::cout<< "after check can block\n";
+      // 
       leaf_node->label = 0; // black win
     }
   }
