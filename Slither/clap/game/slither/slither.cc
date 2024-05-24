@@ -485,7 +485,7 @@ bool SlitherState::check_move(std::vector<int> M, int pos, std::vector<int> w){
     return false;   
 }
 
-uint64_t convert_to_uint64_t(const std::vector<int>& M) {
+uint64_t SlitherState::convert_to_uint64_t(std::vector<int> M) {
     uint64_t board = 0;
     for (int i = 0; i < 25; i++) {
         if (M[i] == 0) {

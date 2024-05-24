@@ -217,7 +217,7 @@ void Job::update(std::mt19937& rng) {
   if (!leaf_policy.empty()) {
     auto& [parent_player, current_player, leaf_node, act] = selection_path.back();
     const auto legal_actions = leaf_state->legal_actions();
-    leaf_node->expand(leaf_state, legal_actions);
+    leaf_node->expand(leaf_state.get(), legal_actions, TT);
     // extract legal action policy and normalize
     float policy_sum = 0.0F;
     for (auto& [p, action, child] : leaf_node->children) {
