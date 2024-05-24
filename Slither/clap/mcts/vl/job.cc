@@ -121,7 +121,6 @@ void Job::select(std::mt19937& rng) {
 }
 
 void Job::evaluate() {
-  // //std::cout<<"job.cc line: 76\n";
   std::cout << "evaluate\n";
   // std::cout<<"job.cc line: 76\n";
   const auto& observation_tensor_shape =
@@ -157,30 +156,32 @@ void Job::evaluate() {
   const auto& value_ptr = batch_value[0].data_ptr<float>();
   const auto& value_size = batch_value[0].numel();
   leaf_returns.assign(value_ptr, value_ptr + value_size);
-
   next_step = Job::Step::UPDATE;
 }
 
 void Job::update(std::mt19937& rng) {
-  // std::cout<<"job.cc line: 135\n";
+
   for (auto& [parent_player, current_player, node, act] : selection_path) {
     node->num_visits -= Engine::virtual_loss - 1;
     atomic_add(node->parent_player_value_sum, leaf_returns[parent_player]);
     atomic_add(node->current_player_value_sum, leaf_returns[current_player]);
   }
-
   auto& [parent_player, current_player, leaf_node, act] = selection_path.back();
-  // if((parent_player == 0) && (current_player == 1)) {
-  //   if(!leaf_state->check_can_block()) {
-  //     leaf_node->label = 0; // black win
-  //   }
-  // }
+  if((parent_player == 0) && (current_player == 1)) {
+    // std::cout<< "before check can block\n";
+    if(!leaf_state->check_can_block()) {
+      // std::cout<< "after check can block\n";
+      // 
+      leaf_node->label = 0; // black win
+    }
+  }
 
   auto pre_label = leaf_node->label;
   int i = selection_path.size() - 2;
   while((i >= 0) && (pre_label != 2)) {
     auto& [p_player, c_player, node, act] = selection_path[i];
 
+    bool needLabel = true;
     if((pre_label == 0) && (p_player == 0) && (c_player == 0)){ // black choose, black move
       node->label = pre_label;
     }
@@ -206,6 +207,9 @@ void Job::update(std::mt19937& rng) {
         //std::cout<<"成功update\n";
       }
     }
+    // if (needLabel) {
+    //   std::cout << leaf_state->printBoard({}, {}) << '\n';
+    // }
     pre_label = node->label;
     i--;
   }
@@ -225,21 +229,20 @@ void Job::update(std::mt19937& rng) {
     if (tree.num_simulations() == 1) tree.add_dirichlet_noise(rng);
   }
   // std::cout << "Update done\n";
-  // //std::cout<<"after if\n";
-
-
-  if (tree.root_node->num_visits >= Engine::max_simulations) {
-    if (tree_owner) {
-      next_step = Step::PLAY;
-    } else {
-      next_step = Step::DONE;
-    }
-  } else {
+  // if (tree.root_node->num_visits >= Engine::max_simulations) {
+  //   if (tree_owner) {
+  //     next_step = Step::PLAY;
+  //   } else {
+  //     next_step = Step::DONE;
+  //   }
+  // } else {
     next_step = Step::SELECT;
     std::cout<< tree.root_node->num_visits << '\n';
+    if (tree.root_node->num_visits > 15000000) {
+      next_step = Step::DONE;
+    }
     // std::cout << "update\n";
   }
-
 }
 
 void Job::play(std::mt19937& rng) {

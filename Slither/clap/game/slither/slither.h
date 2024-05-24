@@ -1,6 +1,7 @@
 #pragma once
 #include <array>
 #include <map>
+#include <unordered_map>
 
 #include "clap/game/game.h"
 
@@ -33,6 +34,9 @@ class SlitherState final : public State {
   std::vector<std::vector<int>> get_critical(std::vector<std::vector<int>>);
   // void generate_WP() override;
   bool check_can_block(/*std::vector<int>*/) override;
+  void store_TT(std::vector<int>, int) override;
+  bool lookup_TT(std::vector<int> M) override;
+
 
   std::vector<std::vector<int>> match_WP();
   int DFS_noBlock(std::vector<int> &M, int cnt, int max, int num, std::vector<std::vector<int>>CPs, int&) override;
@@ -55,6 +59,8 @@ class SlitherState final : public State {
   std::string serialize() const override;
   std::string serialize_num_to_char() const override;
   //bool has_piece(const Player &) const;
+  std::unordered_map<std::string, int> board2Label;
+  std::unordered_map<uint64_t, int> TT;
 
  private:
   // whp
@@ -63,9 +69,11 @@ class SlitherState final : public State {
   bool check_blocked(std::vector<int> M, std::vector<std::vector<int>>CPs);
   bool check_move(std::vector<int> M, int pos, std::vector<int> w);
   void DFS_WP(std::vector<int> &M, int cnt, int max, int num);
+  uint64_t convert_to_uint64_t(std::vector<int> M);
   std::vector<std::vector<std::vector<int>>> W;
   std::vector<std::vector<std::vector<std::vector<std::vector<int>>>>> W_ht;
 	std::vector<std::vector<int>> noBlock;
+
 
   // whp
   std::vector<int> get_restrictions(const Action src, const Action action, const Player player, std::array<short, kNumOfGrids>* bptr = nullptr) const;
