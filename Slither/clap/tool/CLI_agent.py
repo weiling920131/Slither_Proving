@@ -609,7 +609,7 @@ if __name__ == '__main__':
     parser.add_argument('-game', '--game', required=True)
     parser.add_argument('-model', '--model', required=True)
     parser.add_argument('-opp_model', '--opp_model', required=False)    
-    parser.add_argument('-count', '--simulation-count', default=800, type=int)
+    parser.add_argument('-count', '--simulation-count', default=15000000, type=int)
     parser.add_argument('-cpuct', '--c-puct', default=1.5)
     parser.add_argument('-mode', '--mode', required=False, default="gtp")
     parser.add_argument('-nf', '--num-fight-games', default=1, type=int)

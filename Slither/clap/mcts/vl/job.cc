@@ -178,20 +178,8 @@ void Job::update(std::mt19937& rng) {
 
   auto pre_label = leaf_node->label;
   int i = selection_path.size() - 2;
-  // if ((i >= 0) && (pre_label != 2)) {
-  //   std::cout << leaf_state->printBoard({}, {}) << '\n';
-  //   auto& [p_player, c_player, node, act] = selection_path[i+1];
-  //   std::cout << "last action: " << act << " pre_label: " << pre_label << " prev: " << p_player << " cur: " << c_player << '\n';
-  // }
-  // if ((i >= 0) && (pre_label != 2)) {
-  //   std::cout << leaf_state->printBoard({}, {}) << '\n';
-  //   auto& [p_player, c_player, node, act] = selection_path[i+1];
-  //   std::cout << "last action: " << act << " pre_label: " << pre_label << " prev: " << p_player << " cur: " << c_player << '\n';
-  // }
   while((i >= 0) && (pre_label != 2)) {
     auto& [p_player, c_player, node, act] = selection_path[i];
-    // std::cout << "action: " << act << " pre_label: " << pre_label << " prev: " << p_player << " cur: " << c_player << '\n';
-    // std::cout << "action: " << act << " pre_label: " << pre_label << " prev: " << p_player << " cur: " << c_player << '\n';
 
     bool needLabel = true;
     if((pre_label == 0) && (p_player == 0) && (c_player == 0)){ // black choose, black move
@@ -200,36 +188,23 @@ void Job::update(std::mt19937& rng) {
     else if((pre_label == 1) && (p_player == 1) && (c_player == 1)){ // white choose, white move
       node->label = pre_label;
     }
+    else if((pre_label == 0) && (p_player == 1) && (c_player == 0)){ // label = 0, OR node (white place)
+      node->label = pre_label;
+    }
+    else if((pre_label == 1) && (p_player == 0) && (c_player == 1)){ // label = 1, AND node (black place)
+      node->label = pre_label;
+    }
     else{
-      if((pre_label == 0) && (p_player == 1) && (c_player == 0)){ // label = 0, OR node (white place)
-        // std::cout<< "label\n";
-        node->label = pre_label;
-      }
-      // else if((pre_label == 1) && (p_player == 0) && (c_player == 1)){ // label = 1, AND node (black place)
-      else if((pre_label == 1) && (p_player == 0) && (c_player == 1)){ // label = 1, AND node (black place)
-        node->label = pre_label;
-      }
-      else{
-        // std::cout << "child:\n";
-        // std::cout << "child:\n";
-        // std::cout << "child:\n";
-        for(auto& [p, action, child] : node->children){
-          // std::cout << action << " label: " << child->label << '\n';
-          // std::cout << action << " label: " << child->label << '\n';
-          // std::cout << action << " label: " << child->label << '\n';
-          if(child->label != pre_label){
-            needLabel = false;
-            break;
-          }
+      bool needLabel = true;
+      for(auto& [p, action, child] : node->children){
+        if(child->label != pre_label){
+          needLabel = false;
+          break;
         }
-        // std::cout << '\n';
-        // std::cout << '\n';
-        // std::cout << "i: " << i << '\n';
-        if(needLabel){
-          node->label = pre_label;
-          //std::cout<<"成功update\n";
-        }
-        // //std::cout<<"while done\n";
+      }
+      if(needLabel){
+        node->label = pre_label;
+        //std::cout<<"成功update\n";
       }
     }
     // if (needLabel) {
@@ -242,7 +217,7 @@ void Job::update(std::mt19937& rng) {
   if (!leaf_policy.empty()) {
     auto& [parent_player, current_player, leaf_node, act] = selection_path.back();
     const auto legal_actions = leaf_state->legal_actions();
-    leaf_node->expand(leaf_state, legal_actions);
+    leaf_node->expand(leaf_state.get(), legal_actions, TT);
     // extract legal action policy and normalize
     float policy_sum = 0.0F;
     for (auto& [p, action, child] : leaf_node->children) {

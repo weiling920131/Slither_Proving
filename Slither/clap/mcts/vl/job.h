@@ -12,7 +12,6 @@
 
 namespace clap::mcts::vl {
 
-std::unordered_map<uint64_t, int> TT;
 
 
 class Node;
@@ -21,6 +20,7 @@ class Engine;
 class Job {
  public:
   enum Step { SELECT, EVALUATE, UPDATE, PLAY, REPORT, DONE };
+  std::unordered_map<uint64_t, int> TT;
 
   Job(Engine* engine, const std::string& serialize_string = "");
   void select(std::mt19937& rng);
