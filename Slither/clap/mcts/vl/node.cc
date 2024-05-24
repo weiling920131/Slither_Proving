@@ -57,14 +57,19 @@ std::tuple<game::Action, Node*> Node::select(std::mt19937& rng) const {
   return {selected_action, selected_node};
 }
 
-void Node::expand(const std::vector<game::Action>& legal_actions) {
+void Node::expand(game::StatePtr state, const std::vector<game::Action>& legal_actions) {
   children.reserve(legal_actions.size());
   for (const auto& action : legal_actions) 
+    auto cur_state = state;
     auto node = std::make_unique<Node>();
-    node.get()->label = 2;
-    
+    cur_state->apply_action(action);
+    if(cur_state->lookup_TT(TT, cur_state->getboard())){
+      node.get()->label = 0;
+    }else{
+      node.get()->label = 2;
+    }
     children.emplace_back(0.0F, action, std::make_unique<Node>());
-  
+
   expand_done();
 }
 

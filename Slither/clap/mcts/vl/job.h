@@ -3,6 +3,8 @@
 #include <random>
 #include <tuple>
 #include <vector>
+#include <unordered_map>
+
 
 #include "clap/game/game.h"
 #include "clap/mcts/vl/tree.h"
@@ -48,6 +50,7 @@ class Job {
   game::StatePtr root_state;
   // report
   clap::pb::Trajectory trajectory;
+  std::unordered_map<uint64_t, int> TT;
 };
 
 }  // namespace clap::mcts::vl
