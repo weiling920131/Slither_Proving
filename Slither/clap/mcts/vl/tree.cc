@@ -29,7 +29,10 @@ void Tree::add_dirichlet_noise(std::mt19937& rng) {
   }
 }
 
-void Tree::reset() { root_node->reset(); }
+void Tree::reset() { 
+  root_node->reset(); 
+  TT.clear();
+}
 
 void Tree::store_TT(uint64_t board, int label){
     TT[board] = {label};

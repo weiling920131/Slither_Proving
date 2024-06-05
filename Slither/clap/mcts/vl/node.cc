@@ -15,6 +15,7 @@ Node::Node()
       parent_player_value_sum(0.0F),
       current_player_value_sum(0.0F),
       label(2),
+      boardInt(0),
       expand_state(State::UNEXPANDED) {}
 
 std::tuple<game::Action, Node*> Node::select(std::mt19937& rng) const {
