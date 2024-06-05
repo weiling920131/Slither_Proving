@@ -175,9 +175,30 @@ void Job::update(std::mt19937& rng) {
       leaf_node->label = 0; // black win
     }
   }
-
+  if (!leaf_policy.empty() && leaf_node->label == 2) {
+    auto& [parent_player, current_player, leaf_node, act] = selection_path.back();
+    const auto legal_actions = leaf_state->legal_actions();
+    leaf_node->expand(leaf_state.get(), legal_actions, TT);
+    // extract legal action policy and normalize
+    float policy_sum = 0.0F;
+    for (auto& [p, action, child] : leaf_node->children) {
+      p = leaf_policy[action];
+      policy_sum += p;
+    }
+    for (auto& [p, action, child] : leaf_node->children) p /= policy_sum;
+    // first simulation -> add dirichlet noise to root policy
+    if (tree.num_simulations() == 1) tree.add_dirichlet_noise(rng);
+  }
   auto pre_label = leaf_node->label;
   int i = selection_path.size() - 2;
+
+  for (auto& [p, action, child] : leaf_node->children) {
+    if (child->label != 2) {
+      pre_label = child->label;
+      i = selection_path.size() - 1;
+      // while-loop
+    }
+  }
   while((i >= 0) && (pre_label != 2)) {
     auto& [p_player, c_player, node, act] = selection_path[i];
 
@@ -214,20 +235,6 @@ void Job::update(std::mt19937& rng) {
     i--;
   }
   
-  if (!leaf_policy.empty()) {
-    auto& [parent_player, current_player, leaf_node, act] = selection_path.back();
-    const auto legal_actions = leaf_state->legal_actions();
-    leaf_node->expand(leaf_state.get(), legal_actions, TT);
-    // extract legal action policy and normalize
-    float policy_sum = 0.0F;
-    for (auto& [p, action, child] : leaf_node->children) {
-      p = leaf_policy[action];
-      policy_sum += p;
-    }
-    for (auto& [p, action, child] : leaf_node->children) p /= policy_sum;
-    // first simulation -> add dirichlet noise to root policy
-    if (tree.num_simulations() == 1) tree.add_dirichlet_noise(rng);
-  }
   // std::cout << "Update done\n";
   // if (tree.root_node->num_visits >= Engine::max_simulations) {
   //   if (tree_owner) {
