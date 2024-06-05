@@ -59,6 +59,7 @@ class SlitherState final : public State {
   std::string serialize_num_to_char() const override;
   //bool has_piece(const Player &) const;
   // std::unordered_map<uint64_t, int> TT;
+  uint64_t convert_to_uint64_t(std::vector<int> M);
 
  private:
   // whp
@@ -67,7 +68,6 @@ class SlitherState final : public State {
   bool check_blocked(std::vector<int> M, std::vector<std::vector<int>>CPs);
   bool check_move(std::vector<int> M, int pos, std::vector<int> w);
   void DFS_WP(std::vector<int> &M, int cnt, int max, int num);
-  uint64_t convert_to_uint64_t(std::vector<int> M);
   std::vector<std::vector<std::vector<int>>> W;
   std::vector<std::vector<std::vector<std::vector<std::vector<int>>>>> W_ht;
 	std::vector<std::vector<int>> noBlock;

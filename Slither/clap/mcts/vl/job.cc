@@ -32,7 +32,7 @@ void Job::select(std::mt19937& rng) {
 
     leaf_node->num_visits += Engine::virtual_loss;
 
-    if(tree.lookup_TT(leaf_state->getboard())){
+    if(tree.lookup_TT(leaf_node->boardInt)) {
       leaf_node->label = leaf_state->get_winner();
       leaf_policy.clear();
       leaf_returns = leaf_state->returns();
@@ -57,7 +57,7 @@ void Job::select(std::mt19937& rng) {
     }
     auto tmp = leaf_node;
     // std::tie(action, leaf_node) = leaf_node->select(rng);
-    std::tie(action, leaf_node) = leaf_node->select(rng, leaf_state);
+    std::tie(action, leaf_node) = leaf_node->select(rng);
     if (action == -1) {
         if(tmp == tree.root_node.get()) {
           std::cout<<"root: "<<tmp->label<<'\n';
@@ -143,7 +143,7 @@ void Job::update(std::mt19937& rng) {
   if (!leaf_policy.empty() && leaf_node->label == 2) {
     auto& [parent_player, current_player, leaf_node, act] = selection_path.back();
     const auto legal_actions = leaf_state->legal_actions();
-    leaf_node->expand(leaf_state.get(), legal_actions, TT);
+    leaf_node->expand(tree, leaf_state.get(), legal_actions);
     // extract legal action policy and normalize
     float policy_sum = 0.0F;
     for (auto& [p, action, child] : leaf_node->children) {
@@ -382,7 +382,6 @@ void Job::report() {
     tree.reset();
     root_state = engine->game->new_initial_state();
     trajectory.Clear();
-    TT.clear();
   } else {
     next_step = Step::DONE;
   }

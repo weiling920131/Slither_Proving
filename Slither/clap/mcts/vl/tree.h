@@ -1,9 +1,11 @@
 #pragma once
 
+#ifndef TREE_H
+#define TREE_H
 #include "clap/mcts/vl/node.h"
 
 namespace clap::mcts::vl {
-
+class Node;
 class Tree {
  public:
   Tree() = default;
@@ -20,3 +22,4 @@ class Tree {
 };
 
 }  // namespace clap::mcts::vl
+#endif

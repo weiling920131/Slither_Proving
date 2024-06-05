@@ -6,10 +6,14 @@
 #include <tuple>
 #include <vector>
 
+#ifndef NODE_H
+#define NODE_H
+
 #include "clap/game/game.h"
+#include "clap/mcts/vl/tree.h"
 
 namespace clap::mcts::vl {
-
+class Tree;
 class Node {
  public:
   Node();
@@ -42,3 +46,4 @@ class Node {
 };
 
 }  // namespace clap::mcts::vl
+#endif
