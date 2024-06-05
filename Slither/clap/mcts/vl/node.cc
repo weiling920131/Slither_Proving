@@ -32,7 +32,6 @@ std::tuple<game::Action, Node*> Node::select(std::mt19937& rng) const {
 
   for (const auto& [p, action, child] : children) {
     if(child->label != 2) continue;
-
     const float q = child->num_visits != 0
                         ? child->parent_player_value_sum / child->num_visits
                         : DEFAULT_Q;
