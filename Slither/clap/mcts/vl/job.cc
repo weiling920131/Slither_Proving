@@ -31,81 +31,45 @@ void Job::select(std::mt19937& rng) {
   while (true) {    
 
     leaf_node->num_visits += Engine::virtual_loss;
-    //std::cout<<"job.cc line: 33\n";
-    if (leaf_node->children.empty()) {
-      //std::cout<<"job.cc line: 35\n";
 
+    if(leaf_state->lookup_TT(TT, leaf_state->getboard())){
+      leaf_node->label = leaf_state->get_winner();
+      leaf_policy.clear();
+      leaf_returns = leaf_state->returns();
+      next_step = Step::UPDATE;
+      break;
+    }
+
+    if (leaf_node->children.empty()) {
       if (leaf_state->is_terminal()) {
-        //std::cout<<"job.cc line: 38\n";
         leaf_node->label = leaf_state->get_winner();
-        //std::cout<<"job.cc line: 40\n";
         leaf_policy.clear();
-        //std::cout<<"job.cc line: 42\n";
         leaf_returns = leaf_state->returns();
-        //std::cout<<"job.cc line: 44\n";
         next_step = Step::UPDATE;
-        //std::cout<<"job.cc line: 46\n";
         break;
       }
-      
-      // std::cout<<"job.cc line: 42\n";
-      //std::cout<<"job.cc line: 49\n";
       auto success = leaf_node->acquire_expand();
-      //std::cout<<"job.cc line: 51\n";
       if (success) {
-        //std::cout<<"job.cc line: 53\n";
         leaf_observation = leaf_state->observation_tensor();
-        // std::cout << "select12\n";
         next_step = Step::EVALUATE;
-        //std::cout<<"job.cc line: 56\n";
         break;
       }
     }
-    //std::cout<<"job.cc line: 60\n";
     auto tmp = leaf_node;
-    std::tie(action, leaf_node) = leaf_node->select(rng);
+    // std::tie(action, leaf_node) = leaf_node->select(rng);
+    std::tie(action, leaf_node) = leaf_node->select(rng, leaf_state);
     if (action == -1) {
-        //std::cout<<"job.cc line: 64\n";
-        // std::cout << "action == -1, label: " << tmp->label << '\n';
-  
-        //std::cout<<"job.cc line: 67\n";
         if(tmp == tree.root_node.get()) {
           std::cout<<"root: "<<tmp->label<<'\n';
-          // while(true) {
-          //   bool list = false;
-          //   if (tmp->children.size() != 1) {
-          //     //std::cout<<"job.cc line: 71\n";
-          //     for (auto &[p, action, child]: tmp->children) {
-          //       //std::cout<<"job.cc line: 73\n";
-          //       if (child->label == 0) {
-          //         //std::cout<<"job.cc line: 75\n";
-          //         // std::cout << "action: " << action << " label: " << std::to_string(child->label) << "\n";
-          //         break;
-          //       }
-          //     }
-          //     break;
-          //   }
-          //   else {
-          //     tmp = std::get<2>(tmp->children[0]).get();
-          //   }
-          // }
         }
-        //std::cout<<"job.cc line: 86\n";
         leaf_policy.clear();
-        //std::cout<<"job.cc line: 88\n";
         leaf_returns = leaf_state->returns();
-        //std::cout<<"job.cc line: 90\n";
         if(tree_owner) {
           next_step = Step::PLAY;
         }else {
           next_step = Step::DONE;
         }
-        //std::cout<<"job.cc line: 96\n";
         break;
-      // else {
-      //   next_step = Step::DONE;
-      //   break;
-      // }
     }
 
     
@@ -197,6 +161,7 @@ void Job::update(std::mt19937& rng) {
       pre_label = child->label;
       i = selection_path.size() - 1;
       // while-loop
+      
     }
   }
   while((i >= 0) && (pre_label != 2)) {
