@@ -32,7 +32,7 @@ class Node {
   // 0 black win
   // 1 white win
   int label;
-  std::string boardStr;
+  uint64_t boardInt;
   
   std::atomic <int> num_visits;
   std::atomic <float> parent_player_value_sum;
