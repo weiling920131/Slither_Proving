@@ -33,8 +33,8 @@ class SlitherState final : public State {
   std::vector<std::vector<int>> get_critical(std::vector<std::vector<int>>);
   // void generate_WP() override;
   bool check_can_block() override;
-  void store_TT(std::unordered_map<uint64_t, int> &, std::vector<int>, int) override;
-  bool lookup_TT(std::unordered_map<uint64_t, int> &, std::vector<int>) override;
+  // void store_TT(std::unordered_map<uint64_t, int> &, std::vector<int>, int) override;
+  // bool lookup_TT(std::unordered_map<uint64_t, int> &, std::vector<int>) override;
 
 
   std::vector<std::vector<int>> match_WP();

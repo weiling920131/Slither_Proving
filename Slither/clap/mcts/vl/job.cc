@@ -32,7 +32,7 @@ void Job::select(std::mt19937& rng) {
 
     leaf_node->num_visits += Engine::virtual_loss;
 
-    if(leaf_state->lookup_TT(TT, leaf_state->getboard())){
+    if(tree.lookup_TT(leaf_state->getboard())){
       leaf_node->label = leaf_state->get_winner();
       leaf_policy.clear();
       leaf_returns = leaf_state->returns();
@@ -136,8 +136,8 @@ void Job::update(std::mt19937& rng) {
     if(!leaf_state->check_can_block()) {
       // std::cout<< "after check can block\n";
       // 
-      tree.store_TT(leaf_state->getboard(), 0);
       leaf_node->label = 0; // black win
+      tree.store_TT(leaf_node->boardInt, leaf_node->label);
     }
   }
   if (!leaf_policy.empty() && leaf_node->label == 2) {
@@ -154,17 +154,49 @@ void Job::update(std::mt19937& rng) {
     // first simulation -> add dirichlet noise to root policy
     if (tree.num_simulations() == 1) tree.add_dirichlet_noise(rng);
   }
-  auto pre_label = leaf_node->label;
-  int i = selection_path.size() - 2;
 
   for (auto& [p, action, child] : leaf_node->children) {
     if (child->label != 2) {
-      pre_label = child->label;
-      i = selection_path.size() - 1;
-      // while-loop
+      auto pre_label = child->label;
+      int i = selection_path.size() - 1;
+      
+      if (i >= 0) {
+        auto& [p_player, c_player, node, act] = selection_path[i];
+        if (node->label != 2) continue;
+
+        bool needLabel = true;
+        if((pre_label == 0) && (p_player == 0) && (c_player == 0)){ // black choose, black move
+          node->label = pre_label;
+        }
+        else if((pre_label == 1) && (p_player == 1) && (c_player == 1)){ // white choose, white move
+          node->label = pre_label;
+        }
+        else if((pre_label == 0) && (p_player == 1) && (c_player == 0)){ // label = 0, OR node (white place)
+          node->label = pre_label;
+        }
+        else if((pre_label == 1) && (p_player == 0) && (c_player == 1)){ // label = 1, AND node (black place)
+          node->label = pre_label;
+        }
+        else{
+          bool needLabel = true;
+          for(auto& [p, action, child] : node->children){
+            if(child->label != pre_label){
+              needLabel = false;
+              break;
+            }
+          }
+          if(needLabel){
+            node->label = pre_label;
+          }
+        }
+      }
       
     }
   }
+
+  auto pre_label = leaf_node->label;
+  int i = selection_path.size() - 2;
+
   while((i >= 0) && (pre_label != 2)) {
     auto& [p_player, c_player, node, act] = selection_path[i];
 

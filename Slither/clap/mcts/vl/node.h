@@ -15,7 +15,7 @@ class Node {
   Node();
   std::tuple<game::Action, Node*> select(std::mt19937& rng) const;
   // std::tuple<game::Action, Node*> select(std::mt19937& rng, game::StatePtr& leaf_state) const;
-  void expand(game::State* state, const std::vector<game::Action>& legal_actions, std::unordered_map<uint64_t, int>& TT);
+  void expand(Tree& tree, game::State* state, const std::vector<game::Action>& legal_actions);
 
   void wait_expand() const;
   bool acquire_expand();
@@ -32,7 +32,7 @@ class Node {
   // 0 black win
   // 1 white win
   int label;
-  std::string boardStr;
+  uint64_t boardInt;
   
   std::atomic <int> num_visits;
   std::atomic <float> parent_player_value_sum;
