@@ -497,21 +497,21 @@ uint64_t SlitherState::convert_to_uint64_t(std::vector<int> M) {
     return board;
 }
 
-void SlitherState::store_TT(std::unordered_map<uint64_t, int> &TT, std::vector<int> M, int label){
-	uint64_t board = convert_to_uint64_t(M);
-    TT[board] = {label};
-	return;
-}
+// void SlitherState::store_TT(std::unordered_map<uint64_t, int> &TT, std::vector<int> M, int label){
+// 	uint64_t board = convert_to_uint64_t(M);
+//     TT[board] = {label};
+// 	return;
+// }
 
-bool SlitherState::lookup_TT(std::unordered_map<uint64_t, int> &TT, std::vector<int> M){
-    uint64_t board = convert_to_uint64_t(M);
-    auto it = TT.find(board);
-    if (it != TT.end()) {
-        return true;
-    } else {
-        return false;
-    }
-}
+// bool SlitherState::lookup_TT(std::unordered_map<uint64_t, int> &TT, std::vector<int> M){
+//     uint64_t board = convert_to_uint64_t(M);
+//     auto it = TT.find(board);
+//     if (it != TT.end()) {
+//         return true;
+//     } else {
+//         return false;
+//     }
+// }
 
 bool SlitherState::check_can_block(std::unordered_map<uint64_t, int> &TT){
     std::vector<int> M = getboard();

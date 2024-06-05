@@ -31,4 +31,19 @@ void Tree::add_dirichlet_noise(std::mt19937& rng) {
 
 void Tree::reset() { root_node->reset(); }
 
+void Tree::store_TT(uint64_t board, int label){
+    TT[board] = {label};
+	return;
+}
+
+bool Tree::lookup_TT(uint64_t board){
+    auto it = TT.find(board);
+    if (it != TT.end()) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
 }  // namespace clap::mcts::vl
