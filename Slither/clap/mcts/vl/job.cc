@@ -32,7 +32,7 @@ void Job::select(std::mt19937& rng) {
 
     leaf_node->num_visits += Engine::virtual_loss;
 
-    if(leaf_state->lookup_TT(TT, leaf_state->getboard())){
+    if(tree.lookup_TT(leaf_state->getboard())){
       leaf_node->label = leaf_state->get_winner();
       leaf_policy.clear();
       leaf_returns = leaf_state->returns();

@@ -61,8 +61,8 @@ void Node::expand(Tree& tree, game::State* state, const std::vector<game::Action
   for (const auto& action : legal_actions) {
     auto cur_state = state;
     auto node = std::make_unique<Node>();
-    node->boardInt = tree.convert_to_uint64_t(cur_state->getboard());
     cur_state->apply_action(action);
+    node->boardInt = tree.convert_to_uint64_t(cur_state->getboard());
     if(cur_state->tree.lookup_TT(node->boardInt)) {
       std::cout<< "Found in transposition table"<< std::endl;
       node.get()->label = 0;
