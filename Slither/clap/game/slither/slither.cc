@@ -513,7 +513,7 @@ bool SlitherState::lookup_TT(std::unordered_map<uint64_t, int> &TT, std::vector<
     }
 }
 
-bool SlitherState::check_can_block(std::unordered_map<uint64_t, int> &TT){
+bool SlitherState::check_can_block(){
     std::vector<int> M = getboard();
 	std::vector<std::vector<int>> pos = get_critical(match_WP());
 	if(pos.size() == 0) return true;
@@ -605,7 +605,7 @@ bool SlitherState::check_can_block(std::unordered_map<uint64_t, int> &TT){
 		}
     }
 	//can't block, store in TT
-	store_TT(TT, M, 0);
+	// store_TT(TT, M, 0);
     return false;
 }
 

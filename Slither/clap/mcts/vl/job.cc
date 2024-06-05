@@ -133,9 +133,10 @@ void Job::update(std::mt19937& rng) {
   auto& [parent_player, current_player, leaf_node, act] = selection_path.back();
   if((parent_player == 0) && (current_player == 1)) {
     // std::cout<< "before check can block\n";
-    if(!leaf_state->check_can_block(TT)) {
+    if(!leaf_state->check_can_block()) {
       // std::cout<< "after check can block\n";
       // 
+      tree.store_TT(leaf_state->getboard(), 0);
       leaf_node->label = 0; // black win
     }
   }

@@ -33,7 +33,7 @@ class State {
   virtual bool test_action_bool(std::vector<Action>, std::vector<std::vector<Action>>&, Player) { return 0; }
   virtual bool test_board(std::vector<Action>) { return 0; }
   virtual int test_generate(std::vector<Action>, int, int) { return 0; }
-  virtual bool check_can_block(std::unordered_map<uint64_t, int> &) {return 0;};
+  virtual bool check_can_block() {return 0;};
   virtual void store_TT(std::unordered_map<uint64_t, int> &, std::vector<int>, int) {return ;};
   virtual bool lookup_TT(std::unordered_map<uint64_t, int> &, std::vector<int>) {return 0;};
  
