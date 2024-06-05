@@ -15,8 +15,8 @@ class Tree {
   std::shared_ptr<Node> root_node = std::make_shared<Node>();
 
   std::unordered_map<uint64_t, int> TT;
-  void store_TT(std::vector<int>, int);
-  bool lookup_TT(std::vector<int>);
+  void store_TT(uint64_t, int);
+  bool lookup_TT(uint64_t);
 };
 
 }  // namespace clap::mcts::vl
