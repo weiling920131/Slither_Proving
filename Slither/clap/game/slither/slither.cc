@@ -582,7 +582,7 @@ bool SlitherState::check_can_block(std::unordered_map<uint64_t, int> &TT){
 						// std::cout << "移動到pos1加下\n"; 
 						return true;
 					}
-					https://meet.google.com/ksf-yqcc-ehx?authuser=1M[pos[j][0]+dir[d]] = 2;
+					M[pos[j][0]+dir[d]] = 2;
 				}
 			}
 		}else if(cp_num==2){
