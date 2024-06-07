@@ -18,6 +18,7 @@ Node::Node()
       expand_state(State::UNEXPANDED) {}
 
 std::tuple<game::Action, Node*> Node::select(std::mt19937& rng) const {
+  // std::cout<< "node select"<< std::endl;
   wait_expand();
 
   const auto& C_PUCT = Engine::c_puct;
@@ -58,6 +59,7 @@ std::tuple<game::Action, Node*> Node::select(std::mt19937& rng) const {
 }
 
 void Node::expand(Tree& tree, game::State* state, const std::vector<game::Action>& legal_actions) {
+  // std::cout<< "node expand"<< std::endl;
   children.reserve(legal_actions.size());
   for (const auto& action : legal_actions) {
     auto cur_state = state;
@@ -78,6 +80,7 @@ void Node::expand(Tree& tree, game::State* state, const std::vector<game::Action
 
 void Node::wait_expand() const {
   while (expand_state.load() == State::EXPANDING) {
+    // std::cout<<"mother fxxker\n";
   }
 }
 
