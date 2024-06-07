@@ -29,11 +29,10 @@ void Job::select(std::mt19937& rng) {
   game::Action action;
   //std::cout<<"before select while\n";
   while (true) {
-    // std::cout<<".";
+    std::cout<<".";
     leaf_node->num_visits += Engine::virtual_loss;
     // std::cout << leaf_node->boardInt << "==============\n";
     if(tree.lookup_TT(leaf_node->boardInt)) {
-      // std::cout << "found\n";
       leaf_node->label = 0;
       leaf_policy.clear();
       leaf_returns = leaf_state->returns();
@@ -61,10 +60,10 @@ void Job::select(std::mt19937& rng) {
     // std::tie(action, leaf_node) = leaf_node->select(rng);
     std::tie(action, leaf_node) = leaf_node->select(rng);
     if (action == -1) {
+        std::cout<<"action == -1\n";
         if(tmp == tree.root_node.get()) {
           std::cout<<"root: "<<tmp->label<<'\n';
         }
-        std::cout<<"test1\n";
         leaf_policy.clear();
         leaf_returns = leaf_state->returns();
         if(tree_owner) {
@@ -72,7 +71,6 @@ void Job::select(std::mt19937& rng) {
         }else {
           next_step = Step::DONE;
         }
-        std::cout<<"test2\n";
         break;
     }
 
@@ -128,13 +126,14 @@ void Job::evaluate() {
 }
 
 void Job::update(std::mt19937& rng) {
-  // std::cout<<"job update\n";
+
   for (auto& [parent_player, current_player, node, act] : selection_path) {
     node->num_visits -= Engine::virtual_loss - 1;
     atomic_add(node->parent_player_value_sum, leaf_returns[parent_player]);
     atomic_add(node->current_player_value_sum, leaf_returns[current_player]);
   }
   auto& [parent_player, current_player, leaf_node, act] = selection_path.back();
+
   if((parent_player == 0) && (current_player == 1)) {
     // std::cout<< "before check can block\n";
     if(!leaf_state->check_can_block()) {
@@ -145,7 +144,7 @@ void Job::update(std::mt19937& rng) {
     }
   }
   if (!leaf_policy.empty() && leaf_node->label == 2) {
-    auto& [parent_player, current_player, leaf_node, act] = selection_path.back();
+    // auto& [parent_player, current_player, leaf_node, act] = selection_path.back();
     const auto legal_actions = leaf_state->legal_actions();
     leaf_node->expand(tree, leaf_state.get(), legal_actions);
     // extract legal action policy and normalize
@@ -172,43 +171,31 @@ void Job::update(std::mt19937& rng) {
         if((pre_label == 0) && (p_player == 0) && (c_player == 0)){ // black choose, black move
           node->label = pre_label;
           if(!tree.lookup_TT(node->boardInt)) {
-            if(node->boardInt == 0){
-              std::cout << "HERE1111111111111111111111111111111111111111111111111111111111111\n";
-            }
             tree.store_TT(node->boardInt, pre_label);
           }
         }
         else if((pre_label == 1) && (p_player == 1) && (c_player == 1)){ // white choose, white move
           node->label = pre_label;
           if(!tree.lookup_TT(node->boardInt)) {
-            if(node->boardInt == 0){
-              std::cout << "HERE222222222222222222222222222222222222222222222222222222222222222\n";
-            }
             tree.store_TT(node->boardInt, pre_label);
           }
         }
         else if((pre_label == 0) && (p_player == 1) && (c_player == 0)){ // label = 0, OR node (white place)
           node->label = pre_label;
           if(!tree.lookup_TT(node->boardInt)) {
-            if(node->boardInt == 0){
-              std::cout << "HERE33333333333333333333333333333333333333333333333\n";
-            }
             tree.store_TT(node->boardInt, pre_label);
           }
         }
         else if((pre_label == 1) && (p_player == 0) && (c_player == 1)){ // label = 1, AND node (black place)
           node->label = pre_label;
           if(!tree.lookup_TT(node->boardInt)) {
-            if(node->boardInt == 0){
-              std::cout << "HERE44444444444444444444444444444444444444444444444444444444444444444\n";
-            }
             tree.store_TT(node->boardInt, pre_label);
           }
         }
         else{
           bool needLabel = true;
-          for(auto& [p, action, child] : node->children){
-            if(child->label != pre_label){
+          for(auto& [_p, _action, _child] : leaf_node->children){
+            if(_child->label != pre_label){
               needLabel = false;
               break;
             }
@@ -216,9 +203,6 @@ void Job::update(std::mt19937& rng) {
           if(needLabel){
             node->label = pre_label;
             if(!tree.lookup_TT(node->boardInt)) {
-              if(node->boardInt == 0){
-              std::cout << "HERE55555555555555555555555555555555555555555555555555555555555555\n";
-            }
               tree.store_TT(node->boardInt, pre_label);
             }
           }
@@ -232,9 +216,8 @@ void Job::update(std::mt19937& rng) {
   int i = selection_path.size() - 2;
 
   while((i >= 0) && (pre_label != 2)) {
-    auto& [p_player, c_player, node, act] = selection_path[i];
+    auto& [p_player, c_player, node, a] = selection_path[i];
 
-    bool needLabel = true;
     if((pre_label == 0) && (p_player == 0) && (c_player == 0)){ // black choose, black move
       node->label = pre_label;
       if(!tree.lookup_TT(node->boardInt)) {
@@ -318,8 +301,7 @@ void Job::play(std::mt19937& rng) {
   // std::cerr<<"test"<<std::endl;
   while (tree.root_node.use_count() != 1) {
     // break;
-    // std::cout<<"play\n";
-    // //std::cout<<"use_count: "<<tree.root_node.use_count()<<'\n';
+    // std::cout<<"use_count: "<<tree.root_node.use_count()<<'\n';
   }
   const auto player = root_state->current_player();
   const auto root_node = tree.root_node.get();
@@ -381,7 +363,6 @@ void Job::play(std::mt19937& rng) {
   while (Engine::play_until_turn_player &&
          root_state->current_player() == player && !root_state->is_terminal()) {
     // no children for this node
-    // std::cout<<"while\n";
     if (parent_node->num_visits - 1 == 0) break;
 
     // reset policy
