@@ -62,7 +62,7 @@ void Job::select(std::mt19937& rng) {
         if(tmp == tree.root_node.get()) {
           std::cout<<"root: "<<tmp->label<<'\n';
         }
-        std::cout<<'test1\n';
+        std::cout<<"test1\n";
         leaf_policy.clear();
         leaf_returns = leaf_state->returns();
         if(tree_owner) {
@@ -70,7 +70,7 @@ void Job::select(std::mt19937& rng) {
         }else {
           next_step = Step::DONE;
         }
-        std::cout<<'test2\n';
+        std::cout<<"test2\n";
         break;
     }
 
@@ -142,20 +142,7 @@ void Job::update(std::mt19937& rng) {
       tree.store_TT(leaf_node->boardInt, leaf_node->label);
     }
   }
-  if (!leaf_policy.empty() && leaf_node->label == 2) {
-    auto& [parent_player, current_player, leaf_node, act] = selection_path.back();
-    const auto legal_actions = leaf_state->legal_actions();
-    leaf_node->expand(tree, leaf_state.get(), legal_actions);
-    // extract legal action policy and normalize
-    float policy_sum = 0.0F;
-    for (auto& [p, action, child] : leaf_node->children) {
-      p = leaf_policy[action];
-      policy_sum += p;
-    }
-    for (auto& [p, action, child] : leaf_node->children) p /= policy_sum;
-    // first simulation -> add dirichlet noise to root policy
-    if (tree.num_simulations() == 1) tree.add_dirichlet_noise(rng);
-  }
+
 
   for (auto& [p, action, child] : leaf_node->children) {
     if (child->label != 2) {
@@ -285,7 +272,7 @@ void Job::update(std::mt19937& rng) {
 void Job::play(std::mt19937& rng) {
   // std::cerr<<"test"<<std::endl;
   while (tree.root_node.use_count() != 1) {
-    // break;
+    break;
     // //std::cout<<"use_count: "<<tree.root_node.use_count()<<'\n';
   }
   const auto player = root_state->current_player();

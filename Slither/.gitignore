@@ -6,3 +6,4 @@ build/
 storage/
 .nfs*
 *.sgf
+mcts_sgf/
