@@ -143,7 +143,7 @@ void Job::update(std::mt19937& rng) {
     }
   }
   if (!leaf_policy.empty() && leaf_node->label == 2) {
-    auto& [parent_player, current_player, leaf_node, act] = selection_path.back();
+    // auto& [parent_player, current_player, leaf_node, act] = selection_path.back();
     const auto legal_actions = leaf_state->legal_actions();
     leaf_node->expand(tree, leaf_state.get(), legal_actions);
     // extract legal action policy and normalize
@@ -163,7 +163,7 @@ void Job::update(std::mt19937& rng) {
       int i = selection_path.size() - 1;
       
       if (i >= 0) {
-        auto& [p_player, c_player, node, act] = selection_path[i];
+        // auto& [p_player, c_player, node, act] = selection_path[i]; //為啥要用node而不是child
         if (node->label != 2) continue;
 
         bool needLabel = true;
