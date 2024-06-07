@@ -29,17 +29,18 @@ void Job::select(std::mt19937& rng) {
   game::Action action;
   //std::cout<<"before select while\n";
   while (true) {
-    std::cout<<".";
+    // std::cout<<".";
     leaf_node->num_visits += Engine::virtual_loss;
-
+    // std::cout << leaf_node->boardInt << "==============\n";
     if(tree.lookup_TT(leaf_node->boardInt)) {
+      // std::cout << "found\n";
       leaf_node->label = 0;
       leaf_policy.clear();
       leaf_returns = leaf_state->returns();
       next_step = Step::UPDATE;
       break;
     }
-
+    // std::cout << "TT done\n";    
     if (leaf_node->children.empty()) {
       if (leaf_state->is_terminal()) {
         leaf_node->label = leaf_state->get_winner();
@@ -55,6 +56,7 @@ void Job::select(std::mt19937& rng) {
         break;
       }
     }
+    // std::cout << "terminate done\n";    
     auto tmp = leaf_node;
     // std::tie(action, leaf_node) = leaf_node->select(rng);
     std::tie(action, leaf_node) = leaf_node->select(rng);
@@ -170,24 +172,36 @@ void Job::update(std::mt19937& rng) {
         if((pre_label == 0) && (p_player == 0) && (c_player == 0)){ // black choose, black move
           node->label = pre_label;
           if(!tree.lookup_TT(node->boardInt)) {
+            if(node->boardInt == 0){
+              std::cout << "HERE1111111111111111111111111111111111111111111111111111111111111\n";
+            }
             tree.store_TT(node->boardInt, pre_label);
           }
         }
         else if((pre_label == 1) && (p_player == 1) && (c_player == 1)){ // white choose, white move
           node->label = pre_label;
           if(!tree.lookup_TT(node->boardInt)) {
+            if(node->boardInt == 0){
+              std::cout << "HERE222222222222222222222222222222222222222222222222222222222222222\n";
+            }
             tree.store_TT(node->boardInt, pre_label);
           }
         }
         else if((pre_label == 0) && (p_player == 1) && (c_player == 0)){ // label = 0, OR node (white place)
           node->label = pre_label;
           if(!tree.lookup_TT(node->boardInt)) {
+            if(node->boardInt == 0){
+              std::cout << "HERE33333333333333333333333333333333333333333333333\n";
+            }
             tree.store_TT(node->boardInt, pre_label);
           }
         }
         else if((pre_label == 1) && (p_player == 0) && (c_player == 1)){ // label = 1, AND node (black place)
           node->label = pre_label;
           if(!tree.lookup_TT(node->boardInt)) {
+            if(node->boardInt == 0){
+              std::cout << "HERE44444444444444444444444444444444444444444444444444444444444444444\n";
+            }
             tree.store_TT(node->boardInt, pre_label);
           }
         }
@@ -202,6 +216,9 @@ void Job::update(std::mt19937& rng) {
           if(needLabel){
             node->label = pre_label;
             if(!tree.lookup_TT(node->boardInt)) {
+              if(node->boardInt == 0){
+              std::cout << "HERE55555555555555555555555555555555555555555555555555555555555555\n";
+            }
               tree.store_TT(node->boardInt, pre_label);
             }
           }
@@ -221,24 +238,36 @@ void Job::update(std::mt19937& rng) {
     if((pre_label == 0) && (p_player == 0) && (c_player == 0)){ // black choose, black move
       node->label = pre_label;
       if(!tree.lookup_TT(node->boardInt)) {
+        if(node->boardInt == 0){
+              std::cout << "HERE66666666666666666666666666666666666666666666666666666666666666\n";
+            }
         tree.store_TT(node->boardInt, pre_label);
       }
     }
     else if((pre_label == 1) && (p_player == 1) && (c_player == 1)){ // white choose, white move
       node->label = pre_label;
       if(!tree.lookup_TT(node->boardInt)) {
+        if(node->boardInt == 0){
+              std::cout << "HERE777777777777777777777777777777777777777777777777777777777777\n";
+            }
         tree.store_TT(node->boardInt, pre_label);
       }
     }
     else if((pre_label == 0) && (p_player == 1) && (c_player == 0)){ // label = 0, OR node (white place)
       node->label = pre_label;
       if(!tree.lookup_TT(node->boardInt)) {
+        if(node->boardInt == 0){
+              std::cout << "HERE88888888888888888888888888888888888888888888888888888888888888888888888888888888888\n";
+            }
         tree.store_TT(node->boardInt, pre_label);
       }
     }
     else if((pre_label == 1) && (p_player == 0) && (c_player == 1)){ // label = 1, AND node (black place)
       node->label = pre_label;
       if(!tree.lookup_TT(node->boardInt)) {
+        if(node->boardInt == 0){
+              std::cout << "HERE9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999\n";
+            }
         tree.store_TT(node->boardInt, pre_label);
       }
     }
@@ -253,6 +282,9 @@ void Job::update(std::mt19937& rng) {
       if(needLabel){
         node->label = pre_label;
         if(!tree.lookup_TT(node->boardInt)) {
+          if(node->boardInt == 0){
+              std::cout << "HERE0000000000000000000000000000000000000000000000000000000\n";
+            }
           tree.store_TT(node->boardInt, pre_label);
         }
         //std::cout<<"成功update\n";
@@ -274,7 +306,7 @@ void Job::update(std::mt19937& rng) {
   //   }
   // } else {
     next_step = Step::SELECT;
-    std::cout<< tree.root_node->num_visits << '\n';
+    // std::cout<< tree.root_node->num_visits << '\n';
     if (tree.root_node->num_visits > 15000000) {
       next_step = Step::DONE;
     }
