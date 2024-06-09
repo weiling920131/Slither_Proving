@@ -36,8 +36,10 @@ void Job::select(std::mt19937& rng) {
       if (leaf_node == tree.root_node.get()) {
         std::cout << "root in TT\n";
         if(tree_owner) {
+          std::cout << "owner\n";
           next_step = Step::PLAY;
         }else {
+          std::cout << "not owner\n";
           next_step = Step::DONE;
         }
         break;
@@ -76,8 +78,10 @@ void Job::select(std::mt19937& rng) {
         leaf_returns = leaf_state->returns();
         if(tree_owner) {
           next_step = Step::PLAY;
+          std::cout << "owner\n";
         }else {
           next_step = Step::DONE;
+          std::cout << "not owner\n";
         }
         break;
     }
@@ -308,8 +312,8 @@ void Job::update(std::mt19937& rng) {
 void Job::play(std::mt19937& rng) {
   // std::cerr<<"test"<<std::endl;
   while (tree.root_node.use_count() != 1) {
-    // break;
     // std::cout<<"use_count: "<<tree.root_node.use_count()<<'\n';
+    // break;
   }
   const auto player = root_state->current_player();
   const auto root_node = tree.root_node.get();
