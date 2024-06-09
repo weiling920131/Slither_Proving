@@ -67,21 +67,29 @@ void Node::expand(Tree& tree, game::State* state, const std::vector<game::Action
     cur_state->apply_action(action);
     node->boardInt = cur_state->convert_to_uint64_t(cur_state->getboard());
     if(tree.lookup_TT(node->boardInt)) {
-      std::cout<< "Found in transposition table"<< std::endl;
-      node.get()->label = 0;
+      // std::cout<< "Found in transposition table"<< std::endl;
+      node->label = 0;
     }else{
       // std::cout<< "not Found in transposition table"<< std::endl;
-      node.get()->label = 2;
+      node->label = 2;
     }
     children.emplace_back(0.0F, action, std::move(node));
   }
-  expand_done();
+  // std::cout<< "1\n";
+  // expand_done();
 }
 
 void Node::wait_expand() const {
+  int check= true;
   while (expand_state.load() == State::EXPANDING) {
-    // std::cout<<"mother fxxker\n";
+    if(check) {
+      check = false;
+      std::cout<<"boardInt: "<<boardInt<<'\n';
+      std::cout<<"label: "<<label<<'\n';
+      std::cout<<"num_visits: "<<num_visits<<'\n';
+    }
   }
+  if(!check) std::cout<< "=\n=\n=\n=\n=\n=\n=\n=\n=\n=\n";
 }
 
 bool Node::acquire_expand() {

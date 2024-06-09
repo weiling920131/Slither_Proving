@@ -107,11 +107,11 @@ std::string Engine::get_trajectory() {
 
 void Engine::cpu_worker(uint32_t seed) {
   std::mt19937 rng{seed};
-
   while (running) {
     std::unique_ptr<Job> job;
     cpu_jobs.wait_dequeue(job);
     if (job == nullptr) return;
+    // std::cout<<job->tree.root_node.use_count()<<std::endl;
 
     while (true) {
       switch (job->next_step) {
