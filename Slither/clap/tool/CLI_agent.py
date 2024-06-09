@@ -617,10 +617,10 @@ if __name__ == '__main__':
     parser.add_argument('-verbose', '--verbose', action='store_true')
     parser.add_argument('-top', '--top', default=10, type=int)
 
-    parser.add_argument('-c', '--cpu-workers', default=os.cpu_count(), type=int)
-    parser.add_argument('-g', '--gpu-workers', default=GPU_COUNT, type=int)
-    # parser.add_argument('-c', '--cpu-workers', default=1, type=int)
-    # parser.add_argument('-g', '--gpu-workers', default=1, type=int)
+    # parser.add_argument('-c', '--cpu-workers', default=os.cpu_count(), type=int)
+    # parser.add_argument('-g', '--gpu-workers', default=GPU_COUNT, type=int)
+    parser.add_argument('-c', '--cpu-workers', default=1, type=int)
+    parser.add_argument('-g', '--gpu-workers', default=1, type=int)
     
     parser.add_argument('-b', '--batch-size', default=os.cpu_count()//2, type=int)
     parser.add_argument('-transform', '--transform', default=0, type=int)
