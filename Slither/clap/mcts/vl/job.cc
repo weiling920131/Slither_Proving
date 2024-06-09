@@ -28,18 +28,27 @@ void Job::select(std::mt19937& rng) {
 
   game::Action action;
   //std::cout<<"before select while\n";
-  while (true) {
+  while (true) {    
     std::cout<<".";
     leaf_node->num_visits += Engine::virtual_loss;
-    // std::cout << leaf_node->boardInt << "==============\n";
+
     if(tree.lookup_TT(leaf_node->boardInt)) {
+      if (leaf_node == tree.root_node.get()) {
+        std::cout << "root in TT\n";
+        if(tree_owner) {
+          next_step = Step::PLAY;
+        }else {
+          next_step = Step::DONE;
+        }
+        break;
+      }
       leaf_node->label = 0;
       leaf_policy.clear();
       leaf_returns = leaf_state->returns();
       next_step = Step::UPDATE;
       break;
     }
-    // std::cout << "TT done\n";    
+
     if (leaf_node->children.empty()) {
       if (leaf_state->is_terminal()) {
         leaf_node->label = leaf_state->get_winner();
@@ -55,7 +64,6 @@ void Job::select(std::mt19937& rng) {
         break;
       }
     }
-    // std::cout << "terminate done\n";    
     auto tmp = leaf_node;
     // std::tie(action, leaf_node) = leaf_node->select(rng);
     std::tie(action, leaf_node) = leaf_node->select(rng);
@@ -397,6 +405,7 @@ void Job::play(std::mt19937& rng) {
                                      parent_node->num_visits);
     }
     for (const auto& p : mcts_policy) pb_state_evaluation->add_policy(p);
+
 
     // apply action to root state
     root_state->apply_action(chosen_action);
