@@ -35,13 +35,13 @@ void Tree::reset() {
 }
 
 void Tree::store_TT(uint64_t board, int label){
-    // std::lock_guard<std::mutex> guard(TTmutex);
+    std::lock_guard<std::mutex> guard(TTmutex);
     TT[board] = {label};
 	return;
 }
 
 bool Tree::lookup_TT(uint64_t board){
-    // std::lock_guard<std::mutex> guard(TTmutex);
+    std::lock_guard<std::mutex> guard(TTmutex);
     auto it = TT.find(board);
     if (it != TT.end()) {
         return true;
