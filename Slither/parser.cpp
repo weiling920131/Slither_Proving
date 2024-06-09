@@ -206,6 +206,8 @@ public:
 						TwoLayersNode* new_node = new TwoLayersNode;
 						new_node->action = action;
 						new_node->player = getPlayerType(node->action_.getPlayer());
+						new_node->comment = node->getComment();
+
 
 						new_node_parent->children.push_back(new_node);
 						parseEditorTree_r(child, new_node_parent, cnt_level+1);
@@ -222,7 +224,7 @@ public:
 				if (action != "") {
 					TwoLayersNode* new_node = new_node_parent->children.back();
 					new_node->action += action;
-					new_node->comment = node->getComment();
+					new_node->comment += " " + node->getComment();
 
 					for(SGFTreeNode* child = node->child_; child != NULL; child = child->next_silbing_) {
 						parseEditorTree_r(child, new_node, cnt_level+1);
