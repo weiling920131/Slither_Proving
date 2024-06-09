@@ -68,10 +68,10 @@ void Node::expand(Tree& tree, game::State* state, const std::vector<game::Action
     node->boardInt = cur_state->convert_to_uint64_t(cur_state->getboard());
     if(tree.lookup_TT(node->boardInt)) {
       std::cout<< "Found in transposition table"<< std::endl;
-      node.get()->label = 0;
+      node->label = 0;
     }else{
       // std::cout<< "not Found in transposition table"<< std::endl;
-      node.get()->label = 2;
+      node->label = 2;
     }
     children.emplace_back(0.0F, action, std::move(node));
   }
