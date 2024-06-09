@@ -29,9 +29,9 @@ void Job::select(std::mt19937& rng) {
   game::Action action;
   //std::cout<<"before select while\n";
   while (true) {    
-    std::cout<<".";
+    // std::cout<<".";
     leaf_node->num_visits += Engine::virtual_loss;
-
+    
     if(tree.lookup_TT(leaf_node->boardInt)) {
       if (leaf_node == tree.root_node.get()) {
         // leaf_node->expand_done();
@@ -60,6 +60,7 @@ void Job::select(std::mt19937& rng) {
         next_step = Step::UPDATE;
         break;
       }
+      // std::cout<<"1\n";
       auto success = leaf_node->acquire_expand();
       if (success) {
         leaf_observation = leaf_state->observation_tensor();
@@ -81,6 +82,8 @@ void Job::select(std::mt19937& rng) {
           next_step = Step::PLAY;
           std::cout << "owner\n";
         }else {
+          // leaf_node->expand_done();
+          std::cout<<tree.root_node.use_count()<<'\n';
           next_step = Step::DONE;
           std::cout << "not owner\n";
         }
@@ -274,7 +277,7 @@ void Job::update(std::mt19937& rng) {
     pre_label = node->label;
     i--;
   }
-  
+  leaf_node->expand_done();
   // std::cout << "Update done\n";
   // if (tree.root_node->num_visits >= Engine::max_simulations) {
   //   if (tree_owner) {
@@ -283,6 +286,18 @@ void Job::update(std::mt19937& rng) {
   //     next_step = Step::DONE;
   //   }
   // } else {
+    // if (leaf_node == tree.root_node.get() && leaf_node->label == 0 && tree.lookup_TT(leaf_node->boardInt)) {
+    //     std::cout << "root in TT\n";
+    //     if(tree_owner) {
+    //       std::cout << "owner\n";
+    //       next_step = Step::PLAY;
+    //     }else {
+    //       std::cout << "not owner\n";
+    //       next_step = Step::DONE;
+    //     }
+    //     return;
+    // }
+
     next_step = Step::SELECT;
     std::cout<< tree.root_node->num_visits << '\n';
     if (tree.root_node->num_visits > 15000000) {
