@@ -494,7 +494,7 @@ uint64_t SlitherState::convert_to_uint64_t(std::vector<int> M) {
             board |= (uint64_t(1) << (i + 25));
         }
     }
-	board = board * 10 + turn_;
+	board = board * 10 + (turn_% 3);
     return board;
 }
 

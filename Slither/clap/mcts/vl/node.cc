@@ -68,7 +68,7 @@ void Node::expand(Tree& tree, game::State* state, const std::vector<game::Action
     cur_state->apply_action(action);
     node->boardInt = cur_state->convert_to_uint64_t(cur_state->getboard());
     if(tree.lookup_TT(node->boardInt)) {
-      std::cout<< "Found in transposition table"<< std::endl;
+      std::cout<< "Found in TT (expand)"<< std::endl;
       node->label = 0;
       node->isTT = true;
     }else{
