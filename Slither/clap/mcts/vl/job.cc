@@ -35,12 +35,12 @@ void Job::select(std::mt19937& rng) {
     if((previous_player != leaf_state->current_player()) && tree.lookup_TT(leaf_node->boardInt)) {
       if (leaf_node == tree.root_node.get()) {
         // leaf_node->expand_done();
-        // std::cout << "root in TT\n";
+        std::cout << "root in TT\n";
         if(tree_owner) {
-          // std::cout << "owner\n";
+          std::cout << "owner\n";
           next_step = Step::PLAY;
         }else {
-          // std::cout << "not owner\n";
+          std::cout << "not owner\n";
           next_step = Step::DONE;
         }
         break;
@@ -75,18 +75,18 @@ void Job::select(std::mt19937& rng) {
     if (action == -1) {
         // std::cout<<"action == -1\n";
         if(tmp == tree.root_node.get()) {
-          // std::cout<<"root: "<<tmp->label<<'\n';
+          std::cout<<"root: "<<tmp->label<<'\n';
         }
         leaf_policy.clear();
         leaf_returns = leaf_state->returns();
         if(tree_owner) {
           next_step = Step::PLAY;
-          // std::cout << "owner\n";
+          std::cout << "owner\n";
         }else {
           // leaf_node->expand_done();
           // std::cout<<tree.root_node.use_count()<<'\n';
           next_step = Step::DONE;
-          // std::cout << "not owner\n";
+          std::cout << "not owner\n";
         }
         break;
     }
@@ -319,7 +319,6 @@ void Job::play(std::mt19937& rng) {
   for (auto& tt: tree.TT) {
     std::cout << tt.first << " " << tt.second << '\n';
   }
-  std::cout << "TT: " << tree.TT.size() << '\n';
   const auto player = root_state->current_player();
   const auto root_node = tree.root_node.get();
 
