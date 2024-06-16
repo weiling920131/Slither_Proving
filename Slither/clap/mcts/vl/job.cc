@@ -46,6 +46,7 @@ void Job::select(std::mt19937& rng) {
         break;
       }
       leaf_node->label = 0;
+      leaf_node->isTT = true;
       leaf_policy.clear();
       leaf_returns = leaf_state->returns();
       next_step = Step::UPDATE;
