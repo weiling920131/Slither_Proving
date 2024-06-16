@@ -316,6 +316,10 @@ void Job::play(std::mt19937& rng) {
     // break;
   }
   std::cout << "TT size: " << tree.TT.size() << '\n';
+  for (auto& tt: tree.TT) {
+    std::cout << tt.first << " " << tt.second << '\n';
+  }
+  std::cout << "TT: " << tree.TT.size() << '\n';
   const auto player = root_state->current_player();
   const auto root_node = tree.root_node.get();
 
