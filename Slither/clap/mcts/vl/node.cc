@@ -83,7 +83,14 @@ void Node::expand(Tree& tree, game::State* state, const std::vector<game::Action
 
 void Node::wait_expand() const {
   while (expand_state.load() == State::EXPANDING) {
+    if(check) {
+      check = false;
+      std::cout<<"boardInt: "<<boardInt<<'\n';
+      std::cout<<"label: "<<label<<'\n';
+      std::cout<<"num_visits: "<<num_visits<<'\n';
+    }
   }
+  if(!check) std::cout<< "=\n=\n=\n=\n=\n=\n=\n=\n=\n=\n";
 }
 
 bool Node::acquire_expand() {

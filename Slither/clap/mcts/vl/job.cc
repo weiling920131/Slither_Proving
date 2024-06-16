@@ -35,12 +35,12 @@ void Job::select(std::mt19937& rng) {
     if((previous_player != leaf_state->current_player()) && tree.lookup_TT(leaf_node->boardInt)) {
       if (leaf_node == tree.root_node.get()) {
         // leaf_node->expand_done();
-        std::cout << "root in TT\n";
+        // std::cout << "root in TT\n";
         if(tree_owner) {
-          std::cout << "owner\n";
+          // std::cout << "owner\n";
           next_step = Step::PLAY;
         }else {
-          std::cout << "not owner\n";
+          // std::cout << "not owner\n";
           next_step = Step::DONE;
         }
         break;
@@ -73,20 +73,20 @@ void Job::select(std::mt19937& rng) {
     // std::tie(action, leaf_node) = leaf_node->select(rng);
     std::tie(action, leaf_node) = leaf_node->select(rng);
     if (action == -1) {
-        std::cout<<"action == -1\n";
+        // std::cout<<"action == -1\n";
         if(tmp == tree.root_node.get()) {
-          std::cout<<"root: "<<tmp->label<<'\n';
+          // std::cout<<"root: "<<tmp->label<<'\n';
         }
         leaf_policy.clear();
         leaf_returns = leaf_state->returns();
         if(tree_owner) {
           next_step = Step::PLAY;
-          std::cout << "owner\n";
+          // std::cout << "owner\n";
         }else {
           // leaf_node->expand_done();
-          std::cout<<tree.root_node.use_count()<<'\n';
+          // std::cout<<tree.root_node.use_count()<<'\n';
           next_step = Step::DONE;
-          std::cout << "not owner\n";
+          // std::cout << "not owner\n";
         }
         break;
     }
@@ -104,7 +104,7 @@ void Job::select(std::mt19937& rng) {
 }
 
 void Job::evaluate() {
-  std::cout << "evaluate\n";
+  // std::cout << "evaluate\n";
   // std::cout<<"job.cc line: 76\n";
   const auto& observation_tensor_shape =
       engine->game->observation_tensor_shape();

@@ -34,15 +34,15 @@ void Tree::reset() {
   TT.clear();
 }
 
-void Tree::store_TT(uint64_t board, int label){
+void Tree::store_TT(uint64_t board, int label, int step){
     std::lock_guard<std::mutex> guard(TTmutex);
-    TT[board] = {label};
+    TT[board*10+step] = {label};
 	return;
 }
 
-bool Tree::lookup_TT(uint64_t board){
+bool Tree::lookup_TT(uint64_t board, step){
     std::lock_guard<std::mutex> guard(TTmutex);
-    auto it = TT.find(board);
+    auto it = TT.find(board*10+step);
     if (it != TT.end()) {
         return true;
     } else {
