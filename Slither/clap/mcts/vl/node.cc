@@ -14,6 +14,7 @@ Node::Node()
       parent_player_value_sum(0.0F),
       current_player_value_sum(0.0F),
       label(2),
+      isTT(false),
       boardInt(0),
       expand_state(State::UNEXPANDED) {}
 
@@ -69,19 +70,28 @@ void Node::expand(Tree& tree, game::State* state, const std::vector<game::Action
     if(tree.lookup_TT(node->boardInt)) {
       std::cout<< "Found in transposition table"<< std::endl;
       node->label = 0;
+      node->isTT = true;
     }else{
       // std::cout<< "not Found in transposition table"<< std::endl;
       node->label = 2;
     }
     children.emplace_back(0.0F, action, std::move(node));
   }
-  expand_done();
+  // std::cout<< "1\n";
+  // expand_done();
 }
 
 void Node::wait_expand() const {
+  int check= true;
   while (expand_state.load() == State::EXPANDING) {
-    // std::cout<<"mother fxxker\n";
+  //   if(check) {
+  //     check = false;
+  //     std::cout<<"boardInt: "<<boardInt<<'\n';
+  //     std::cout<<"label: "<<label<<'\n';
+  //     std::cout<<"num_visits: "<<num_visits<<'\n';
+  //   }
   }
+  // if(!check) std::cout<< "=\n=\n=\n=\n=\n=\n=\n=\n=\n=\n";
 }
 
 bool Node::acquire_expand() {
