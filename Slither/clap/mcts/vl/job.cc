@@ -32,7 +32,7 @@ void Job::select(std::mt19937& rng) {
     // std::cout<<".";
     leaf_node->num_visits += Engine::virtual_loss;
     
-    if(tree.lookup_TT(leaf_node->boardInt)) {
+    if((previous_player != leaf_state->current_player()) && tree.lookup_TT(leaf_node->boardInt)) {
       if (leaf_node == tree.root_node.get()) {
         // leaf_node->expand_done();
         std::cout << "root in TT\n";
@@ -151,13 +151,13 @@ void Job::update(std::mt19937& rng) {
   auto& [parent_player, current_player, leaf_node, act] = selection_path.back();
 
   if((parent_player == 0) && (current_player == 1)) {
-    // std::cout<< "before check can block\n";
-    if(!leaf_state->check_can_block()) {
+  //  std::cout<< "before check can block\n";
+   if(!leaf_state->check_can_block()) {
       // std::cout<< "after check can block\n";
-      // 
-      leaf_node->label = 0; // black win
-      tree.store_TT(leaf_node->boardInt, leaf_node->label);
-    }
+      
+     leaf_node->label = 0; // black win
+     tree.store_TT(leaf_node->boardInt, leaf_node->label);
+   }
   }
   if (!leaf_policy.empty() && leaf_node->label == 2) {
     // auto& [parent_player, current_player, leaf_node, act] = selection_path.back();
@@ -183,15 +183,15 @@ void Job::update(std::mt19937& rng) {
 
         if((pre_label == 0) && (parent_player == 0) && (current_player == 0)){ // black choose, black move
           leaf_node->label = pre_label;
-          if(!tree.lookup_TT(leaf_node->boardInt)) {
-            tree.store_TT(leaf_node->boardInt, pre_label);
-          }
+          // if(!tree.lookup_TT(leaf_node->boardInt)) {
+          //   tree.store_TT(leaf_node->boardInt, pre_label);
+          // }
         }
         else if((pre_label == 1) && (parent_player == 1) && (current_player == 1)){ // white choose, white move
           leaf_node->label = pre_label;
-          if(!tree.lookup_TT(leaf_node->boardInt)) {
-            tree.store_TT(leaf_node->boardInt, pre_label);
-          }
+          // if(!tree.lookup_TT(leaf_node->boardInt)) {
+          //   tree.store_TT(leaf_node->boardInt, pre_label);
+          // }
         }
         else if((pre_label == 0) && (parent_player == 1) && (current_player == 0)){ // label = 0, OR node (white place)
           leaf_node->label = pre_label;
@@ -215,7 +215,7 @@ void Job::update(std::mt19937& rng) {
           }
           if(needLabel){
             leaf_node->label = pre_label;
-            if(!tree.lookup_TT(leaf_node->boardInt)) {
+            if((parent_player != current_player) && !tree.lookup_TT(leaf_node->boardInt)) {
               tree.store_TT(leaf_node->boardInt, pre_label);
             }
           }
@@ -233,15 +233,15 @@ void Job::update(std::mt19937& rng) {
 
     if((pre_label == 0) && (p_player == 0) && (c_player == 0)){ // black choose, black move
       node->label = pre_label;
-      if(!tree.lookup_TT(node->boardInt)) {
-        tree.store_TT(node->boardInt, pre_label);
-      }
+      // if(!tree.lookup_TT(node->boardInt)) {
+      //   tree.store_TT(node->boardInt, pre_label);
+      // }
     }
     else if((pre_label == 1) && (p_player == 1) && (c_player == 1)){ // white choose, white move
       node->label = pre_label;
-      if(!tree.lookup_TT(node->boardInt)) {
-        tree.store_TT(node->boardInt, pre_label);
-      }
+      // if(!tree.lookup_TT(node->boardInt)) {
+      //   tree.store_TT(node->boardInt, pre_label);
+      // }
     }
     else if((pre_label == 0) && (p_player == 1) && (c_player == 0)){ // label = 0, OR node (white place)
       node->label = pre_label;
@@ -265,7 +265,7 @@ void Job::update(std::mt19937& rng) {
       }
       if(needLabel){
         node->label = pre_label;
-        if(!tree.lookup_TT(node->boardInt)) {
+        if((p_player != c_player) && !tree.lookup_TT(node->boardInt)) {
           tree.store_TT(node->boardInt, pre_label);
         }
         //std::cout<<"成功update\n";
@@ -299,7 +299,7 @@ void Job::update(std::mt19937& rng) {
     // }
 
     next_step = Step::SELECT;
-    std::cout<< tree.root_node->num_visits << '\n';
+    if(tree.root_node->num_visits % 50000 == 0) std::cout<< tree.root_node->num_visits << '\n';
     if (tree.root_node->num_visits > 15000000) {
       next_step = Step::DONE;
     }
@@ -313,6 +313,7 @@ void Job::play(std::mt19937& rng) {
     // std::cout<<"use_count: "<<tree.root_node.use_count()<<'\n';
     // break;
   }
+  std::cout << "TT size: " << tree.TT.size() << '\n';
   const auto player = root_state->current_player();
   const auto root_node = tree.root_node.get();
 

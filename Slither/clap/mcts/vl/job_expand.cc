@@ -101,7 +101,7 @@ void Job::PreOrderTraversalDump(std::ofstream& sgf_file_,
     // sgf_file_ << "MCTS Policy: "
     //           << (float)current_node.num_visits / (parent_num_visits - 1)
     //           << "\r\n]";
-    char label_char[] = "BWN";
+    char label_char[] = "BWNT";
     sgf_file_ << "\r\nC[Label: " << label_char[current_node.label] << "\r\n]";
 
     current_state->apply_action(last_action);

@@ -36,6 +36,7 @@ class Node {
   // 0 black win
   // 1 white win
   int label;
+  bool isTT;
   uint64_t boardInt;
   
   std::atomic <int> num_visits;
