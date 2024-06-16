@@ -300,7 +300,8 @@ void Job::update(std::mt19937& rng) {
     // }
 
     next_step = Step::SELECT;
-    if(tree.root_node->num_visits % 50000 == 0) std::cout<< tree.root_node->num_visits << '\n';
+    // if(tree.root_node->num_visits % 50000 == 0) 
+    std::cout<< tree.root_node->num_visits << '\n';
     if (tree.root_node->num_visits > 15000000) {
       next_step = Step::DONE;
     }

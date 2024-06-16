@@ -16,7 +16,6 @@ Node::Node()
       label(2),
       isTT(false),
       boardInt(0),
-      isTT(false),
       expand_state(State::UNEXPANDED) {}
 
 std::tuple<game::Action, Node*> Node::select(std::mt19937& rng) const {
